@@ -1,0 +1,85 @@
+<!-- 
+Copyright 2003-2004 The Apache Software Foundation
+Licensed  under the  Apache License,  Version 2.0  (the "License");
+you may not use  this file  except in  compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed  under the  License is distributed on an "AS IS" BASIS,
+WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+implied.
+
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<p>
+  ObjectFactory wrappers to provide proxied components to the container.
+</p>
+<h1>Proxy Factories</h1>
+<p>
+  There are currently two types of factories available with Fortress: BCEL
+  enabled, and traditional JDK 1.3 proxies.
+  <a href="http://jakarta.apache.org/bcel/">Jakarta BCEL</a> is a library to
+  directly generate Java class bytecode.  You do not have to include this
+  library for Fortress to function, however if it is present Fortress will
+  use it.
+</p>
+<h2>The Need</h3>
+<p>
+  Proxies are used both for the protection of the component's lifecycle methods,
+  and for backwards compatibility with Composable components.  The proxy
+  automatically adds the <code>Component</code> interface to any component (even
+  if it did not have it in the source code) so that it can be used with your
+  old legacy components.  As everyone upgrades, the backwards compatibility
+  concern becomes less of an issue--however protecting a component is still
+  very important.
+</p>
+<h2>JDK 1.3 Proxy Code</h2>
+<p>
+  The Java Proxy code uses reflection to do its dirty work, so despite all the
+  advances in JDK 1.4 introspection code you will still incur a substantial
+  performance bottleneck using this approach.  A user did a micro-benchmark
+  and reported that the performance hit is around 4:1 vs. just using the component
+  directly.  If your components are not repeatedly called several times in rapid
+  succession as is the case with micro-benchmarks then you probably will barely
+  notice the change.  Nevertheless, in some environments (most notably when you
+  are working with Servlets) that performance hit will begin to add up.
+</p>
+<h2>BCEL Enabled Proxy Code</h2>
+<p>
+  The BCEL enabled proxy code creates a wrapper class that directly calls the
+  methods on your component as if you wrote it yourself.  As an example, the
+  following two code snippets will show you how the component is proxied:
+</p>
+<h3>Component's Interface</h3>
+<pre>
+public interface HelloWorldComponent
+{
+    String sayHello();
+}
+</pre>
+<h3>Wrapper Class</h3>
+<pre>
+public final class HelloWorldComponent$BCELWrapper
+{
+    private final HelloWorldComponent m_component;
+
+    public HelloWorldComponent$BCELWrapper(HelloWorldComponent base)
+    {
+        m_component = base;
+    }
+
+    public String sayHello()
+    {
+        return m_component.sayHello();
+    }
+}
+</pre>
+<h3>The Benefit</h3>
+<p>
+  The resulting code is much easier for the JVM to use, and does not pose a
+  serious threat to the performance of the component.  All you have to do is
+  include the BCEL.jar file, and the choice will be made for you.
+</p>

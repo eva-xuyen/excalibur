@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<project>
+
+  <extend>${basedir}/../project-common.xml</extend>
+  <id>excalibur-fortress-migration</id>
+  <name>Fortress Migration Adapter</name>
+  <package>org.apsche.avalon.fortress.migration</package>
+  <currentVersion>1.0.0-dev</currentVersion>
+
+  <inceptionYear>2004</inceptionYear>
+  <shortDescription>Fortress Migration Adapter</shortDescription>
+
+  <description>
+	Fortress migration is a project supporting the 
+      binary compatibility of legacy fortress components 
+      within an avalon environment.
+  </description>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>avalon-framework</groupId>
+      <artifactId>avalon-framework-api</artifactId>
+      <version>4.1.5</version>
+    </dependency>
+    <dependency>
+      <groupId>avalon-framework</groupId>
+      <artifactId>avalon-framework-impl</artifactId>
+      <version>4.1.5</version>
+    </dependency>
+    <dependency>
+      <groupId>avalon-logkit</groupId>
+      <artifactId>avalon-logkit</artifactId>
+      <version>2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>2.1</version>
+    </dependency>
+    <dependency>
+      <groupId>concurrent</groupId>
+      <artifactId>concurrent</artifactId>
+      <version>1.3.1</version>
+    </dependency>
+    <dependency>
+      <groupId>excalibur-fortress</groupId>
+      <artifactId>excalibur-fortress-container-api</artifactId>
+      <version>1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>excalibur-fortress</groupId>
+      <artifactId>excalibur-fortress-container-impl</artifactId>
+      <version>1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>excalibur-instrument</groupId>
+      <artifactId>excalibur-instrument</artifactId>
+      <version>1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>excalibur-lifecycle</groupId>
+      <artifactId>excalibur-lifecycle-api</artifactId>
+      <version>1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>excalibur-lifecycle</groupId>
+      <artifactId>excalibur-lifecycle-impl</artifactId>
+      <version>1.1</version>
+    </dependency>
+
+  </dependencies>
+
+</project>

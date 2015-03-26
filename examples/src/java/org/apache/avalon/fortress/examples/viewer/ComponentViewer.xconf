@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<!-- Example Fortress configuration file -->
+<fortress-example>
+
+  <!-- Simple translation component. This component maintains translations for a
+       given key in different languages.
+   -->
+  <translator id="translator" logger="translator" activation="request">
+    <dictionary>
+      <translation key="hello-world">
+        <value language="Deutsch">Hallo Welt</value>
+        <value language="English">Hello World</value>
+        <value language="Français">Bonjour la monde</value>
+        <value language="Indonesia">Apa kabar Dunia</value>
+        <value language="Espanõl">Hola Mundo</value>
+        <value language="Italiano">Ciao Mondo</value>
+      </translation>
+    </dictionary>
+  </translator>
+
+</fortress-example>
+
