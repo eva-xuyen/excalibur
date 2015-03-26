@@ -1,0 +1,117 @@
+<?xml version="1.0"?>
+
+<!--
+     Copyright 2004 The Apache Software Foundation
+     Licensed  under the  Apache License,  Version 2.0  (the "License");
+     you may not use  this file  except in  compliance with the License.
+     You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed  under the  License is distributed on an "AS IS" BASIS,
+     WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+     implied.
+
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<document>
+
+    <properties>
+        <title>Subversion Access</title>
+    </properties>
+
+    <body>
+
+        <section name="What is Subversion?">
+
+            <p>
+                Subversion (svn for short) is a version control system that beats the shit out of
+                CVS. See <a href="http://subversion.tigris.org">the subversion homepage</a> for more
+                information. Excalibur uses subversion for version control.
+            </p>
+
+            <h2>How do I use it?</h2>
+
+            <p>After downloading the client, point it towards the excalibur repository at</p>
+
+            <pre>
+        https://svn.apache.org/repos/asf/excalibur/
+            </pre>
+
+            <p>
+                (note you can also browse the repository online from that url). To check out the
+                latest and greatest bleeding edge excalibur source tree, use a command like this:
+            </p>
+
+            <pre>
+        svn checkout https://svn.apache.org/repos/asf/excalibur/trunk/ excalibur-trunk
+            </pre>
+
+        </section>
+
+        <section name="Web access">
+
+            <p>
+                You can browse the repository online through
+            </p>
+
+            <blockquote><a href="http://cvs.apache.org/viewcvs.cgi/excalibur/?root=Apache-SVN">http://cvs.apache.org/viewcvs.cgi/excalibur/?root=Apache-SVN</a></blockquote>
+
+            <p>
+                A rather more restricted web interface is offered by viewing the repository
+                directly:
+            </p>
+
+            <blockquote><a href="https://svn.apache.org/repos/asf/excalibur/">https://svn.apache.org/repos/asf/excalibur/</a></blockquote>
+
+        </section>
+
+        <section name="What about write access?">
+
+            <p>
+                If you're an excalibur, <a href="http://cocoon.apache.org/">cocoon</a> or
+                <a href="http://james.apache.org/">james</a> committer, you have write access to
+                that repository using that same URL. Before you can do anything, you need to set up
+                a svn password. To do so, log in to svn.apache.org using SSH, and enter the command
+                <code>svnpasswd</code>. Pick a safe password!
+            </p>
+
+            <p>
+                Now, when you make changes, you can commit them with your username/password
+                combination. Ie:
+            </p>
+
+            <pre>
+        cd excalibur-trunk
+        echo "test" > test.txt
+        svn add test.txt
+        svn commit --username your-name --password your-password --message "Trying out svn"
+            </pre>
+
+        </section>
+        <section name="How does all that work?">
+
+            <p>
+                The setup the ASF uses is pretty much the one described in
+                <a href="http://svnbook.red-bean.com/svnbook/ch06s04.html">chapter 6 of the svn
+                book</a>. The repository lives in /x1/svn on minotaur.apache.org, with the important
+                files related to authorization living in that directory, too.
+            </p>
+
+        </section>
+        <section name="What about IDE integration and GUI clients?">
+
+            <p>It works fine. Go and google.</p>
+
+            <ul>
+                <li><a href="http://tortoisesvn.tigris.org/">TortoiseSVN</a> provides windows explorer integration;</li>
+                <li><a href="http://svnup.tigris.org/">svnup</a> provides IDEA integration and a java GUI;</li>
+                <li><a href="http://subclipse.tigris.org/">subclipse</a> provides Eclipse integration; etc etc.</li>
+            </ul>
+                
+        </section>
+    </body>
+
+</document>

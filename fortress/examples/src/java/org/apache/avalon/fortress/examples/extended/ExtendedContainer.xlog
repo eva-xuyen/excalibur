@@ -1,0 +1,20 @@
+<logkit>
+    <factories>
+      <factory type="file" class="org.apache.avalon.excalibur.logger.factory.FileTargetFactory"/>
+    </factories>
+
+    <targets>
+       <file id="root">
+        <filename>fortress-extensions.log</filename>
+        <format type="extended">
+          %7.7{priority} %5.5{time}   [%8.8{category}] (%{context}): %{message}\n%{throwable}
+        </format>
+       </file>
+     </targets>
+
+     <categories>
+       <category name="" log-level="DEBUG">
+         <log-target id-ref="root"/>
+       </category>
+     </categories>
+</logkit>

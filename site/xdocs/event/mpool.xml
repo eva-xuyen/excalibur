@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+
+<!--
+     Copyright 2004 The Apache Software Foundation
+     Licensed  under the  Apache License,  Version 2.0  (the "License");
+     you may not use  this file  except in  compliance with the License.
+     You may obtain a copy of the License at
+     
+     http://www.apache.org/licenses/LICENSE-2.0
+     
+     Unless required by applicable law or agreed to in writing, software
+     distributed  under the  License is distributed on an "AS IS" BASIS,
+     WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+     implied.
+     
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<document>
+    <properties>
+        <title>Event - MPool (Managed Pool)</title>
+    </properties>
+    <body>
+        <section name="Why MPool Was Created">
+            <p>
+        MPool (Managed Pool) was created as an experiment in dynamic
+        pool management.  The theory is that by determining whether to
+        shrink or grow a pool can be a costly endeavor.  That is
+        especially true when you want to play with "intelligent" pools.
+            </p>
+            <p>
+        What we observed after we used MPool in practice is that under
+        load, pool sizing algorithms begin to choke the efficiency of
+        the pool.  In fact, it can get so bad that it would be better
+        not to have a pool at all.  An unbounded pool (one that does
+        not shrink) is a resource hog, especially during inactive times.
+        By moving the pool sizing logic into an asyncronous Command,
+        we were able to achieve the efficiency of an unbounded pool
+        while keeping an eye on pool size.  During times of inactivity
+        we destroy pooled objects that we don't need.  During times of
+        stress, we create a new object immediately and in a background
+        process we add new objects.
+            </p>
+        </section>
+        <section name="When To Use MPool">
+            <p>
+        Use MPool any time you need a pool without hard limits, and you
+        expect heavy loads.  The pool size is checked periodically, so
+        we don't incur extra overhead of having to check that while the
+        pool size grows and shrinks.
+            </p>
+        </section>
+        <section name="Core Concepts">
+            <p>
+        MPool has two pool types: fixed size and variable size.  A fixed
+        size pool is not managed externally.  There is a fixed limit to
+        the number of resources it can manage so we don't have to manage
+        it.  A variable sized pool is a managed pool.  A managed pool will
+        be created by the PoolManager, and that manager will manage all
+        of its pool sizes in the background.
+            </p>
+            <section name="Object Factory">
+                <p>
+          An Object Factory is what the pools use to create new objects
+          or destroy old ones.  They are particularly helpful when there
+          is a complex creation/destruction policy.  They are also essential
+          for ManageablePools.
+                </p>
+            </section>
+            <section name="Pool">
+                <p>
+          The base Pool interface is how the client code interacts with
+          the pool.  You acquire and release pooled objects from the
+          pool.
+                </p>
+            </section>
+            <section name="Managable Pool">
+                <p>
+          A Managable Pool is a special interface that allows a PoolManager
+          to register itself with a "magic key" so that the managed pool
+          only responds to the PoolManager responsible for it.
+                </p>
+            </section>
+            <section name="Pool Manager">
+                <p>
+          The Pool Manager is how you obtain a Managable Pool.  It also
+          takes care of the management functions for that pool.
+                </p>
+            </section>
+        </section>
+    </body>
+</document>

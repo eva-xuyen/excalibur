@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+     Copyright 2004 The Apache Software Foundation
+     Licensed  under the  Apache License,  Version 2.0  (the "License");
+     you may not use  this file  except in  compliance with the License.
+     You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed  under the  License is distributed on an "AS IS" BASIS,
+     WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+     implied.
+
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<document>
+    <properties>
+        <title>The Store Janitor</title>
+    </properties>
+
+    <body>
+        <section name="Goal">
+            <p>This document describes the usage of the StoreJanitor.</p>
+        </section>
+        <section name="Description">
+            <p>The implementation is quit simple! Every implementation of a Store can register in the
+  StoreJanitor. It checks in a configurable interval if memory is running low. If low, 
+  it greps via Round Robin a victim (Store) and frees xx% of all emlements in this Store. 
+  After that the StoreJanitor sleeps and waits for the next iteration.</p>
+            <p>The StoreJanitor is very useful for web applications that use the store as
+   a in-memory cache. The StoreJanitor helps in avoiding OutOfMemory exceptions.</p>
+        </section>
+        <section name="Configuration">
+            <p>The Store Janitor can be configured with a few options:
+            </p>
+            <ul>
+                <li>
+                    <em>freememory</em>: How many bytes shall be always free in the JVM (Default: 1mb)
+                </li>
+                <li>
+                    <em>heapsize</em>: Maximum possible size of the JVM memory consumption (Default: 64mb)
+                </li>
+                <li>
+                    <em>cleanupthreadinterval</em>: How often (sec) shall run the cleanup thread (Default: 10s)
+                </li>
+                <li>
+                    <em>adaptivethreadinterval</em> (experimental): Enable adaptive algorithm to determine thread interval
+           (Default: false) When true,
+                    <code>cleanupthreadinterval</code> defines the maximum cleanup interval.
+           Cleanup interval then is determined based on the memory fill rate: the faster memory is filled in,
+           and the less free memory is left, the shorter is the cleanup time.
+                </li>
+                <li>
+                    <em>threadpriority</em>: priority of the thread (1-10). (Default: 10)
+                </li>
+                <li>
+                    <em>percent_to_free</em>: What fraction of the store to free when memory is low (1-100). (Default: 10%)
+                </li>
+                <li>
+                    <em>invokegc</em>: Invoke the gc on low memory first (true|false; default: false)
+                </li>
+            </ul>
+            <p>The right configuration is very important, because wrong settings can
+    cause a high system load. Let's have a look at a sample configuration.</p>
+            <subsection name="Example configuration">
+                <ul>
+                    <li>Tomcat settings in tomcat.sh or tomcat.bat:</li>
+                </ul>
+                <source><![CDATA[
+%_RUNJAVA% %TOMCAT_OPTS% -Dtomcat.home="%TOMCAT_HOME%" \
+  -Xmx200000000 org.apache.tomcat.startup.Tomcat %2 %3 %4 %5 %6 %7 %8 %9
+                ]]></source>
+                <ul>
+                    <li>StoreJanitor settings:</li>
+                </ul>
+                <p>The freememory and heapsize paramter always depends on the Xmx
+    parameter.</p>
+                <source><![CDATA[
+  <!--+
+      | Store Janitor: the store garbage collector and memory usage controller.
+      |
+      | Be careful with the heapsize and freememory parameters. Wrong values
+      | can cause high cpu usage. Example configuration:
+      | Jvm settings:
+      |    -Xmx200000000
+      | store-janitor settings:
+      |    <parameter name="freememory" value="5000000"/>
+      |    <parameter name="heapsize" value="196000000"/>
+      |
+      | It is recommended to have heapsize equal to -Xmx, especially on Sun's
+      | JVM which are unable to shrink its heap once it grows above minimum.
+      | Freememory should be greater than amount of memory necessary for normal
+      | application operation.
+      | BUT: The heap size of the memory of the JVM is a little bit less than
+      |      the value you specify for -Xmx, so you have to set the heapsize
+      |      for the store janitor to a value which is lower (2% less seems
+      |      to be a working value).
+      +-->
+  <store-janitor logger="core.store.janitor">
+     <!-- How much free memory shall be available in the jvm -->
+     <parameter name="freememory" value="2048000"/>
+     <!-- Indicates the limit of the jvm memory consumption. The default max
+          heapsize for Sun's JVM is (almost) 64Mb -->
+     <parameter name="heapsize" value="66600000"/>
+     <!-- How often shall the cleanup thread check memory -->
+     <parameter name="cleanupthreadinterval" value="10"/>
+     <!-- Experimental adaptive algorithm for cleanup interval
+     <parameter name="adaptivethreadinterval" value="true"/>
+     -->
+     <!-- Indicates the thread priority of the cleanup thread -->
+     <parameter name="threadpriority" value="5"/>
+     <!-- How much percent of the elements of each registered Store
+          shall be removed when low on memory. Default 10% -->
+     <parameter name="percent_to_free" value="10"/>
+     <!-- Invoke the garbage collector when low memory is reached -->
+     <parameter name="invokegc" value="false"/>
+  </store-janitor>
+                ]]></source>
+                <p>It is recommended to have
+                    <code>heapsize</code> equal to -Xmx, especially
+    on Sun's JVM which are unable to shrink its heap once it grows above minimum.
+                    <code>freememory</code> should be greater than amount of memory necessary for normal
+    application operation. But the heap size of the memory of the JVM is a little bit less than
+   the value you specify for -Xmx, so you have to set the heapsize
+   for the store janitor to a value which is lower (2% less seems
+    to be a working value)
+                </p>
+                <p> The
+                    <code>cleanupthreadinterval</code> defines the interval of the background
+    thread which checks memory in seconds. Also this paramter should configured wisely. 
+    A to short interval can cause also a high system load. The
+                    <code>threadpriority</code> defines the priority of the background thread.
+    1 is lowest level and 10 the highest.
+                </p>
+                <p>
+    The
+                    <code>percent_to_free</code> parameter describes, how much percent of the
+    elements of each registered Store shall be removed when low on memory.
+                </p>
+            </subsection>
+        </section>
+    </body>
+</document>
+

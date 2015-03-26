@@ -1,0 +1,141 @@
+<testcase>
+    <annotation>
+        <![CDATA[
+        <title>TableIdGenerator Tests</title>
+        <para>
+        This series of tests excersizes the TableIdGenerator provided by Excalibur.
+        The configuration is specified in the file located in
+        <parameter>jakarta-avalon-excalibur/src/scratchpad/org/apache/avalon/excalibur/datasource/ids/test/TableIdGeneratorJdbcTestCase.xtext</parameter>.
+        </para>
+        ]]>
+    </annotation>
+    
+    <!-- =================================================================== -->
+    <!-- LogKit Configuration.                                               -->
+    <!-- =================================================================== -->
+    <logkit>
+        <factories>
+            <factory type="stream" 
+                class="org.apache.avalon.excalibur.logger.factory.StreamTargetFactory"/>
+            <factory type="file" class="org.apache.avalon.excalibur.logger.factory.FileTargetFactory"/>
+        </factories>
+        
+        <targets>
+            <stream id="console">
+                <stream>System.out</stream>
+                <format type="avalon">
+                    %7.7{priority} %5.5{time}   [%8.8{category}] (%{context}): %{message}\n%{throwable}
+                </format>
+            </stream>
+            <file id="file">
+                <filename>TEST-org.apache.avalon.excalibur.datasource.ids.test.TableIdGeneratorJdbcTestCase.log</filename>
+                <format type="avalon">
+                    %7.7{priority} %5.5{time}   [%8.8{category}] (%{context}): %{message}\n%{throwable}
+                </format>
+            </file>
+        </targets>
+        
+        <categories>
+            <category name="" log-level="DEBUG">
+                <log-target id-ref="console"/>
+                <log-target id-ref="file"/>
+            </category>
+            
+            <category name="jdbc" log-level="INFO">
+                <log-target id-ref="console"/>
+                <log-target id-ref="file"/>
+            </category>
+            
+            <category name="id-gen" log-level="INFO">
+                <log-target id-ref="console"/>
+                <log-target id-ref="file"/>
+            </category>
+        </categories>
+    </logkit>
+    
+    <!-- =================================================================== -->
+    <!-- Roles Configuration.                                                -->
+    <!-- =================================================================== -->
+    <roles>
+        <role name="org.apache.avalon.excalibur.datasource.DataSourceComponentSelector"
+              shorthand="datasources"
+              default-class="org.apache.avalon.excalibur.component.ExcaliburComponentSelector">
+            
+            <hint shorthand="jdbc"
+                class="org.apache.avalon.excalibur.datasource.ResourceLimitingJdbcDataSource"/>
+        </role>
+        
+        <role name="org.apache.avalon.excalibur.datasource.ids.IdGeneratorSelector"
+              shorthand="id-generators"
+              default-class="org.apache.avalon.excalibur.component.ExcaliburComponentSelector">
+            <hint shorthand="table"
+                class="org.apache.avalon.excalibur.datasource.ids.TableIdGenerator"/>
+        </role>
+        <role name="org.apache.avalon.excalibur.datasource.ids.IdGenerator"
+            shorthand="id-generator"
+            default-class="org.apache.avalon.excalibur.datasource.ids.TableIdGenerator"/>
+    </roles>
+    
+    <!-- =================================================================== -->
+    <!-- Component Configuration.                                            -->
+    <!-- =================================================================== -->
+    <components>
+        <datasources>
+            <jdbc name="test-db" logger="jdbc">
+                <pool-controller min="1" max="10"/>
+                <auto-commit>true</auto-commit>
+                <driver>org.hsqldb.jdbcDriver</driver>
+                <dburl>jdbc:hsqldb:test</dburl>
+                <user>sa</user>
+                <password></password>
+            </jdbc>
+        </datasources>
+        
+        <id-generators>
+            <table name="ids-testNonExistingTableName" block-size="1" table="ids"
+                   key-table="does-not-exist" logger="id-gen">
+                <dbpool>test-db</dbpool>
+            </table>
+            
+            <table name="ids-testSimpleRequestIdsSize1" block-size="1" table="ids"
+                   key-table="test" logger="id-gen">
+                <dbpool>test-db</dbpool>
+            </table>
+            
+            <table name="ids-testSimpleRequestIdsSize10" block-size="10" table="ids"
+                   key-table="test" logger="id-gen">
+                <dbpool>test-db</dbpool>
+            </table>
+            
+            <table name="ids-testSimpleRequestIdsSize100" block-size="100" table="ids"
+                   key-table="test" logger="id-gen">
+                <dbpool>test-db</dbpool>
+            </table>
+            
+            <table name="ids-testBigDecimalRequestIdsSize10" big-decimals="true"
+                   block-size="10" table="ids" key-table="test" logger="id-gen">
+                <dbpool>test-db</dbpool>
+            </table>
+            
+            <table name="ids-testMaxByteIds" block-size="10" table="ids"
+                   key-table="test" logger="id-gen">
+                <dbpool>test-db</dbpool>
+            </table>
+            
+            <table name="ids-testMaxShortIds" block-size="10" table="ids"
+                   key-table="test" logger="id-gen">
+                <dbpool>test-db</dbpool>
+            </table>
+            
+            <table name="ids-testMaxIntegerIds" block-size="10" table="ids"
+                   key-table="test" logger="id-gen">
+                <dbpool>test-db</dbpool>
+            </table>
+            
+            <table name="ids-testMaxLongIds" block-size="10" table="ids"
+                   key-table="test" logger="id-gen">
+                <dbpool>test-db</dbpool>
+            </table>
+        </id-generators>
+    </components>
+</testcase>

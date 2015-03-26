@@ -1,0 +1,63 @@
+<testcase>
+  <annotation>
+    <![CDATA[
+      <title>DataSource Tests</title>
+      <para>
+        This series of tests exercise the JDBC DataSourceComponent provided by
+        Excalibur.  The configuration is specified in the file located in
+        <parameter>jakarta-avalon-excalibur/src/test/org/apache/avalon/excalibur/datasource/test/DataSourceJdbcTestCase.xtext</parameter>.
+        You may edit the test to customize the settings.
+      </para>
+    ]]>
+  </annotation>
+
+  <logkit>
+    <factories>
+      <factory type="stream" 
+               class="org.apache.avalon.excalibur.logger.factory.StreamTargetFactory"/>
+      <factory type="file" class="org.apache.avalon.excalibur.logger.factory.FileTargetFactory"/>
+    </factories>
+
+    <targets>
+      <stream id="console">
+        <stream>System.out</stream>
+        <format type="avalon">
+          %7.7{priority} %5.5{time}   [%8.8{category}] (%{context}): %{message}\n%{throwable}
+        </format>
+      </stream>
+      <file id="file">
+        <filename>TEST-org.apache.avalon.excalibur.datasource.test.DataSourceJdbcTestCase.log</filename>
+        <format type="avalon">
+          %7.7{priority} %5.5{time}   [%8.8{category}] (%{context}): %{message}\n%{throwable}
+        </format>
+      </file>
+    </targets>
+
+    <categories>
+      <category name="test" log-level="INFO">
+        <log-target id-ref="console"/>
+        <log-target id-ref="file"/>
+      </category>
+    </categories>
+  </logkit>
+
+  <roles>
+    <role name="org.apache.avalon.excalibur.datasource.DataSourceComponent"
+          shorthand="datasource"
+          default-class="org.apache.avalon.excalibur.datasource.JdbcDataSource"/>
+  </roles>
+
+  <!--
+    It is critical that you have a monitor by the name "active" and the
+    name "passive"
+  -->
+  <components>
+    <datasource logger="test">
+      <pool-controller min="1" max="10"/>
+      <driver>org.hsqldb.jdbcDriver</driver>
+      <dburl>jdbc:hsqldb:test</dburl>
+      <user>sa</user>
+      <password/>
+    </datasource>
+  </components>
+</testcase>

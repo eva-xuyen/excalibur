@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+     Copyright 2004 The Apache Software Foundation
+     Licensed  under the  Apache License,  Version 2.0  (the "License");
+     you may not use  this file  except in  compliance with the License.
+     You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed  under the  License is distributed on an "AS IS" BASIS,
+     WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+     implied.
+
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<document>
+
+    <properties>
+        <title>Fortress - Getting Started</title>
+
+    </properties>
+
+    <body>
+        <section name="Getting Started">
+            <p>
+                This is a brief guide to getting you up and running with fortress.
+                For complex topics like how to decompose a system into individual
+                components, Seperation of Concerns, etc, refer to other documentation.
+            </p>
+            <subsection name="Getting your stuff together">
+                <ul>
+                    <li>If you haven't already, download and install the latest version
+                of
+                        <link href="http://ant.apache.org/">Apache Ant</link>.
+                    </li>
+                    <li>Get and install a CVS client (see
+                        <link href="http://jakarta.apache.org/site/cvsindex.html">here</link>
+                for information on CVS).
+                    </li>
+                    <li>Check out the modules avalon, avalon-excalibur,
+                avalon-logkit and jakarta-site</li>
+                    <li>Use ant to build the various projects: avalon, logkit, excalibur fortress.
+                If something goes wrong, run ant in verbose mode using the -v option and
+                send the output to the avalon-user mailing list. Someone'll help you out.
+                    </li>
+                </ul>
+
+                <p>Or, if you hate CVS, get a nightly build.</p>
+            </subsection>
+            <subsection name="Hello, world!">
+                <p>You just built fortress, its dependencies, and its examples from cvs in
+            the previous step. This enables you to (finally!) run a HelloWorld demo.
+            change into the bin directory for the examples and run the
+            scripts there (runswing.sh is a nice one).</p>
+            </subsection>
+            <subsection name="Well, duh! So now what?">
+                <p>
+                    <b>Play with the examples</b>
+                </p>
+                <p>After looking at the sources to the examples provided and figuring out
+                what goes on (if you're an IDE person, run the examples in your IDE
+                debugger! If you develop servlets, be sure to try to get the servlet
+                example to run), the real cool but also the hard part begins.</p>
+
+            </subsection>
+            <subsection name="Converting from ECM">
+                <p>If you're looking at converting an existing avalonized application that
+                uses ECM, well, we want to write a tool that does this all but automatically
+                for you. Not there yet though.</p>
+            </subsection>
+            <subsection name="Convert a non-avalon application">
+                <p>The first thing you want to do is to create a fortress instance inside
+                your applications main loop or bootstrap class. The second thing you want
+                to do is identify the building blocks of your application, and transform
+                them into avalon components (by making them passive, and extending the
+                avalon framework lifecycle interfaces).
+                Then, create the fortress configuration files to tell it about those new
+                components, and transfer control over those components from your bootstrap
+                code to fortress. Done!</p>
+                <p>Okay, so it may not be so simple as it sounds, but that is the general
+                idea. Just get started, and come and talk to us on the mailing list when
+                you get lost.</p>
+            </subsection>
+            <subsection name="Creating a new application">
+                <p>Start with the example that fits your enviroment (console, GUI
+                or embedded), and simply start hacking from there. You'll want to think
+                about the various tasks your app serves, and how to decompose your app
+                into components that fit those tasks. The
+                    <link href="http://avalon.apache.org/developing">Developing with Avalon</link>
+                paper talks you through this.
+                </p>
+            </subsection>
+            <subsection name="Mastering Fortress">
+                <p>
+                The best way to learn about avalon and its concepts is to build your own
+                container. Try and plug in your own implementations of the different parts
+                of fortress, like a different ComponentHandler. Once you get a hang of it,
+                come and join the avalon folks in their quest for the holy grail of
+                software architecture!
+                </p>
+            </subsection>
+
+        </section>
+    </body>
+</document>

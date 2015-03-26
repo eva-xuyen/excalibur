@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module version="4" relativePaths="true">
+  <component name="ModuleRootManager" />
+  <component name="NewModuleRootManager">
+    <output url="file://$MODULE_DIR$/target/classes" />
+    <exclude-output />
+    <output-test url="file://$MODULE_DIR$/target/test-classes" />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/component-examples/instrument-manager/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/component-tests/src/test" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/component/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/component/src/test" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/datasource/examples/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/datasource/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/datasource/src/test" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/event/api/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/event/impl/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/event/impl/src/test" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/fortress/bean/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/fortress/bean/src/test" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/fortress/container-api/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/fortress/container-impl/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/fortress/container-test/src/test" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/fortress/examples/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/fortress/examples/src/test" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/fortress/meta/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/fortress/migration/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/instrument-client/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/instrument-manager/altrmi/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/instrument-manager/http/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/instrument-manager/impl/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/instrument-manager/impl/src/test" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/instrument-manager/spi/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/instrument/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/instrument/src/test" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/lifecycle/api/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/lifecycle/impl/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/logger/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/monitor/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/monitor/src/test" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/pool/api/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/pool/impl/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/pool/impl/src/test" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/pool/instrumented/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/sourceresolve/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/sourceresolve/src/test" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/store/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/store/src/test" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/testcase/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/thread/api/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/thread/impl/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/thread/impl/src/test" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/thread/instrumented/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/xmlutil/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/xmlutil/src/test" isTestSource="true" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Avalon" level="application" />
+    <orderEntry type="library" name="Spice-Salt" level="application" />
+    <orderEntry type="library" name="LogKit" level="application" />
+  </component>
+</module>
+

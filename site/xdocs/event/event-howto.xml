@@ -1,0 +1,245 @@
+<?xml version="1.0"?>
+
+<!--
+     Copyright 2004 The Apache Software Foundation
+     Licensed  under the  Apache License,  Version 2.0  (the "License");
+     you may not use  this file  except in  compliance with the License.
+     You may obtain a copy of the License at
+     
+     http://www.apache.org/licenses/LICENSE-2.0
+     
+     Unless required by applicable law or agreed to in writing, software
+     distributed  under the  License is distributed on an "AS IS" BASIS,
+     WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+     implied.
+     
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<document>
+    <properties>
+        <title>Event - How To Use Event</title>
+    </properties>
+    <body>
+        <section name="Event is a Framework for Event Processing">
+            <p>
+        The first thing that you should expect is that Event does not
+                <b>do</b> anything by itself.  It defines all the core interfaces
+        used with the Event package.  We also have a few implementations.
+        This documentation focuses on how to use the interfaces.
+            </p>
+            <p>
+        An Event Source is where we pull events from.  Whether that Source
+        is a Queue or just some implementation of the Source doesn't
+        really matter.  The Source has a
+                <code>setTimeout()</code> to
+        make the Source block for the specified number of milliseconds
+        before responding.
+            </p>
+            <p>
+        An Event Sink is where we send events.  Again, the Sink can be
+        a unique class, or the other end of a Queue.  We have several options
+        for enqueueing events.
+            </p>
+            <p>
+        A Queue is the union of the Sink and the Source.  Events enqueued
+        on to the Sink portion of the Queue will later be dequeued from
+        the Source side of the Queue.  Because a Queue is simply a Sink and
+        a Source merged together, there is no reason to duplicate usage
+        docs.
+            </p>
+            <p>
+        The EventHandler is a class that is set up to handle events.  Those
+        events can then be processed and sent to one of several Queues in
+        the system.
+            </p>
+        </section>
+        <section name="Pulling Events From a Source">
+            <p>
+        We have three options: pull one event at a time, unload all the
+        events, or pull a number of events at a time.  Each of these
+        may be preferred one over the other depending on your design needs.
+            </p>
+            <source>
+                <![CDATA[
+Object oneEvent = m_mySource.dequeue();
+
+Object[] allEvents = m_mySource.dequeueAll();
+
+Object[] someEvents = m_mySource.dequeue( 10 );
+              ]]>
+            </source>
+            <p>
+        If there are no events, and the timeout is set to 0 or less, we
+        will immediately return with the results.  The version that returns
+        only one event will return
+                <code>null</code> if there are no events.
+        The versions that return more than one event will return an empty
+        array.
+            </p>
+            <note>
+        The dequeue() operation that accepts a number will return
+                <strong>up
+        to</strong> that number of events.  If there are fewer events in the
+        Source, then it will only return that number.
+            </note>
+            <p>
+        There are two remaining methods:
+                <code>setTimeout()</code>, and
+                <code>size()</code>.  The
+                <code>size()</code> method returns the
+        number of elements in the Sink.  The
+                <code>setTimeout()</code>
+        sets the number of milliseconds you are willing to wait for an
+        event to show up in the Source.  If the timeout is set to zero
+        or less, the dequeue() methods will return immediately.
+            </p>
+            <source>
+                <![CDATA[
+// Return immediately
+m_mySource.setTimeout( 0 );
+
+// Return after the specified timeout (in milliseconds)
+m_mySource.setTimeout( 250 );
+              ]]>
+            </source>
+        </section>
+        <section name="Sending Events to a Sink">
+            <p>
+        We have several options for enqueuing events into a Sink.
+        We have transactional enqueuing, lossy enqueuing, and
+        normal enqueuing.
+            </p>
+            <source>
+                <![CDATA[
+// Enqueue one event at a time:
+try
+{
+    Object event = createEvent();
+    m_mySink.enqueue( event );
+}
+catch (SinkException se)
+{
+    getLogger().error( "Error enqueuing events", se );
+}
+
+// Enqueue several events at one time
+try
+{
+    Object[] events = createEvents();
+    m_mySink.enqueue( events );
+}
+catch (SinkException se)
+{
+    /* IMPORTANT: This is ALL OR NOTHING.  If an exception
+     * is thrown, none of the events were enqueued
+     */
+    getLogger().error( "Error enqueuing events", se );
+}
+
+// Perform lossy enqueuing
+Object event = createEvent();
+boolean wasSuccessful = m_mySink.tryEnqueue( event );
+
+if ( ! wasSuccessful ) doSomething();
+
+// Perform Transactional enqueuing
+try
+{
+    Object[] events = createEvents();
+    PreparedEnqueue transaction = m_mySink.prepareEnqueue( events );
+
+    // perform some conditional logic
+    if( shouldCommit( events ) )
+    {
+        transaction.commit();
+    }
+    else
+    {
+        transaction.abort();
+    }
+}
+catch (SinkException se)
+{
+    /* IMPORTANT: This is ALL OR NOTHING.  If an exception
+     * is thrown, none of the events were enqueued
+     */
+    getLogger().error( "Error enqueuing events", se );
+}
+              ]]>
+            </source>
+            <p>
+        The transactional enqueuing allows you to set some
+        events on the Sink ahead of time, and perform your processing.
+        If the events are not up to snuff, you can abort() the
+        enqueue, and they will not be processed.
+            </p>
+            <p>
+        There are some other methods that are utility methods:
+                <code>maxSize()</code>,
+                <code>isFull()</code>,
+                <code>canAccept()</code>,
+                <code>size()</code>.  They help
+        you in your planning.  Use
+                <code>maxSize()</code> to determine
+        the bounds of the Sink.  If the value returned is -1, then
+        there are no bounds.  If the value is positive, then that
+        is the limit of the number of events the Sink can have at
+        one time.  The
+                <code>canAccept()</code> method is related
+        in that it only makes sense for bounded Sinks.  If there is
+        a limit the
+                <code>canAccept()</code> method will return the
+        number of events the Sink will accept, otherwise it will
+        return -1.  The
+                <code>size()</code> method returns the number
+        of elements still in the Sink.  The
+                <code>isFull()</code>
+        method returns wether the Sink has more room.
+            </p>
+            <source>
+                <![CDATA[
+// Determining how many events a Sink can handle
+int numElements = m_mySink.canAccept();
+
+if ( numElements < 0 )
+{
+    // This is an unbounded Sink
+}
+              ]]>
+            </source>
+        </section>
+        <section name="EventHandlers">
+            <p>
+        Event Handlers are used in automated event routing systems like
+        SEDA architectures.  Basically, it is a way for your object/component
+        to handle events without having to implement the Sink interface,
+        which can be kind of tricky.  Here is an example:
+            </p>
+            <source>
+                <![CDATA[
+import org.apache.excalibur.event.EventHandler;
+
+/** Send events to System.out */
+public class MyEventHandler implements EventHandler
+{
+     /** Handle several events at one time */
+     public void handleEvents( Object[] events )
+     {
+         for (int i = 0; i < events.length; i++)
+         {
+             handleEvent( events[i] );
+         }
+     }
+
+     /** Handle one event at a time */
+     public void handleEvent( Object event )
+     {
+         System.out.println( event );
+     }
+}
+              ]]>
+            </source>
+        </section>
+    </body>
+</document>

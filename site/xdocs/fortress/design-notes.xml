@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+     Copyright 2004 The Apache Software Foundation
+     Licensed  under the  Apache License,  Version 2.0  (the "License");
+     you may not use  this file  except in  compliance with the License.
+     You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed  under the  License is distributed on an "AS IS" BASIS,
+     WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+     implied.
+
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<document>
+
+    <properties>
+        <title>Fortress - Design Notes</title>
+
+    </properties>
+
+    <body>
+        <section name="Fortress Design Notes">
+            <p>
+        Fortress has two design goals: facilitate heirarchical containers and
+        take management functions outside of the critical path. The critical
+        path is the code execution path that is required to find and use a
+        component. Fortress assumes that the developer has explicit knowledge of
+        his domain--which Fortress itself would never have any knowledge of. It
+        also assumes that there is one root container, although it does not
+        force that upon the developer.
+            </p>
+            <subsection name="Asynchronous Management">
+                <p>
+          Due to the long startup times of certain components like the
+          DataSourceComponent ECM based code suffered from slowness. The problem
+          was also made worse by the delayed loading and running of components.
+          Components would only be instantiated when they were first looked
+          up--which made problems for components that needed to be started
+          immediately.
+                </p>
+                <p>
+          Fortress makes use of the Event package's CommandManager so that all
+          components can be started up immediately, but it is done in the
+          background. That means that components are still starting while
+          Fortress is ready to work. If a component hasn't been started yet
+          before it is needed, then Fortress will make sure it starts before it
+          turns over the requested component. It will also make sure no
+          component gets started twice.
+                </p>
+                <p>
+          All component pool sizing and management is done by background threads
+          so that as Fortress responds to requests for components, it manages
+          resources without adding that cost to the client code. That means the
+          critical path (the code that actually does the work of the system) is
+          not delayed unnecessarily.
+                </p>
+            </subsection>
+            <subsection name="Hierarchical Containers">
+                <p>
+          Part of the design concept for Fortress heirarchical containers is to
+          use a ContainerManager to make sure all the necessary services are set
+          up and running. For example, the Fortress container needs a
+          CommandManager--so the ContainerManager checks to see if it is already
+          set up and uses it. That way we can have one Container that has one or
+          more ContainerManagers that all use the kernel level services of the
+          parent container.
+                </p>
+                <p>
+          The kernel level services are: CommandManager, InstrumentManager,
+          LoggerManager and ThreadManager. The actual setup and configuration of
+          these services are done using a Context. The choice for the Context
+          object was a conscious decision because we didn't want to extend the
+          objects in a proprietary manner (LoggerManageable, etc.) like the ECM
+          did. By passing the kernel services in the context, the kernel
+          services can be forwarded to any child containers.
+                </p>
+                <p>
+          To assist in the setup of the Context, Fortress uses a ContextManager.
+          The ContextManager will either set up the context based on a Context
+          passed in, or from a default context. Once the ContextManager assists
+          the ContainerManager to set up any missing kernel services, you can
+          get the Container from the ContainerManager and start using it.
+                </p>
+            </subsection>
+        </section>
+        <section name="Why Not Set Up a Standard Container Interface?">
+            <p>
+            Each domain has its own needs. For instance, Cocoon is based on a
+            request/response processing model. Component based tools are based
+            on a useage model. Swing based Apps are based on other models. There
+            is no one size fits all solution, and Fortress can be used in all of
+            these solutions. As an interim solution, the DefaultContainer does
+            have one public method exposed:
+                <code>getServiceManager()</code>.
+            </p>
+        </section>
+        <section name="Why Not Use a Central Kernel?">
+            <p>
+            This was actually planned in a future release. There are some issues
+            to work out with a central kernel though. Those issues include how
+            to detect and set up sub-containers, how to make sure the container
+            instance you want is set up instead of the default version, etc. In
+            essence, what is needed is
+                <em>meta information</em>. Meta
+            information is information about the container heirarchy and the
+            components involved. In the future Avalon Container: Merlin ,
+            has a proper meta model.
+            </p>
+        </section>
+        <section name="Smooth Migration for Component Lookup">
+            <p>
+          Due to the fact there are many ways of implementing the "preferred
+          practices" for role naming, different components make assumptions
+          about their environment.  The chief problem with these assumptions
+          is that it reduces the availability for which components can work
+          with each other.  Some components expect only one component to be
+          mapped, while another component may expect to lookup choices in
+          a ServiceSelector, while yet another may expect to find it via a
+          stylized entry.  To recap, the supported lookup styles are:
+            </p>
+            <ul>
+                <li>lookup(MyComponent.ROLE)</li>
+                <li>lookup(MyComponent.ROLE + "Selector").select(hint)</li>
+                <li>lookup(MyComponent.ROLE + "/" + hint)</li>
+            </ul>
+            <p>
+          In the first case, the component that requires an external component
+          asks for the mapped component via the role name.  It expects only
+          one component to be mapped.  If Fortress has multiple components
+          available, it will only return the default version.  The default
+          version is the first entry in the configuration file, unless you
+          add the magic attribute "default" with the value "true".  The last
+          component for the role with that attribute is the default value.
+            </p>
+            <p>
+          In the second case, the component expects to be able to select the
+          component from a ServiceSelector, mapped to the ROLE + "Selector"
+          entry.  Fortress will manufacture a ServiceSelector for you, and
+          all will be as expected.
+            </p>
+            <p>
+          In the last case, the component expects to be able to look up the
+          component based on the ROLE and the hint combined.  The magic
+          separator is the "/" character.  Fortress will be able to interpret
+          that and skip the ServiceSelector step.
+            </p>
+        </section>
+    </body>
+</document>
+

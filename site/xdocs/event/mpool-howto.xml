@@ -1,0 +1,181 @@
+<?xml version="1.0"?>
+
+<!--
+     Copyright 2004 The Apache Software Foundation
+     Licensed  under the  Apache License,  Version 2.0  (the "License");
+     you may not use  this file  except in  compliance with the License.
+     You may obtain a copy of the License at
+     
+     http://www.apache.org/licenses/LICENSE-2.0
+     
+     Unless required by applicable law or agreed to in writing, software
+     distributed  under the  License is distributed on an "AS IS" BASIS,
+     WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+     implied.
+     
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<document>
+    <properties>
+        <title>Event - How To Use MPool</title>
+    </properties>
+    <body>
+        <section name="Setting Up the PoolManager">
+            <p>
+        In order to set up a CommandManager.  For those instructions,
+        follow
+                <a href="command-howto.html">the Command "How To"</a>.
+        From there, you want to set up the PoolManager using the following
+        code:
+            </p>
+            <source>
+                <![CDATA[
+// Using the CommandManager in the variable "commandManager"
+
+PoolManager poolManager = new DefaultPoolManager( commandManager );
+              ]]>
+            </source>
+        </section>
+        <section name="Creating Your Pool">
+            <p>
+        The PoolManager is responsible for manufacturing managed pools,
+        and for managing their sizes.  All PoolManager managed pools are
+        "soft" limiting.  They will continue to grow while they are being
+        accessed heavily, but it will shrink during times of inactivity.
+        To create your pool, use the following code:
+            </p>
+            <source>
+                <![CDATA[
+int initialEntries = 20;
+ObjectFactory objectFactory = new MySpecialObjectFactory();
+
+Pool managedPool = poolManager.getManagedPool( objectFactory, initialEntries );
+              ]]>
+            </source>
+            <section name="Writing an ObjectFactory">
+                <p>
+          Writing an Object Factory is not that difficult.  You just need to
+          implement the ObjectFactory interface.  Below is an example
+          implementation:
+                </p>
+                <source>
+                    <![CDATA[
+public class MySpecialObjectFactory implements ObjectFactory
+{
+    private final Class m_mySpecialClass;
+
+    /** Create default object type */
+    public MySpecialObjectFactory()
+    {
+        this( MySpecialObject.class );
+    }
+
+    /** Create generic object type */
+    public MySpecialObjectFactory( Class specialClass )
+    {
+        if ( null == specialClass )
+        {
+            throw new IllegalArgumentException ("Class cannot be null");
+        }
+
+        m_mySpecialClass = specialClass;
+    }
+
+    /** Implement the getCreatedClass() method */
+    public Class getCreatedClass()
+    {
+        return m_mySpecialClass;
+    }
+
+    /** Create an instance */
+    public Object newInstance()
+        throws Exception
+    {
+        return getCreatedClass().newInstance();
+    }
+
+    /** Dispose of an instance */
+    public void dispose( Object obj )
+    {
+        // perform permanent cleanup code
+    }
+}
+                  ]]>
+                </source>
+            </section>
+            <section name="Unmanaged Pools">
+                <p>
+          There are two unmanaged pool types in MPool:
+          FixedSizePool and BlockingFixedSizePool.  They are
+          similar to one another, but differ in how they respond
+          to insufficient resources.  The FixedSizePool fails fast,
+          and throws an exception.  The BlockingFixedSizePool tries
+          to wait for a specified number of milliseconds.
+                </p>
+                <p>
+          The Fixed Size Pools are not managed because they will only
+          have a certain number of pooled objects at any time.  They
+          will never grow or shrink.  They are useful for instances
+          where the number of elements are known in advanced.  One
+          example is a JDBC connection pool because some vendors require
+          you to pay per connection licensing fees.
+                </p>
+            </section>
+        </section>
+        <section name="Using the Pool">
+            <p>
+        Using the pools is quite simple:
+            </p>
+            <source>
+                <![CDATA[
+Object pooledResource = managedPool.acquire();
+
+// do whatever I want with the pooled resource
+
+managedPool.release( pooledResource );
+              ]]>
+            </source>
+            <p>
+        What if we have an object that needs to perform some simple
+        cleanup?  Have your Object implement the
+                <code>Resettable</code>
+        interface.  What if we are migrating from the old Pool package?
+        You don't have to do anything.  MPool knows about the old Pool
+        package, and will check for its recyclable method.  It will only
+        call the Resettable.reset() method if your object implements both
+        interfaces.  Both of these will work:
+            </p>
+            <source>
+                <![CDATA[
+import org.apache.excalibur.mpool.Resettable;
+
+public class ResettableObject implements Resettable
+{
+    // All the methods and stuff for the real object...
+
+    public void reset()
+    {
+        // perform small cleanup code...
+    }
+}
+              ]]>
+            </source>
+            <source>
+                <![CDATA[
+import org.apache.avalon.excalibur.pool.Recyclable;
+
+public class ResettableObject implements Recyclable
+{
+    // All the methods and stuff for the real object...
+
+    public void recycle()
+    {
+        // perform small cleanup code...
+    }
+}
+              ]]>
+            </source>
+        </section>
+    </body>
+</document>

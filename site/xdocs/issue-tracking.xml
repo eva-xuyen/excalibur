@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+
+<!--
+     Copyright 2004 The Apache Software Foundation
+     Licensed  under the  Apache License,  Version 2.0  (the "License");
+     you may not use  this file  except in  compliance with the License.
+     You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed  under the  License is distributed on an "AS IS" BASIS,
+     WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+     implied.
+
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<document>
+
+    <properties>
+        <title>Issue Tracking</title>
+    </properties>
+
+    <body>
+
+        <section name="What is JIRA?">
+            <p>
+                JIRA is an issue and bug tracker.  The Excalibur team uses JIRA to keep track of all
+                of our open tasks and changelog data.
+            </p>
+        </section>
+        <section name="Who can use it?">
+            <p>
+                Anyone.  Anyone can create an account and enter or update issues, bug reports, and
+                feature requests.
+            </p>
+        </section>
+        <section name="Where is it?">
+            <p>
+                Apache Excalibur uses the following
+                <a href="http://issues.apache.org/jira">ASF JIRA</a> modules:
+            </p>
+            <ul>
+                <li><a href="http://nagoya.apache.org/jira/secure/BrowseProject.jspa?id=10428">Excalibur Components</a></li>
+                <li><a href="http://nagoya.apache.org/jira/secure/BrowseProject.jspa?id=10420">Excalibur Fortress</a></li>
+            </ul>
+
+            <p>
+                You can browse these modules to see the current status of the project or to enter
+                new issues.
+            </p>
+        </section>
+
+    </body>
+
+</document>

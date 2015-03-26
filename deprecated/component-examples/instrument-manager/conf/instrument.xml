@@ -1,0 +1,106 @@
+<!-- 
+Copyright 2003-2004 The Apache Software Foundation
+Licensed  under the  Apache License,  Version 2.0  (the "License");
+you may not use  this file  except in  compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed  under the  License is distributed on an "AS IS" BASIS,
+WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+implied.
+
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<instrument logger="system.instrument">
+    <name>example-instrument-manager</name>
+    <description>ECM Example Instrument Application</description>
+    
+    <connectors>
+        <connector class="altrmi" port="15555"/>
+    </connectors>
+    
+    <state-file interval="60000">../data/instrument.sampledata</state-file>
+    
+    <!-- The instrumentables section allows you to preconfigure instruments and samples. -->
+    <instrumentables>
+        <!-- Instrument configuration for the Component Manager. -->
+        <instrumentable name="component-manager">
+            <instrumentable name="example-instrumentable">
+                <instrument name="puts">
+                    <sample type="ctr" interval="1000" size="600"/>
+                </instrument>
+                <instrument name="gets">
+                    <sample type="ctr" interval="1000" size="600"/>
+                </instrument>
+                <instrument name="references">
+                    <sample type="max" interval="1000" size="600"/>
+                </instrument>
+            </instrumentable>
+        </instrumentable>
+        
+        <!-- Instrument configuration for the Instrument Manager. -->
+        <instrumentable name="instrument-manager" description="Instrument Manager">
+            <instrument name="active-thread-count" description="Active Thread Count">
+                <sample type="max" interval="1000" size="600" description="Maximum each second."/>
+            </instrument>
+            
+            <instrument name="total-memory" description="Total Memory">
+                <sample type="max" interval="1000" size="600" description="Maximum each second."/>
+            </instrument>
+            
+            <instrument name="free-memory" description="Free Memory">
+                <sample type="min" interval="1000" size="600" description="Minimum each second."/>
+            </instrument>
+            
+            <instrument name="memory" description="In-Use Memory">
+                <sample type="max" interval="1000" size="600" description="Maximum each second."/>
+            </instrument>
+        </instrumentable>
+        
+        <!-- Instrument configuration for the Example Instrumentable. -->
+        <instrumentable name="example-instrumentable" description="Example Instrumentable">
+            <!-- Note that any number of samples are possible for each profile point. -->
+            <instrument name="random-quick" description="Random Values at a quick rate.">
+                <sample type="maximum" interval="1000" size="600" description="Maximum each second."/>
+                <sample type="minimum" interval="1000" size="600" description="Minimum each second."/>
+                <sample type="mean" interval="1000" size="600" description="Average each second."/>
+            </instrument>
+            
+            <instrument name="random-slow" description="Random Values at a slow rate.">
+                <sample type="maximum" interval="1000" size="600" description="Maximum each second."/>
+                <sample type="minimum" interval="1000" size="600" description="Minimum each second."/>
+                <sample type="mean" interval="1000" size="600" description="Average each second."/>
+            </instrument>
+            
+            <instrument name="random-random" description="Random Values at a random rate.">
+                <sample type="maximum" interval="1000" size="600" description="Maximum each second."/>
+                <sample type="minimum" interval="1000" size="600" description="Minimum each second."/>
+                <sample type="mean" interval="1000" size="600" description="Average each second."/>
+            </instrument>
+            
+            <instrument name="counter-quick" description="Count of actions at a quick rate.">
+                <sample type="counter" interval="100" size="600" description="Count per 100ms."/>
+                <sample type="counter" interval="1000" size="600" description="Count per second."/>
+                <sample type="counter" interval="60000" size="60" description="Count per minute."/>
+            </instrument>
+            
+            <instrument name="counter-slow" description="Count of actions at a slow rate.">
+                <sample type="counter" interval="1000" size="600" description="Count per second."/>
+                <sample type="counter" interval="60000" size="60" description="Count per minute."/>
+            </instrument>
+            
+            <instrument name="counter-random" description="Count of actions at a random rate.">
+                <sample type="counter" interval="1000" size="600" description="Count per second."/>
+                <sample type="counter" interval="60000" size="60" description="Count per minute."/>
+            </instrument>
+            
+            <instrument name="doaction-counter" description="Number of times doAction is called.">
+                <sample type="counter" interval="1000" size="600" description="Count per second."/>
+                <sample type="counter" interval="60000" size="60" description="Count per minute."/>
+            </instrument>
+        </instrumentable>
+    </instrumentables>
+</instrument>

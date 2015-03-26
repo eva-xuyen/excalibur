@@ -1,0 +1,38 @@
+<logkit logger="lm" log-level="INFO">
+    <factories>
+        <factory type="stream" 
+                 class="org.apache.avalon.excalibur.logger.factory.StreamTargetFactory"/>
+        <factory type="file" 
+                 class="org.apache.avalon.excalibur.logger.factory.FileTargetFactory"/>
+        <factory type="priority-filter" 
+                 class="org.apache.avalon.excalibur.logger.factory.PriorityFilterTargetFactory"/>
+    </factories>
+    <targets>
+        <stream id="console">
+            <stream>System.out</stream>
+            <format type="avalon">
+%19.19{time:yyyy-MM-dd'T'HH:mm:ss.SSS} %5.5{priority} [%15.15{category}]: %{message}\n%{throwable}
+            </format>
+        </stream>
+    </targets>
+    <categories>
+        <!-- Role Manager Logger -->
+        <category name="rm" log-level="INFO">
+            <log-target id-ref="console"/>
+        </category>
+        
+        <!-- Component Manager Logger -->
+        <category name="cm" log-level="INFO">
+            <log-target id-ref="console"/>
+        </category>
+        
+        <!-- Application Loggers -->
+        <category name="app" log-level="INFO">
+            <log-target id-ref="console"/>
+            
+            <category name="jdbc" log-level="INFO">
+                <log-target id-ref="console"/>
+            </category>
+        </category>
+    </categories>
+</logkit>

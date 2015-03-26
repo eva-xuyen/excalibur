@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+
+<!--
+     Copyright 2004 The Apache Software Foundation
+     Licensed  under the  Apache License,  Version 2.0  (the "License");
+     you may not use  this file  except in  compliance with the License.
+     You may obtain a copy of the License at
+     
+     http://www.apache.org/licenses/LICENSE-2.0
+     
+     Unless required by applicable law or agreed to in writing, software
+     distributed  under the  License is distributed on an "AS IS" BASIS,
+     WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+     implied.
+     
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<document>
+    <properties>
+        <title>Event - Event</title>
+    </properties>
+    <body>
+        <section name="Why Event Was Created">
+            <p>
+        Event was created out of a desire to express the Staged Event
+        Driven Architecture (SEDA) design in an Avalon way.  It has
+        grown to be a robust event pipelining library.  We maintained
+        the core concepts from the
+                <a href="http://seda.sourceforge.net/" target="_new">SandStorm</a>
+        server, and cleaned up the API to have Queues operate in a
+        more transactional way.
+            </p>
+        </section>
+        <section name="When To Use Event">
+            <p>
+        Most of the time, your use of the Event package is only to
+        interface to other subsystems.  For instance, the
+                <a href="command.html">Command Manager</a> uses the
+        Event Queues to receive commands from multiple threads
+        simultaneously.
+            </p>
+            <p>
+        You can also use Event when you are developing new systems
+        that have loosely coupled, disjunct pieces.  One of the core
+        benefits of using event pipelines is that we can easily
+        reroute the Queues while the system is running, and not lose
+        any events.
+            </p>
+        </section>
+        <section name="Core Concepts">
+            <p>
+        An Event Pipeline has a set of Sources and Sinks.  A Source
+        is where you get more events, or the "dequeue" side of an
+        event Queue.  A Sink is where you send events on to the next
+        stage, or the "enqueue" side of an event Queue.
+            </p>
+            <section name="Source">
+                <p>
+          The Source can be blocking or non-blocking.  A blocking
+          Source will stop the current thread from processing until
+          there are new events to give to it.  A non-blocking Source
+          will return an empty set of events immediately if there
+          are no more events.
+                </p>
+            </section>
+            <section name="Sink">
+                <p>
+          The Sink allows you to add events in a variety of ways.
+          You can simply add them one at a time, or you can add
+          a whole group of events at one time.  The Sink also supports
+          a transactional enqueue which means we can push some events
+          on to the Sink, but wait to commit or cancel the events
+          at a later time.  The Sink will make room for the events,
+          but it will not let them pass through until they are officially
+          committed.
+                </p>
+            </section>
+            <section name="Queue">
+                <p>
+          A Queue is merely the union of a Sink and a Source.  A Queue
+          will manage the throughput of the events from Sink to Source.
+                </p>
+            </section>
+            <section name="Signals and Messages">
+                <p>
+          Signals and Messages are special events that provide contextual
+          information.  A message will have a string and/or an object
+          attached to it.  They are used mainly for reporting purposes,
+          or for the begginings of a Messaging Oriented Middleware (MOM)
+          implementation.  A Signal is a control event that the Queue,
+          and the system react to.
+                </p>
+            </section>
+        </section>
+    </body>
+</document>

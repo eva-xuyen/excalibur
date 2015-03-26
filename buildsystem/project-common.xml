@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<project>
+    <pomVersion>3</pomVersion>
+    <name>Apache Excalibur</name>
+    <logo>http://excalibur.apache.org/logo.gif</logo>
+    <organization>
+        <name>The Apache Software Foundation</name>
+        <url>http://www.apache.org/</url>
+        <logo>http://www.apache.org/images/asf-logo.gif</logo>
+    </organization>
+    <inceptionYear>1997</inceptionYear>
+
+    <licenses>
+        <license>
+            <name>Apache License 2.0</name>
+            <distribution>repo</distribution>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <package>org.apache.avalon</package>
+    <gumpRepositoryId>avalon-excalibur</gumpRepositoryId>
+
+    <url>http://excalibur.apache.org/</url>
+    <issueTrackingUrl>http://nagoya.apache.org/</issueTrackingUrl>
+
+    <siteAddress>excalibur.apache.org</siteAddress>
+    <siteDirectory>${root.site.directory}</siteDirectory>
+    <distributionDirectory></distributionDirectory>
+
+    <repository>
+        <!-- broken in rc3 <connection>scm:svn:https://svn.apache.org/repos/asf/excalibur/</connection>-->
+        <url>https://svn.apache.org/repos/asf/excalibur/</url>
+    </repository>
+
+    <mailingLists>
+        <mailingList>
+            <name>Excalibur Developer List</name>
+            <subscribe>dev-subscribe@excalibur.apache.org</subscribe>
+            <unsubscribe>dev-unsubscribe@excalibur.apache.org</unsubscribe>
+            <archive>http://nagoya.apache.org/eyebrowse/SummarizeList?listName=dev@excalibur.apache.org</archive>
+        </mailingList>
+        <mailingList>
+            <name>Excalibur User List</name>
+            <subscribe>user-subscribe@excalibur.apache.org</subscribe>
+            <unsubscribe>user-unsubscribe@excalibur.apache.org</unsubscribe>
+            <archive>http://nagoya.apache.org/eyebrowse/SummarizeList?listName=user@excalibur.apache.org</archive>
+        </mailingList>
+        <mailingList>
+            <name>Excalibur Commit List</name>
+            <subscribe>scm-subscribe@excalibur.apache.org</subscribe>
+            <unsubscribe>scm-unsubscribe@excalibur.apache.org</unsubscribe>
+            <archive>http://nagoya.apache.org/eyebrowse/SummarizeList?listName=scm@excalibur.apache.org</archive>
+        </mailingList>
+    </mailingLists>
+
+    <developers>
+        <!-- current -->
+        <developer>
+            <name>Shash Chatterjee</name>
+            <id>shash</id>
+            <roles>
+                <role>Committer</role>
+                <role>PMC Member</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Peter Donald</name>
+            <id>donaldp</id>
+            <roles>
+                <role>Committer</role>
+                <role>PMC Member</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>J. Aaron Farr</name>
+            <id>farra</id>
+            <roles>
+                <role>Committer</role>
+                <role>PMC Member</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Alex Karasulu</name>
+            <id>akarasulu</id>
+            <roles>
+                <role>Committer</role>
+                <role>PMC Member</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Berin Loritsch</name>
+            <id>bloritsch</id>
+            <roles>
+                <role>Committer</role>
+                <role>PMC Member</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Leif Mortenson</name>
+            <id>leif</id>
+            <organization>Tanuki Software Inc.</organization>
+            <url>http://www.tanukisoftware.com</url>
+            <timezone>+9</timezone>
+            <roles>
+                <role>Committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Michael Nash</name>
+            <id>mnash</id>
+            <roles>
+                <role>Committer</role>
+                <role>PMC Member</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Neeme Praks</name>
+            <id>neeme</id>
+            <roles>
+                <role>Committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Peter Royal</name>
+            <id>proyal</id>
+            <roles>
+                <role>Committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Leo Simons</name>
+            <id>leosimons</id>
+            <roles>
+                <role>Committer</role>
+                <role>PMC Member</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Anton Tagunov</name>
+            <id>atagunov</id>
+            <roles>
+                <role>Committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Mauro Talevi</name>
+            <id>mauro</id>
+            <roles>
+                <role>Committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Hamilton Verissimo de Oliveira</name>
+            <id>hammett</id>
+            <roles>
+                <role>Committer</role>
+                <role>PMC Member</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Carsten Ziegeler</name>
+            <id>cziegeler</id>
+            <roles>
+                <role>Committer</role>
+                <role>PMC Member</role>
+            </roles>
+        </developer>
+
+        <!-- emiritus -->
+        <developer>
+            <name>Federico Barbieri</name>
+            <id>fede</id>
+            <roles>
+                <role>Emeritus Committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Paul Hammant</name>
+            <id>hammant</id>
+            <roles>
+                <role>Emeritus Committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Niclas Hedhman</name>
+            <id>niclas</id>
+            <roles>
+                <role>Emiritus Committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Craig McClanahan</name>
+            <roles>
+                <role>Emeritus Committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Stephen McConnell</name>
+            <id>mcconnell</id>
+            <roles>
+                <role>Emeritus Committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Costin Manolache</name>
+            <roles>
+                <role>Emeritus Committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Stefano Mazzocchi</name>
+            <id>stefano</id>
+            <roles>
+                <role>Emeritus Committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Eung-ju Park</name>
+            <id>colus</id>
+            <roles>
+                <role>Emeritus Committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Jeff Turner</name>
+            <id>jefft</id>
+            <roles>
+                <role>Emeritus Committer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <contributors>
+        <contributor>
+            <name>Andrei Ivanov</name>
+            <!--<email>myfam@surfeu.fi</email>-->
+        </contributor>
+        <contributor>
+            <name>Chad Stansbury</name>
+            <!--<email>stansburyc@earthlink.net</email>-->
+        </contributor>
+        <contributor>
+            <name>Charles Benett</name>
+            <!--<email>charles@benett1.demon.co.uk</email>-->
+        </contributor>
+        <contributor>
+            <name>Greg Steuck</name>
+        </contributor>
+        <contributor>
+            <name>Harish Prabandham</name>
+        </contributor>
+        <contributor>
+            <name>Kurt R. Hoehn</name>
+            <!--<email>khoehn@smartstream.net</email>-->
+        </contributor>
+        <contributor>
+            <name>Ram Chidambaram</name>
+            <!--<email>ram.chidambaram@telus.com</email>-->
+        </contributor>
+        <contributor>
+            <name>Serge Knystautas</name>
+            <!--<email>sergek@lokitech.com</email>-->
+        </contributor>
+    </contributors>
+
+    <build>
+
+        <nagEmailAddress>dev@excalibur.apache.org</nagEmailAddress>
+        <sourceDirectory>${basedir}/src/java</sourceDirectory>
+        <unitTestSourceDirectory>${basedir}/src/test</unitTestSourceDirectory>
+        <integrationUnitTestSourceDirectory/>
+        <aspectSourceDirectory/>
+
+        <unitTest>
+            <includes>
+                <include>**/*TestCase*</include>
+            </includes>
+            <excludes>
+                <exclude>**/Abstract*</exclude>
+            </excludes>
+            <resources>
+                <resource>
+                    <directory>${basedir}/src/test</directory>
+                    <includes>
+                        <include>**/*.dtd</include>
+                        <include>**/*.properties</include>
+                        <include>**/*.xinfo</include>
+                        <include>**/*.xtest</include>
+                        <include>**/*.xtype</include>
+                        <include>**/*.xprofile</include>
+                        <include>**/*.xconfig</include>
+                        <include>**/*.xconf</include>
+                        <include>**/*.xml</include>
+                        <include>**/*.xservice</include>
+                        <include>**/*.rng</include>
+                        <include>**/*.roles</include>
+                        <include>**/*.xlog</include>
+                    </includes>
+                </resource>
+            </resources>
+        </unitTest>
+
+        <integrationUnitTestPatterns>
+        </integrationUnitTestPatterns>
+
+        <resources>
+            <resource>
+                <directory>${basedir}</directory>
+                <includes>
+                    <include>LICENSE*</include>
+                    <include>NOTICE*</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>${basedir}/src/java</directory>
+                <includes>
+                    <include>**/*.jpg</include>
+                    <include>**/*.png</include>
+                    <include>**/*.gif</include>
+                    <include>**/*.ico</include>
+                    <include>**/*.dtd</include>
+                    <include>**/*.properties</include>
+                    <include>**/*.xinfo</include>
+                    <include>**/*.xtype</include>
+                    <include>**/*.xprofile</include>
+                    <include>**/*.xconfig</include>
+                    <include>**/*.xml</include>
+                    <include>**/*.xservice</include>
+                    <include>**/*.rng</include>
+                    <include>**/*.xlog</include>
+                    <include>**/*.instruments</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
+
+</project>

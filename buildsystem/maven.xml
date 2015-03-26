@@ -1,0 +1,188 @@
+<?xml version="1.0"?>
+<!--
+Copyright 2004 The Apache Software Foundation
+Licensed  under the  Apache License,  Version 2.0  (the "License");
+you may not use  this file  except in  compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed  under the  License is distributed on an "AS IS" BASIS,
+WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+implied.
+
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<project default="java:jar" xmlns:excalibur="excalibur" xmlns:deploy="deploy" xmlns:artifact="artifact" xmlns:maven="jelly:maven" xmlns:define="jelly:define" xmlns:j="jelly:core" xmlns:ant="jelly:ant">
+    
+    <define:taglib uri="excalibur">
+        <!--
+        @name the name of file to deploy
+        @dir the name of the directory the file lives in
+        @type the maven "type". Slightly different behaviour: if you want a trailing 's' you 
+        should add it (ie "jars" instead of "jar")
+        -->
+        <define:tag name="deploy">
+            <j:set var="pass" value='-i "${maven.repo.default.privatekey}"'/>
+            <j:set var="acct" value="${maven.repo.default.username}@${maven.repo.default.host}"/>
+            <j:set var="deployDir" value="${maven.repo.default.directory}/${pom.groupId}/${type}"/>
+            <j:set var="grp" value="${maven.repo.default.group}"/>
+            
+            <ant:exec dir="${dir}" executable="ssh" failonerror="true">
+                <ant:arg line="${pass} ${acct} 'mkdir -p ${deployDir}'"/>
+            </ant:exec>
+            <ant:exec dir="${dir}" executable="scp" failonerror="true">
+                <ant:arg line="${pass} ${name} ${acct}:${deployDir}"/>
+            </ant:exec>
+            <ant:exec dir="${dir}" executable="ssh" failonerror="true">
+                <ant:arg line="${pass} ${acct} 'chgrp -R ${grp} ${deployDir};chmod -R a+r ${deployDir}; chmod -R g+w ${deployDir}'"/>
+            </ant:exec>
+        </define:tag>
+        
+        <!--
+        @name the name of file to deploy
+        @dir the name of the directory the file lives in
+        @linkname the name of the symlink
+        @type the maven "type". Slightly different behaviour: if you want a trailing 's' you 
+        should add it (ie "jars" instead of "jar")
+        -->
+        <define:tag name="symlink">
+            <j:set var="pass" value='-i "${maven.repo.default.privatekey}"'/>
+            <j:set var="acct" value="${maven.repo.default.username}@${maven.repo.default.host}"/>
+            <j:set var="deployDir" value="${maven.repo.default.directory}/${pom.groupId}/${type}"/>
+            <j:set var="symlinkDir" value="${maven.repo.default.directory}/${pom.groupId}"/>
+            <j:set var="grp" value="${maven.repo.default.group}"/>
+            
+            <ant:exec dir="${dir}" executable="ssh" failonerror="true">
+                <ant:arg line="${pass} ${acct} 'rm -f ${symlinkDir}/${linkname}; ln -s ${deployDir}/${name} ${symlinkDir}/${linkname}'"/>
+            </ant:exec>
+        </define:tag>
+        
+        <!--
+        @name the name of file to gpg
+        @dir the name of the directory the file lives in
+        -->
+        <define:tag name="gpg">
+            <ant:exec dir="${dir}" executable="gpg" failonerror="true">
+                <ant:arg line="--yes -v --output ${name}.asc --detach-sig --armor ${name}"/>
+            </ant:exec>
+        </define:tag>
+        
+        
+    </define:taglib>
+    
+    <goal name="excalibur:tagRelease">
+        <j:set var="repoBase" value="https://svn.apache.org/repos/asf/excalibur"/>
+        <j:set var="tagName" value="${pom.artifactId}-${pom.currentVersion}-Release"/>
+        <j:set var="tagMsg" value="Tagging release of ${pom.artifactId} version ${pom.currentVersion}"/>
+        <ant:exec dir="${maven.build.dir}" executable="svn" failonerror="true">
+            <ant:arg line="copy -m &quot;${tagMsg}&quot; ${repoBase}/trunk ${repoBase}/tags/${tagName}"/>
+        </ant:exec>
+    </goal>
+    
+    <postGoal name="dist:build-src">
+        <excalibur:gpg name="${pom.artifactId}-${pom.currentVersion}-src.zip"
+            dir="${maven.dist.dir}"/>
+        <excalibur:gpg name="${pom.artifactId}-${pom.currentVersion}-src.tar.gz"
+            dir="${maven.dist.dir}"/>
+    </postGoal>
+    
+    <postGoal name="dist:build-bin">
+        <excalibur:gpg name="${pom.artifactId}-${pom.currentVersion}.zip"
+            dir="${maven.dist.dir}"/>
+        <excalibur:gpg name="${pom.artifactId}-${pom.currentVersion}.tar.gz"
+            dir="${maven.dist.dir}"/>
+        <excalibur:gpg name="${pom.artifactId}-${pom.currentVersion}.jar"
+            dir="${maven.build.dir}"/>
+    </postGoal>
+    
+    <goal name="dist:deploy-src" prereqs="dist:build-src">
+        <excalibur:deploy name="${pom.artifactId}-${pom.currentVersion}-src.zip"
+            type="source" dir="${maven.dist.dir}"/>
+        <excalibur:deploy name="${pom.artifactId}-${pom.currentVersion}-src.tar.gz"
+            type="source" dir="${maven.dist.dir}"/>
+        <excalibur:deploy name="${pom.artifactId}-${pom.currentVersion}-src.zip.asc"
+            type="source" dir="${maven.dist.dir}"/>
+        <excalibur:deploy name="${pom.artifactId}-${pom.currentVersion}-src.tar.gz.asc"
+            type="source" dir="${maven.dist.dir}"/>
+        
+        <excalibur:symlink name="${pom.artifactId}-${pom.currentVersion}-src.zip"
+            linkname="${pom.artifactId}-current-src.zip" type="source" dir="${maven.dist.dir}"/>
+        <excalibur:symlink name="${pom.artifactId}-${pom.currentVersion}-src.zip.asc"
+            linkname="${pom.artifactId}-current-src.zip.asc" type="source" dir="${maven.dist.dir}"/>
+        <excalibur:symlink name="${pom.artifactId}-${pom.currentVersion}-src.tar.gz"
+            linkname="${pom.artifactId}-current-src.tar.gz" type="source" dir="${maven.dist.dir}"/>
+        <excalibur:symlink name="${pom.artifactId}-${pom.currentVersion}-src.tar.gz.asc"
+            linkname="${pom.artifactId}-current-src.tar.gz.asc" type="source" dir="${maven.dist.dir}"/>
+    </goal>
+    
+    <goal name="dist:deploy-bin" prereqs="dist:build-bin">
+        <excalibur:deploy name="${pom.artifactId}-${pom.currentVersion}.zip"
+            type="binaries" dir="${maven.dist.dir}"/>
+        <excalibur:deploy name="${pom.artifactId}-${pom.currentVersion}.tar.gz"
+            type="binaries" dir="${maven.dist.dir}"/>
+        <excalibur:deploy name="${pom.artifactId}-${pom.currentVersion}.zip.asc"
+            type="binaries" dir="${maven.dist.dir}"/>
+        <excalibur:deploy name="${pom.artifactId}-${pom.currentVersion}.tar.gz.asc"
+            type="binaries" dir="${maven.dist.dir}"/>
+        
+        <excalibur:deploy name="${pom.artifactId}-${pom.currentVersion}.jar"
+            type="jars" dir="${maven.build.dir}"/>
+        <excalibur:deploy name="${pom.artifactId}-${pom.currentVersion}.jar.asc"
+            type="jars" dir="${maven.build.dir}"/>
+        
+        <excalibur:symlink name="${pom.artifactId}-${pom.currentVersion}.zip"
+            linkname="${pom.artifactId}-current.zip" type="binaries" dir="${maven.dist.dir}"/>
+        <excalibur:symlink name="${pom.artifactId}-${pom.currentVersion}.zip.asc"
+            linkname="${pom.artifactId}-current.zip.asc" type="binaries" dir="${maven.dist.dir}"/>
+        <excalibur:symlink name="${pom.artifactId}-${pom.currentVersion}.tar.gz"
+            linkname="${pom.artifactId}-current.tar.gz" type="binaries" dir="${maven.dist.dir}"/>
+        <excalibur:symlink name="${pom.artifactId}-${pom.currentVersion}.tar.gz.asc"
+            linkname="${pom.artifactId}-current.tar.gz.asc" type="binaries" dir="${maven.dist.dir}"/>
+        
+        <excalibur:symlink name="${pom.artifactId}-${pom.currentVersion}.jar"
+            linkname="${pom.artifactId}-current.jar" type="jars" dir="${maven.build.dir}"/>
+        <excalibur:symlink name="${pom.artifactId}-${pom.currentVersion}.jar.asc"
+            linkname="${pom.artifactId}-current.jar.asc" type="jars" dir="${maven.build.dir}"/>
+    </goal>
+    
+    <goal name="excalibur:deploy">
+        <maven:user-check user="${maven.username}"/>
+        
+        <j:if test='${pom.getContext().getVariable("maven.privatekey") == null}'>
+            <ant:fail>
+                User must specify -Dmaven.privatekey=X
+            </ant:fail>
+        </j:if>
+        
+        <j:set var="user" value="${maven.username}"/>
+        <j:set var="key" value="${maven.privatekey}"/>
+        <j:set var="host" value="minotaur.apache.org"/>
+        <j:set var="url" value="scp://${host}"/>
+        
+        <j:set var="version" value="${pom.currentVersion}"/>
+        <j:set var="isRC" value="${version.indexOf('RC') != '-1'}"/>
+        
+        <j:if test="${isRC == true}">
+            <j:set var="deployBase" value="/home/${user}/public_html/dist"/>
+        </j:if>
+        <j:if test="${isRC == false}">
+            <j:set var="deployBase" value="/www/www.apache.org/dist/excalibur"/>
+        </j:if>
+        
+        ${pom.getContext().setVariable("maven.repo.list", "default")}
+        ${pom.getContext().setVariable("maven.repo.default", url )}
+        ${pom.getContext().setVariable("maven.repo.default.host", host)}
+        ${pom.getContext().setVariable("maven.repo.default.directory", deployBase)}
+        ${pom.getContext().setVariable("maven.repo.default.group", "excalibur")}
+        ${pom.getContext().setVariable("maven.repo.default.username", user)}
+        ${pom.getContext().setVariable("maven.repo.default.privatekey", key)}
+        
+        <attainGoal name="dist:deploy"/>
+    </goal>
+    
+    <goal name="excalibur:release" prereqs="excalibur:deploy,excalibur:tagRelease"/>
+    
+</project>

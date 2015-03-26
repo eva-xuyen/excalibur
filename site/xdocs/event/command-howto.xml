@@ -1,0 +1,191 @@
+<?xml version="1.0"?>
+
+<!--
+     Copyright 2004 The Apache Software Foundation
+     Licensed  under the  Apache License,  Version 2.0  (the "License");
+     you may not use  this file  except in  compliance with the License.
+     You may obtain a copy of the License at
+     
+     http://www.apache.org/licenses/LICENSE-2.0
+     
+     Unless required by applicable law or agreed to in writing, software
+     distributed  under the  License is distributed on an "AS IS" BASIS,
+     WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+     implied.
+     
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<document>
+    <properties>
+        <title>Event - How To Use Command</title>
+    </properties>
+    <body>
+        <section name="Setting Up The Command Manager">
+            <p>
+        Using Command is a two step process.  You have to set it up,
+        and then you can send Commands to it.  Because Command uses
+        an Event Pipeline to move the Commands through the Queue to
+        the EventHandler, we need to set up a ThreadManager.  Currently
+        the only ThreadManager that works as advertized is the TPCThreadManager.
+        TPC stands for "Thread Per CPU".  The TPCThreadManager allows
+        you to customize its behaviour by passing in some parameters.
+        The code snippet below is fairly typical:
+            </p>
+            <source>
+                <![CDATA[
+ThreadManager threadManager = new TPCThreadManager();
+threadManager.enableLogging( getLogger().getChildLogger("threadmanager") );
+Parameters params = new Parameters();
+params.setParameter( "threads-per-processor", "2" );
+params.setParameter( "sleep-time", "1000" );
+params.setParameter( "block-timeout", "250" );
+threadManager.parameterize( params );
+threadManager.initialize();
+      ]]>
+            </source>
+            <p>
+        We create a Threadmanager, pass in the Logger, pass in the Parameters,
+        and then initialize it.  The table below provides all the parameter names
+        that TPCThreadManager recognizes:
+            </p>
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Default Value</th>
+                </tr>
+                <tr>
+                    <td>processors</td>
+                    <td>Number of processors (autodetected if less than one)</td>
+                    <td>Results from SystemUtil.numProcessors()</td>
+                </tr>
+                <tr>
+                    <td>threads-per-processor</td>
+                    <td>Threads per processor to use (Rewritten to 1 if less than one)</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td>sleep-time</td>
+                    <td>Time (in milliseconds) to wait between queue pipeline processing runs</td>
+                    <td>1000</td>
+                </tr>
+                <tr>
+                    <td>block-timeout</td>
+                    <td>Time (in milliseconds) to wait for a thread to process a pipeline</td>
+                    <td>1000</td>
+                </tr>
+            </table>
+            <p>
+        Once the ThreadManager is set up and used, we can set up the CommandManager.
+        We do this by instantiating the CommandManager, and registering it with the
+        ThreadManager.  Below is a code snippet showing how that is done:
+            </p>
+            <source>
+                <![CDATA[
+// Create the CommandManager
+CommandManager commandManager = new CommandManager();
+
+// Register it with the ThreadManager
+threadManager.register( commandManager );
+              ]]>
+            </source>
+        </section>
+        <section name="Running Commands">
+            <p>
+        There are three Command interfaces: Command, DelayedCommand, and RepeatedCommand.
+        Each one of those has a special purpose.  The Command interface exposes the method
+        that the CommandManager will execute named, oddly enough, "execute()".  The
+        Delayed Command is used to specify a number of milliseconds to wait before the
+        command is run.  That delay is based on when the CommandManager receives the
+        DelayedCommand, not on when the object was created.  Lastly the RepeatedCommand
+        interface is used to determine how long and how many times the Command will
+        be executed.  Below is a code snippet showing how to send Commands to the
+        CommandManager:
+            </p>
+            <source>
+                <![CDATA[
+Sink commandSink = commandManager.getCommandSink();
+commandSink.enqueue( new MySpecialCommand() );
+              ]]>
+            </source>
+            <p>
+        It's not that hard to use the CommandManager.  Writing a Command is as easy as
+        implementing the java.lang.Runnable interface.  There are two distinct advantages
+        to using the Command infrastructure: your Command can throw exceptions and it
+        won't cause anything to break, and you have the ability to automatically have
+        your Command run again.  Just keep in mind that the Command infrastructure was
+        meant for short lived management functions happening in the background, not
+        a long lived thread.  If you want to give the illusion that your Command is
+        running a long time without tying up system resources the whole time, then
+        write a RepeatedCommand.  Below is an example RepeatedCommand that is used
+        for the DefaultPoolManager in MPool:
+            </p>
+            <source>
+                <![CDATA[
+/**
+ * This is run every 10 seconds, starting after a 10 second delay.
+ * It gives the appearance of being a long running thread, but it
+ * does not consume a Thread for the times it would otherwise be
+ * asleep.
+ */
+private static final class PoolManagerCommand
+    implements RepeatedCommand
+{
+    private final BucketMap m_map;
+    private final int m_min = 4;
+    private final int m_max = 256;
+    private final int m_grow = 4;
+
+    protected PoolManagerCommand( BucketMap map )
+    {
+        m_map = map;
+    }
+
+    public long getDelayInterval()
+    {
+        return 10 * 1000L;
+    }
+
+    public long getRepeatInterval()
+    {
+        return 10 * 1000L;
+    }
+
+    /**
+     * Anything less than one (zero or less) means to repeat as long
+     * as the CommandManager is in service.
+     */
+    public int getNumberOfRepeats()
+    {
+        return -1;
+    }
+
+    public void execute()
+        throws Exception
+    {
+        Iterator i = m_map.keySet().iterator();
+
+        while( i.hasNext() )
+        {
+            ManagablePool pool = (ManagablePool)i.next();
+            long key = ( (Long)m_map.get( pool ) ).longValue();
+            int size = pool.size( key );
+
+            if( size < m_min )
+            {
+                pool.grow( m_grow, key );
+            }
+
+            if( size > m_max )
+            {
+                pool.shrink( m_grow, key );
+            }
+        }
+    }
+}
+          ]]>
+            </source>
+        </section>
+    </body>
+</document>

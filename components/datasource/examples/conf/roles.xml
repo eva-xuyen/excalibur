@@ -1,0 +1,19 @@
+<role-list logger="rm">
+    <!-- =================================================================== -->
+    <!-- DataSource roles.                                                   -->
+    <!-- =================================================================== -->
+    <role name="org.apache.avalon.excalibur.datasource.DataSourceComponentSelector"
+          shorthand="datasources"
+          default-class="org.apache.avalon.excalibur.component.ExcaliburComponentSelector">
+        
+        <hint shorthand="jdbc" class="org.apache.avalon.excalibur.datasource.JdbcDataSource"/>
+        <hint shorthand="j2ee" class="org.apache.avalon.excalibur.datasource.J2eeDataSource"/>
+    </role>
+    
+    <!-- =================================================================== -->
+    <!-- Application roles.                                                  -->
+    <!-- =================================================================== -->
+    <role name="org.apache.avalon.examples.jdbcdatasource.HelloDBService"
+          shorthand="hello-db"
+          default-class="org.apache.avalon.examples.jdbcdatasource.DefaultHelloDBService"/>
+</role-list>

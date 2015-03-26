@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<project default="avalon:build"  xmlns:maven="jelly:maven" xmlns:j="jelly:core" xmlns:util="jelly:util" xmlns:ant="jelly:ant">
+
+  <ant:property name="maven.dist.assembly.dir"
+    value="${maven.build.dir}/temp"/>
+  <ant:property name="maven.dist.bin.archive.dir"
+    value="${maven.dist.assembly.dir}/bin"/>
+  <ant:property name="maven.dist.src.archive.dir"
+    value="${maven.dist.assembly.dir}/src"/>
+  <ant:property name="maven.dist.bin.assembly.dir"
+    value="${maven.dist.assembly.dir}/bin/${pom.artifactId}"/>
+  <ant:property name="maven.dist.src.assembly.dir"
+    value="${maven.dist.assembly.dir}/src/${pom.artifactId}"/>
+  <ant:property name="maven.dist.dir"
+    value="${maven.build.dir}/distributions"/>
+
+  <goal name="avalon:clean" prereqs="clean">
+    <maven:reactor
+      basedir="${basedir}"
+      includes="*/project.xml"
+      goals="clean"
+      banner="Cleaning:"
+      ignoreFailures="false"/>
+  </goal>
+
+  <goal name="avalon:build">
+    
+    <maven:reactor
+      basedir="${basedir}"
+      includes="*/project.xml"
+      excludes="project.xml,target/**"
+      goals="jar:install"
+      banner="Building:"
+      ignoreFailures="false"
+      postProcessing="true" />
+
+    <ant:copy todir="${maven.build.dir}/jars">
+      <j:forEach var="child" items="${reactorProjects}">
+        <ant:fileset dir="${child.file.parentFile}/target">
+          <ant:include name="${child.artifactId}-${child.currentVersion}.jar"/>
+        </ant:fileset>
+      </j:forEach>
+    </ant:copy>
+
+    <j:forEach var="child" items="${reactorProjects}">
+      <j:set var="path" value="${child.artifactId}-${child.currentVersion}"/>
+      <util:file var="jarFile" name="${maven.build.dir}/jars/${path}.jar"/>
+      <j:if test="${jarFile.exists()}">
+        <checksum file="${jarFile}" fileext=".md5" />
+        <j:if test="${maven_gpg_exe != null}">
+          <ant:exec executable="${maven_gpg_exe}">
+            <ant:arg value="-a"/>
+            <ant:arg value="--yes"/>
+            <ant:arg value="-b"/>
+            <ant:arg value="${jarFile}"/>
+          </ant:exec>
+        </j:if>
+      </j:if>
+    </j:forEach>
+
+  </goal>
+
+  <goal name="avalon:dist" prereqs="avalon:build,xjavadoc,xdist"/>
+
+  <goal
+    name="xdist:prepare-bin-filesystem" 
+    description="Builds the jar files.">
+
+    <ant:delete dir="${maven.dist.bin.assembly.dir}"/>
+    <ant:mkdir dir="${maven.dist.bin.assembly.dir}"/>
+    <ant:echo>
+      +-------------------------------------------------------+
+      | C R E A T I N G  B I N A R Y  D I S T R I B U T I O N |
+      +-------------------------------------------------------+
+    </ant:echo>
+
+    <ant:copy todir="${maven.dist.bin.assembly.dir}">
+      <ant:fileset dir=".">
+        <ant:include name="README.txt"/>
+      </ant:fileset>
+      <ant:fileset dir="${avalon.buildsystem}/site">
+        <ant:include name="LICENSE*"/>
+        <ant:include name="NOTICE*"/>
+      </ant:fileset>
+    </ant:copy>
+
+    <!-- Copy Jars -->
+    <ant:copy todir="${maven.dist.bin.assembly.dir}">
+      <ant:fileset dir="${maven.build.dir}">
+        <ant:include name="jars/**"/>
+      </ant:fileset>
+      <ant:fileset dir="${maven.build.dir}">
+        <ant:include name="docs/**"/>
+      </ant:fileset>
+    </ant:copy>
+
+  </goal>
+
+  <goal
+    name="xdist:prepare-src-filesystem"
+    description="Builds the source distribution file system.">
+    <ant:delete dir="${maven.dist.src.assembly.dir}" />
+    <ant:mkdir dir="${maven.dist.src.assembly.dir}" />
+
+    <ant:echo>
+      +-------------------------------------------------------+
+      | C R E A T I N G  S O U R C E  D I S T R I B U T I O N |
+      +-------------------------------------------------------+
+    </ant:echo>
+
+    <ant:copy todir="${maven.dist.src.assembly.dir}">
+      <ant:fileset dir=".">
+        <ant:include name="README.txt"/>
+      </ant:fileset>
+      <ant:fileset dir="${avalon.buildsystem}/site">
+        <ant:include name="LICENSE*"/>
+        <ant:include name="NOTICE*"/>
+      </ant:fileset>
+    </ant:copy>
+
+    <!-- Copy Source -->
+    <ant:copy todir="${maven.dist.src.assembly.dir}">
+      <ant:fileset dir="${basedir}">
+        <include name="api/**/*java"/>
+        <include name="impl/**/*.java"/>
+        <include name="instrumented/**/*.java"/>
+        <exclude name="**/target/**"/>
+      </ant:fileset>
+      <ant:fileset dir="${maven.build.dir}">
+        <include name="docs"/>
+      </ant:fileset>
+    </ant:copy>
+
+  </goal>
+
+  <goal name="xdist"
+    prereqs="xdist:build"
+    description="Build a complete distribution.">
+  </goal>
+        
+  <goal
+    name="xdist:build"
+    prereqs="xdist:build-bin,xdist:build-src"
+    description="Build a complete distribution.">
+  </goal>
+
+  <goal
+    name="xdist:build-setup"
+    description="Set up directories for a distribution build">
+    <ant:delete dir="${maven.dist.dir}"/>
+    <ant:mkdir dir="${maven.dist.dir}"/>
+  </goal>
+
+  <goal
+    name="xdist:build-bin" 
+    prereqs="xdist:build-setup,xdist:prepare-bin-filesystem"
+    description="Build the binary distribution.">
+
+    <!-- Create a tar.gz file -->
+    <ant:tar longfile="gnu" tarfile="${maven.dist.dir}/${maven.final.name}.tar">
+      <ant:tarfileset dir="${maven.dist.bin.archive.dir}"/>
+    </ant:tar>
+
+    <ant:gzip 
+      zipfile="${maven.dist.dir}/${maven.final.name}.tar.gz"
+      src="${maven.dist.dir}/${maven.final.name}.tar"/>
+    <ant:delete file="${maven.dist.dir}/${maven.final.name}.tar"/>
+    <checksum file="${maven.dist.dir}/${maven.final.name}.tar.gz" fileext=".md5" />
+    <j:if test="${maven_gpg_exe != null}">
+      <ant:exec executable="${maven_gpg_exe}">
+        <ant:arg value="-a"/>
+        <ant:arg value="-b"/>
+        <ant:arg value="${maven.dist.dir}/${maven.final.name}.tar.gz"/>
+      </ant:exec>
+    </j:if>
+
+    <!-- Create a zip file -->
+    <ant:zip zipfile="${maven.dist.dir}/${maven.final.name}.zip">
+      <ant:zipfileset dir="${maven.dist.bin.archive.dir}"/>
+    </ant:zip>
+    <checksum file="${maven.dist.dir}/${maven.final.name}.zip" fileext=".md5" />
+    <j:if test="${maven_gpg_exe != null}">
+      <ant:exec executable="${maven_gpg_exe}">
+        <ant:arg value="-a"/>
+        <ant:arg value="-b"/>
+        <ant:arg value="${maven.dist.dir}/${maven.final.name}.zip"/>
+      </ant:exec>
+    </j:if>
+  </goal>
+
+  <goal
+    name="xdist:build-src"
+    prereqs="xdist:build-setup,xdist:prepare-src-filesystem"
+    description="Build the source distribution.">
+ 
+    <!-- Create a tar.gz file -->
+    <ant:tar longfile="gnu" tarfile="${maven.dist.dir}/${maven.final.name}-src.tar">
+      <ant:tarfileset dir="${maven.dist.src.archive.dir}"/>
+    </ant:tar>
+
+    <ant:gzip 
+      zipfile="${maven.dist.dir}/${maven.final.name}-src.tar.gz" 
+      src="${maven.dist.dir}/${maven.final.name}-src.tar"
+    />
+    <ant:delete file="${maven.dist.dir}/${maven.final.name}-src.tar"/>
+    <checksum file="${maven.dist.dir}/${maven.final.name}-src.tar.gz" fileext=".md5" />
+    <j:if test="${maven_gpg_exe != null}">
+      <ant:exec executable="${maven_gpg_exe}">
+        <ant:arg value="-a"/>
+        <ant:arg value="-b"/>
+        <ant:arg value="${maven.dist.dir}/${maven.final.name}-src.tar.gz"/>
+      </ant:exec>
+    </j:if>
+
+    <!-- Create a zip file -->
+    <ant:zip zipfile="${maven.dist.dir}/${maven.final.name}-src.zip">
+      <ant:zipfileset dir="${maven.dist.src.archive.dir}"/>
+    </ant:zip>
+    <checksum file="${maven.dist.dir}/${maven.final.name}-src.zip" fileext=".md5" />
+    <j:if test="${maven_gpg_exe != null}">
+      <ant:exec executable="${maven_gpg_exe}">
+        <ant:arg value="-a"/>
+        <ant:arg value="-b"/>
+        <ant:arg value="${maven.dist.dir}/${maven.final.name}-src.zip"/>
+      </ant:exec>
+    </j:if>
+
+  </goal>
+
+  <goal name="xjavadoc">
+
+    <maven:reactor basedir="${basedir}"
+      includes="api/**/project.xml,impl/**/project.xml"
+      excludes="project.xml"
+      banner="Site Prep:"
+      ignoreFailures="false"
+      postProcessing="true" />
+
+    <ant:path id="template.classpath">
+      <j:forEach var="child" items="${reactorProjects}">
+        <j:set var="deps" value="${child.dependencies}"/>
+        <j:forEach var="dep" items="${deps}">
+          <ant:pathelement 
+            path="${maven.repo.local}/${dep.getArtifactDirectory()}/jars/${dep.getArtifact()}"/>
+        </j:forEach>
+      </j:forEach>
+    </ant:path>
+
+    <ant:mkdir dir="${maven.build.dir}/docs/api" />
+    <ant:property name="copyright"
+      value="Copyright &amp;copy; ${year} ${pom.organization.name}. All Rights Reserved." />
+    <ant:property name="title" value="${pom.name} ${pom.currentVersion} API"/>
+
+    <ant:javadoc destdir="${maven.build.dir}/docs/api" 
+	doctitle="&lt;h1&gt;${title}&lt;/h1&gt;" 
+      noindex="false" author="true" use="true"
+	windowtitle="${title}" 
+      bottom="${copyright}"
+      additionalparam="-breakiterator -J-Xmx128m "
+      packagenames="*,org.*">
+
+        <classpath>
+          <path refid="template.classpath"/>
+	  </classpath>
+
+        <j:forEach var="child" items="${reactorProjects}">
+          <sourcepath path="${child.file.parentFile}/src/java"/>
+        </j:forEach>
+
+        <j:forEach var="packageGroup" items="${pom.packageGroups}">
+          <group title="${packageGroup.title}" packages="${packageGroup.packages}"/>
+        </j:forEach>
+
+	  <link href="${sun.j2se.link}" />
+	  <link href="${avalon.framework.link}" />
+
+    </ant:javadoc>
+  </goal>
+
+
+</project>

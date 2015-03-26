@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+
+<!--
+     Copyright 2004 The Apache Software Foundation
+     Licensed  under the  Apache License,  Version 2.0  (the "License");
+     you may not use  this file  except in  compliance with the License.
+     You may obtain a copy of the License at
+     
+     http://www.apache.org/licenses/LICENSE-2.0
+     
+     Unless required by applicable law or agreed to in writing, software
+     distributed  under the  License is distributed on an "AS IS" BASIS,
+     WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+     implied.
+     
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<document>
+    <properties>
+        <title>Event - Util</title>
+    </properties>
+    <body>
+        <section name="Why Util Was Created">
+            <p>
+        Util was created to enable us to find out how many processors are
+        on a system programmatically.  Unfortunately Sun does not think
+        it is important to know these details through Java.  The Thread
+        Manager uses this to automatically determine how many background
+        threads it wants in the backing ThreadPool.
+            </p>
+        </section>
+        <section name="When To Use Util">
+            <p>
+        Usually you won't use this package directly, unless you want to
+        know how many processors a system has.  You might need to add a
+        new CPU Parser that will find out the necessary information from
+        environment variables or the /proc/ filesystem for a platform
+        that is not currently supported.
+            </p>
+        </section>
+        <section name="Core Concepts">
+            <p>
+        Util has a SystemUtil which will load the correct CPU Parser for your
+        platform.  If there is no maching CPU Parser will assume that there is
+        only one processor for your system.
+            </p>
+            <section name="System Util">
+                <p>
+          The System Util will allow you to gather any platform specific
+          information.  Some of the methods are simpler ways of accessing
+          the System properties, and others are derived from the CPU Parser.
+                </p>
+            </section>
+            <section name="CPU Parser">
+                <p>
+          The CPU Parser will allow you to gather essential information from
+          your platform.  Unfortunately we cannot assume there is only one
+          way to gather information for each platform.  If your platform is
+          not supported directly, please send an email to the
+                    <a href="mailto:users@avalon.apache.org">Avalon Users</a>
+          mailing list with the new CPU Parser attached.  We should be able
+          to include it in the next release.  We currently support the entire
+          Microsoft Windows suite that supports Java, and Linux.  Since we
+          don't currently have access to other machines, we can't support them
+          yet.
+                </p>
+            </section>
+        </section>
+    </body>
+</document>

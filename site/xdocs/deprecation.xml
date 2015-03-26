@@ -1,0 +1,136 @@
+<?xml version="1.0"?>
+<document>
+
+    <properties>
+        <title>Deprecated Excalibur Products</title>
+    </properties>
+
+    <body>
+        <section name="Deprecated Excalibur Products">
+            <p>
+                Over time several Excalibur products have reached the
+                end of their lifecycle. This page documents the deprecated
+                components.
+            </p>
+            <subsection name="Excalibur-Compatibility">
+                <p>
+                    Compatibility was a library consisting of several utility classes that
+                    Excalibur had ceased developing with the aim of focusing on the charter.
+                </p>
+                <table>
+                    <tr>
+                        <th colspan="2">Replacements</th>
+                    </tr>
+                    <tr>
+                        <th>Package</th>
+                        <th>Replacement</th>
+                    </tr>
+                    <tr>
+                        <td>o.a.a.excalibur.cli</td>
+                        <td><a href="http://jakarta.apache.org/commons/cli/">Commons-CLI</a></td>
+                    </tr>
+                    <tr>
+                        <td>o.a.a.excalibur.collections</td>
+                        <td><a href="http://jakarta.apache.org/commons/collections/">Commons-Collections</a></td>
+                    </tr>
+                    <tr>
+                        <td>o.a.a.excalibur.concurrent</td>
+                        <td>Doug Leas <a href="http://gee.cs.oswego.edu/dl/classes/EDU/oswego/cs/dl/util/concurrent/intro.html">Concurrent Library</a></td>
+                    </tr>
+                    <tr>
+                        <td>o.a.a.excalibur.io</td>
+                        <td><a href="http://spice.codehaus.org/salt">Spice-Salt</a></td>
+                    </tr>
+                    <tr>
+                        <td>o.a.a.excalibur.naming</td>
+                        <td><a href="http://spice.codehaus.org/jndikit">Spice-JNDIKit</a></td>
+                    </tr>
+                </table>
+            </subsection>
+
+            <subsection name="Excalibur-Component">
+                <p>
+                    ECM (Excalibur Component Manager) was our first container. It's still in use in
+                    quite a few projects, but has not been under active development for about two
+                    years, as we've written a much better container that is (almost) completely
+                    backwards compatible.
+                </p>
+
+                <blockquote><strong>Replacement:</strong> <a href="/fortress/index.html">Excalibur-Fortress</a></blockquote>
+
+                <p>
+                    Some old documentation about ECM is still available
+                    <a href="component.html">here</a>.
+                </p>
+            </subsection>
+
+            <subsection name="Excalibur-Configuration">
+                <p>
+                    Excalibur-Configuration was a utility library to manipulate configuration trees.
+                    Configuration had never been released and the original developers have
+                    redeveloped the code elsewhere. The following table lists the replacement
+                    packages for Excalibur-Configuration.
+                </p>
+
+                <blockquote><strong>Replacement:</strong> <a href="http://spice.codehaus.org/configkit">Spice-Configkit</a></blockquote>
+
+                <p>
+                    Some old documentation about Excalibur-Configuration is still available
+                    <a href="configuration.html">here</a>.
+                </p>
+            </subsection>
+
+            <subsection name="Excalibur-Event">
+                <p>
+                    Excalibur-Event was an extensive component library to aid in concurrent
+                    programming. This package has gradually evolved into a much better package
+                    maintained elsewhere. The following table lists the replacement
+                    packages for Excalibur-Event.
+                </p>
+                <table>
+                    <tr>
+                        <th colspan="2">Replacements</th>
+                    </tr>
+                    <tr>
+                        <th>Package</th>
+                        <th>Replacement</th>
+                    </tr>
+                    <tr>
+                        <td>o.a.excalibur.event</td>
+                        <td><a href="http://dist.d-haven.org/event/">D-Haven-Event</a></td>
+                    </tr>
+                    <tr>
+                        <td>o.a.excalibur.mpool</td>
+                        <td><a href="http://dist.d-haven.org/managed-pool/">D-Haven-Managed-Pool</a></td>
+                    </tr>
+                </table>
+
+                <p>
+                    Some old documentation about Excalibur-Event is still available
+                    <a href="event/index.html">here</a>.
+                </p>
+            </subsection>
+
+            <subsection name="Excalibur-i18n">
+                <p>
+                    Excalibur-i18n was a very small utility library to aid in the use of localized
+                    resources. This library stored these resources in an inconvenient location. A
+                    much better package has been developed elsewhere.
+                </p>
+
+                <blockquote><strong>Replacement:</strong> <a href="http://spice.codehaus.org/salt">Spice-Salt</a></blockquote>
+            </subsection>
+
+            <subsection name="Excalibur-Testcase">
+                <p>
+                    Excalibur-Testcase was a library to aid unit testing of components. It provided
+                    an extended TestCase class that would set up an ECM instance for you. Since we
+                    now all know this is a bad idea (no component should be tested against an actual
+                    container implementation, only in isolation), it has been deprecated along with
+                    ECM, with no direct replacement.
+                </p>
+                <blockquote><strong>Replacement:</strong> <em>none</em></blockquote>
+            </subsection>
+        </section>
+    </body>
+</document>

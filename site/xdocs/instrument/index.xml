@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+
+<!--
+     Copyright 2004 The Apache Software Foundation
+     Licensed  under the  Apache License,  Version 2.0  (the "License");
+     you may not use  this file  except in  compliance with the License.
+     You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed  under the  License is distributed on an "AS IS" BASIS,
+     WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+     implied.
+
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<document>
+    <properties>
+        <author email="leif.AT.tanukisoftware.DOT.com">Leif Mortenson</author>
+        <title>Excalibur Instrument - Overview</title>
+    </properties>
+    <body>
+        <section name="Introduction">
+            <p>
+                Instruments allow a user to connect and externally monitor what is
+                happening within an application as it is running.   It is designed to be
+                used in coordination with a logging system.  
+            </p>
+            <p>
+                While logging systems are great at displaying the order in which events
+                take place, there are poor at making clear the rates, volumes and interactions
+                between such events in a temporal fashion.
+            </p>
+        </section>
+        <section name="Audiences">
+            <p>
+                Instrumentation is used in different ways depending on how you will be using it.
+            </p>
+            <table>
+                <tr>
+                    <th>Perspective</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>Application User</td>
+                    <td>
+                        <p>
+                            Out of the Box, Instrumentation provides an HTTP based connector
+                            which allows the user to connect to an application using their
+                            favorite web browser.  This interface is capable of communicating
+                            with the client using either <a href="html-client.html">HTML</a> or
+                            <a href="xml-client.html">XML</a> depending on the needs of the client.
+                        </p>
+                        <p>
+                            In addition to connecting directly using a Web Browser, a standalone
+                            <a href="java-client.html">Java client</a> is also provided which
+                            allows the user to make use of the Instrument features using an
+                            optimum GUI environment.  Behind the scenes, this client uses XML
+                            on top of the HTTP connector to communicate with the application.
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Application Administrator</td>
+                    <td>
+                        <p>
+                            An application administrator is interested in how to
+                            <a href="configuration.html">configure</a> the Instrumentation features
+                            within an application to best meet the needs of its users.
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Component Developer</td>
+                    <td>
+                        <p>
+                            A component developer will be interested in how to write their
+                            components so that they can be monitored and easily analyzed by users
+                            and system administrators when the components are deployed as part of
+                            an application.   The Instrument package provides a very light weight
+                            and simple <a href="component.html">API</a> which makes it possible
+                            to very quickly instrument most components.  The API has been
+                            specifically designed in such a way as to allow components to be used
+                            even in contexts which do not support the Instrumentation features.
+                        </p>
+                        <p>
+                            Note that while the Instrument APIs have been designed to work well
+                            with the Avalon Framework APIs, there is nothing about the API which
+                            requires them.
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Container Developer</td>
+                    <td>
+                        <p>
+                            Container developers will be interested in what is involved to make
+                            their containers take advantage of the Instrumentation provided by
+                            components.   An <a href="container.html">API</a> has been provided to
+                            make implementing instrumentation quite painless by treating it like
+                            any other life-cycle.
+                        </p>
+                        <p>
+                            Note that while the Instrument APIs have been designed to work well
+                            with the Avalon Framework APIs, there is nothing about the API which
+                            requires them.
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Connector Developer</td>
+                    <td>
+                        <p>
+                            In cases where the provided HTTP connector does not meet the needs of
+                            a specific application, the
+                            <a href="manager.html">Instrument Manager API</a> provides a
+                            number of additional ways for an application to take advantage of the
+                            Instrumentation provided by the application.
+                        </p>
+                    </td>
+                </tr>
+            </table>
+        </section>
+    </body>
+</document>

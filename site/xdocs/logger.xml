@@ -1,0 +1,313 @@
+<?xml version="1.0"?>
+
+<!--
+     Copyright 2004 The Apache Software Foundation
+     Licensed  under the  Apache License,  Version 2.0  (the "License");
+     you may not use  this file  except in  compliance with the License.
+     You may obtain a copy of the License at
+     
+     http://www.apache.org/licenses/LICENSE-2.0
+     
+     Unless required by applicable law or agreed to in writing, software
+     distributed  under the  License is distributed on an "AS IS" BASIS,
+     WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+     implied.
+     
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<document>
+    <properties>
+        <title>Excalibur Logger - Overview</title>
+    </properties>
+    <body>
+        <section name="Introduction">
+            <p>
+        Find Avalon Excalibur's Log Management System in the
+                <code>org.apache.avalon.excalibur.logger</code> package.
+        Excalibur-Logger integrates neatly into the Avalon ECM
+        and Fortress. The main goal is to
+        be able to define the log categories on a component basis by
+        specifying a 'logger' attribute which denotes the log category
+        to use for a particular component (given the
+        component is
+                <code>LogEnabled</code> or
+                <code>Loggable</code>).
+            </p>
+        </section>
+        <section name="Not just for logkit">
+            <p>
+            Though the documentation doesn't reflect this accurately
+            yet (patches welcome), excalibur-logger has been updated
+            to support other logging toolkits like jdk1.4 logging and
+            log4j as well.
+            </p>
+        </section>
+        <section name="Not just for ECM">
+            <p>
+              Though the documentation doesn't reflect this accurately
+              yet (patches welcome), excalibur-logger is not just used
+              by (or usable by) ECM. Other containers can and do make
+              use of logger, too.
+            </p>
+        </section>
+        <section name="Example configurations">
+            <p>
+        Look at this example of a component definition:
+            </p>
+            <source>
+                <![CDATA[
+<component role="my.component.role" class="my.component.roleImpl"
+    logger="category.subcategory"/>
+              ]]>
+            </source>
+            <p>
+        And now let's have a look at a hypothetical Excalibur-Logger configuration
+        using Logkit:
+            </p>
+            <source>
+                <![CDATA[
+  <?xml version="1.0"?>
+
+  <logkit>
+    <factories>
+      <factory type="file"
+          class="org.apache.avalon.excalibur.logger.factory.FileTargetFactory"/>
+      <factory type="priority-filter"
+          class="org.apache.avalon.excalibur.logger.factory.PriorityFilterTargetFactory"/>
+    </factories>
+
+    <targets>
+      <file id="root">
+        <filename>lolo/${current-dir}/lala/${foo}/logs/main.log</filename>
+        <format type="extended">
+%7.7{priority} %5.5{time}   [%8.8{category}] (%{context}): %{message}\n%{throwable}
+        </format>
+        <append>true</append>
+      </file>
+      <file id="classloader">
+        <filename>logs/classloader.log</filename>
+        <format type="raw"/>
+      </file>
+      <priority-filter id="foo" log-level="WARN">
+        <file>
+          <filename>logs/foo.log</filename>
+          <format type="extended">
+%7.7{priority} %5.5{time}: %{message}\n%{throwable}
+          </format>
+        </file>
+      </priority-filter>
+    </targets>
+
+    <categories>
+      <category name="cocoon" log-level="INFO">
+        <log-target id-ref="root"/>
+
+        <category name="classloader" log-level="DEBUG">
+          <log-target id-ref="classloader"/>
+        </category>
+      </category>
+      <category name="foo" log-level="DEBUG">
+        <log-target id-ref="foo"/>
+      </category>
+    </categories>
+  </logkit>
+              ]]>
+            </source>
+            <p>
+        As you've seen the configuration file for excalibur-logger when used
+        with logkit has three sections (beside the root element).
+            </p>
+            <dl>
+                <dt>&lt;factories&gt;</dt>
+                <dd>
+          The factories section defines the
+                    <code>LogTargetFactory</code>s
+          that are used to create the needed
+                    <code>LogTargets</code>. You'll
+          find the factories available in the
+                    <code>org.apache.avalon.excalibur.logger.factory</code>
+          package. You can write your own factories which
+          only needs to implement the
+                    <code>org.apache.avalon.excalibur.logger.LogTargetFactory</code>
+          interface or you extend one of the available factories
+          in the mentioned package.
+                </dd>
+                <dt>&lt;targets&gt;</dt>
+                <dd>
+          The targets section defines the individual
+                    <code>LogTargets</code>.
+          The element name of a target definition corresponds
+          to a type attribute of a &lt;factory&gt; element. You'll
+          probably need to consult the javadocs of the corresponding
+          factory to get familiar with the configuration
+          options available for a particular target.
+                </dd>
+                <dt>&lt;categories&gt;</dt>
+                <dd>
+          The categories section finally assembles all together. The
+          name attribute of a category gives the reference used in
+          logger attribute in the components configuration files.
+          The log-level attribute gives the logging priority to the
+                    <code>Logger</code> of that category. &lt;category&gt;
+          elements have &lt;log-targets&gt; children which, you
+          already guessed, defines the
+                    <code>LogTarget</code>s
+          for a particular logging category. You'll also see in the
+          sample above that category elements can be nested to define
+          sub-categories.
+                </dd>
+            </dl>
+        </section>
+        <section name="Design principles and implementation details of Excalibur-Logger">
+            <p>
+        The first abstraction is the
+                <code>LogKitManager</code>:
+            </p>
+            <source>
+        public interface LogKitManager
+        {
+            Logger getLogger( String categoryName );
+        }
+            </source>
+            <p>
+        There is a implementation named
+                <code>DefaultLogKitManager</code>
+        which is the only class exposed to clients. As a convenient a
+        additional interface is introduced for the
+                <code>ComponentManager</code> (stolen from the role management
+        system) which states that a class is willing to get a
+                <code>LogKitManager</code>:
+            </p>
+            <source>
+        public interface LogKitManageable
+        {
+            void setLogKitManager( LogKitManager logmanager );
+        }
+            </source>
+            <p>
+        This method has to be called before the configure method but after the
+        contextualize method.
+            </p>
+            <p>
+        The
+                <code>DefaultLogKitManager</code> is
+                <code>Configurable</code>
+        (as well as
+                <code>Loggable</code> [the initial default logger] and
+                <code>Contextualizable</code> [to pass along for ie.
+                <code>ServletOutputLogTarget</code>]) and gets a
+                <code>Configuration</code> object as expressed in the logkit
+        xml syntax above. This
+                <code>DefaultLogKitManager</code> then uses
+        a object of type
+            </p>
+            <source>
+        public interface LogTargetFactoryManager
+        {
+            LogTargetFactory getLogTargetFactory( String factoryName );
+        }
+            </source>
+            <p>
+        The
+                <code>DefaultLogTargetFactoryManager</code> is
+                <code>Configurable</code> (as well as
+                <code>Loggable</code> and
+                <code>Contextualizable</code>) and gets the
+                <code>Configuration</code> object located at the &lt;factories&gt;
+        element. It will instanciate the concrete factories into a map
+        keyed by the type attribute. So we are at the
+                <code>LogTargetFactory</code> abstraction which is:
+            </p>
+            <source>
+        public interface LogTargetFactory
+        {
+            LogTarget createTarget( Configuration configuration )
+                throws ConfigurationException;
+        }
+            </source>
+            <p>
+        It may happen that a
+                <code>LogTargetFactory</code> needs to
+        create
+                <code>LogTarget</code>s they don't know in advance
+        and thus an additional interface is needed:
+            </p>
+            <source>
+        public interface LogTargetFactoryManageable
+        {
+            void setLogTargetFactoryManager(
+                LogTargetFactoryManager logTargetFactoryManager );
+        }
+            </source>
+            <p>
+        This eases writing factories which acts like decorators
+        (
+                <code>AsyncLogTarget</code>,
+                <code>PriorityFilter</code>)
+        and thus need a LogTargetFactoryManager to create the decorated
+                <code>LogTargets</code> which are embeded in the configuration
+        of them (see &lt;priority-filter&gt; above).
+            </p>
+            <p>
+        After initializing the
+                <code>LogTargetFactoryManager</code> a
+                <code>LogTargetManager</code>
+            </p>
+            <source>
+        public interface LogTargetManager
+        {
+            LogTarget getLogTarget( String targetId );
+        }
+            </source>
+            <p>
+        is created. The implementation
+                <code>DefaultLogTargetManager</code>
+        is, you guess it,
+                <code>Configurable</code> (as well as
+                <code>Loggable</code> and
+                <code>Contextualizable</code>). The
+                <code>Configuration</code> object is the &lt;targets&gt; element
+        in the xml syntax and is put into a map keyed by the id
+        attribute of the target element. It is also
+                <code>LogTargetFactoryManageable</code> tob e able to create
+        the
+                <code>LogTargets</code>.
+            </p>
+            <p>
+        The last step of the
+                <code>DefaultLogKitManagers</code> configure
+        method is to create the actual categories based on the categories
+        elements content. It does it as the syntax will show in a
+        recursive way populating the Loggers retrieved by
+                <code>Hierarchy.getDefaultHierarchy().getLoggerFor( full_category )</code>
+        with the denoted
+                <code>LogTargets</code> from the
+                <code>LogTargetManager</code>.
+            </p>
+            <p>
+        After that the
+                <code>LogKitManager</code> is ready to be asked
+        for
+                <code>Logger</code>s.
+            </p>
+            <p>
+        Now ECM is aware of a
+        "magic attributes" named logger and used like
+                <code>logger="category"</code> on the component definition syntax.
+        The classes building up ECM
+        are made
+                <code>LogTargetFactoryManageable</code>. If you pass along
+        a
+                <code>LogKitManager</code> to the
+                <code>ExcaliburComponentManager</code>
+        it will retrieve the denoted logger
+        category specified with the logger attribute from the
+                <code>LogKitManager</code> and pass it to
+                <code>Component</code>s
+        implementing
+                <code>Loggable</code>.
+            </p>
+        </section>
+    </body>
+</document>

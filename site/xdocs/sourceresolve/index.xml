@@ -1,0 +1,117 @@
+<?xml version="1.0"?>
+
+<!--
+     Copyright 2004 The Apache Software Foundation
+     Licensed  under the  Apache License,  Version 2.0  (the "License");
+     you may not use  this file  except in  compliance with the License.
+     You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed  under the  License is distributed on an "AS IS" BASIS,
+     WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+     implied.
+
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<document>
+
+    <properties>
+        <title>Source Resolving - Overview</title>
+    </properties>
+
+    <body>
+        <section name="Introduction">
+            <p>
+        A very common problem that you have to face in nearly every application
+        is resolving a source, which means finding a resource using a URI. Of
+        course after you located the resource, you want to do something with it,
+        like reading or writing or getting some meta information about it.
+            </p>
+            <p>
+        Of course, the JRE already provides some mechanisms and classes to deal
+        with resources. For example the <code>java.io.*</code> package provides
+        a lot of useful classes to deal with files stored on the local file
+        system. The <code>java.net.*</code> package provides similar functionality
+        if you want to deal with remote resources via http or ftp. In addition
+        there are various third party libraries, like the 
+        <a href="http://jakarta.apache.org/commons/httpclient/">Jakarta Commons HttpClient</a>
+        library that deal with this topic as well.
+            </p>
+            <p>
+        But all these approaches have three problems:
+            </p>
+            <ul>
+                <li>No unified interface - you have to distinguish between access
+                    of local resources and remote resources.</li>
+                <li>Not suitable for web applications if it comes to extending the
+                    supported protocols.</li>
+            </ul>
+            <p>
+        Out of these problems the idea of the source resolver has been born. It
+        provides a unique interface to any resource, being it a local file or
+        a distant resource on an ftp server. And it is possible to provide
+        your own application specific protocols in a multi application friendly
+        way.
+            </p>
+            <p>
+        The source resolver of Apache Excalibur is a useful component
+        that resolves resources from a given URI. The URI can use all 
+        available protocols of the JRE, like HTTP, FTP, FILE etc..
+        In addition own protocols, like <code>myxmldatabase://root/documents/test.xml</code>
+        can be plugged-in and then be used in the same way, "usual"
+        resources (files etc.) are accessed.
+            </p>
+            <p>
+        The main advantage in comparison to the mechanisms provided
+        by the JRE is that the source resolver can be used without
+        any problems within web application servers. Each web
+        application can use it's own configured version of this
+        component avoiding any possible conflicts between these
+        applications.
+            </p>
+            <p>
+        The architecture of this package is simple but powerful.
+        The main component is the SourceResolver. It is used
+        to resolve any URI. If the SourceResolver can resolve the
+        protocol of the URI, it returns a Source object. This Source
+        object is an abstraction of the underlying resource. This
+        resource can be accessed by a provided InputStream.
+            </p>
+            <p>
+        Own protocols can be configured using the SourceFactory interface.
+        Whenever the SourceResolver finds a protocol that it can't handle
+        by itself, it gets a role selector for a SourceFactory and tries
+        to get a component with the role name of the protocol.
+        If such a factory exists, the source creation is passed on to this
+        factory.
+            </p>
+            <p>
+        The Source object is handled similar to Avalon components.
+        After it has been used it must be released using the SourceResolver.
+        The SourceResolver in turn passed on the release of the
+        object to the SourceFactory that created it.
+            </p>
+            <p>
+        The Source object is a lightwight object which can be extended with
+        several interface. For example the XMLizable interface from the XML
+        package to generate SAX events from the Source. Or the Monitorable
+        interface from the monitor package to monitor the resource.
+            </p>
+            <p>
+        For caching purposes the Source object offers a SourceValidity object
+        which can be used in addition to the system ID of the Source to verify
+        if a cache contains a valid version of the Source object.
+            </p>
+        </section>
+        <section name="Projects">
+            <p>You can see the source resolving in action in the 
+            <a href="http://cocoon.apache.org">Apache Cocoon</a>
+            project and in <a href="../fortress/index.html">Fortress</a>.
+            </p>
+        </section>
+    </body>
+</document>
+

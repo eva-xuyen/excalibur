@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Copyright 2004 The Apache Software Foundation
+Licensed  under the  Apache License,  Version 2.0  (the "License");
+you may not use  this file  except in  compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed  under the  License is distributed on an "AS IS" BASIS,
+WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+implied.
+
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<project>
+    <extend>${basedir}/../project-common.xml</extend>
+
+    <name>Excalibur XMLUtil</name>
+    <id>excalibur-xmlutil</id>
+    <inceptionYear>1997</inceptionYear>
+    <shortDescription>Components for consuming and producing XML</shortDescription>
+    <description>
+              Excalibur's XML Utilities provide simplified wrappers
+              for XML parsers, transformers and XPath evaluators. It
+              also provides interfaces and classes useful for
+              constructing a pipeline of XML components by defining interfaces
+              for consuming and producing XML in either SAX or DOM formats.
+    </description>
+    <package>org.apache.excalibur</package>
+
+    <dependencies>
+
+        <dependency>
+            <id>saxon</id>
+            <version>6.5.3</version>
+        </dependency>
+        
+        <dependency>
+            <artifactId>saxon7</artifactId>
+            <groupId>saxon7</groupId>
+            <version>7.9.1</version>
+        </dependency>
+        <dependency>
+            <artifactId>saxon7-jdom</artifactId>
+            <groupId>saxon7</groupId>
+            <version>7.9.1</version>
+        </dependency>
+        <dependency>
+            <artifactId>saxon7-sql</artifactId>
+            <version>7.9.1</version>
+            <groupId>saxon7</groupId>
+        </dependency>
+
+        <dependency>
+            <id>xml-resolver</id>
+            <version>1.1</version>
+        </dependency>
+
+        <dependency>
+            <id>avalon-framework</id>
+            <version>4.1.5</version>
+        </dependency>
+        <dependency>
+            <id>excalibur-logger</id>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>avalon-logkit</groupId>
+            <artifactId>avalon-logkit</artifactId>
+            <version>2.0</version>
+        </dependency>
+        <dependency>
+            <id>excalibur-component</id>
+            <version>1.3</version>
+        </dependency>
+        <dependency>
+            <groupId>excalibur-pool</groupId>
+            <artifactId>excalibur-pool-api</artifactId>
+            <version>2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>excalibur-pool</groupId>
+            <artifactId>excalibur-pool-impl</artifactId>
+            <version>2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>excalibur-pool</groupId>
+            <artifactId>excalibur-pool-instrumented</artifactId>
+            <version>2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>excalibur-instrument</groupId>
+            <artifactId>excalibur-instrument-api</artifactId>
+            <version>1.2-dev</version>
+        </dependency>
+        <dependency>
+            <id>excalibur-sourceresolve</id>
+            <version>2.0</version>
+        </dependency>
+        <dependency>
+            <id>excalibur-store</id>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <id>xml-apis</id>
+            <version>1.0.b2</version>
+        </dependency>
+        
+        <dependency>
+            <id>xerces</id>
+            <version>2.4.0</version>
+        </dependency>
+        
+        <dependency>
+            <id>xalan</id>
+            <version>2.5.1</version>
+        </dependency>
+
+        <dependency>
+            <id>saxpath</id>
+            <version>1.0-FCS</version>
+        </dependency>
+        
+        <dependency>
+            <id>jaxen</id>
+            <version>1.0-FCS-full</version>
+        </dependency>
+
+        <dependency>
+            <!-- testing only -->
+            <id>commons-collections</id>
+            <version>2.1</version>
+        </dependency>
+        <dependency>
+            <!-- testing only -->
+            <groupId>excalibur-component</groupId>
+            <artifactId>excalibur-testcase</artifactId>
+            <version>1.3</version>
+        </dependency>
+        <dependency>
+            <id>jtidy</id>
+            <version>4aug2000r7-dev</version>
+        </dependency>
+        <dependency>
+            <groupId>excalibur-fortress</groupId>
+            <artifactId>excalibur-fortress-container-api</artifactId>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>excalibur-fortress</groupId>
+            <artifactId>excalibur-fortress-meta</artifactId>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
+            <!-- for metadata generation only -->
+            <id>qdox</id>
+            <version>1.1</version>
+        </dependency>
+    </dependencies>
+</project>

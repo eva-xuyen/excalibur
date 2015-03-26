@@ -1,0 +1,164 @@
+<?xml version="1.0"?>
+
+<!--
+     Copyright 2004 The Apache Software Foundation
+     Licensed  under the  Apache License,  Version 2.0  (the "License");
+     you may not use  this file  except in  compliance with the License.
+     You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed  under the  License is distributed on an "AS IS" BASIS,
+     WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+     implied.
+
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<document>
+
+    <properties>
+        <title>Component List</title>
+    </properties>
+
+    <body>
+
+        <section name="Overview">
+
+            <p>
+                Excalibur's most important distributables are two
+                inversion-of-control containers,
+                <a href="fortress/index.html">Fortress</a>, and the deprecated
+                <a href="component.html">ECM</a>. These containers both support the
+                <a href="http://avalon.apache.org/product/framework/">Avalon-Framework</a>
+                container-component contracts.
+            </p>
+
+            <p>
+                Besides these containers, excalibur also provides several reusable components,
+                all of them written for avalon-framework, and some utility libraries. Some of
+                these components are building blocks for the containers we provide, others can
+                run inside those containers.
+            </p>
+
+        </section>
+
+        <section name="Stable components">
+            <table>
+                <tr>
+                    <th>Package</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>Datasource</td>
+                    <td>
+                        <p>
+                            Avalon Excalibur's DataSource package in
+                            <code>org.apache.avalon.excalibur.datasource</code> allows you
+                            to manage pooled connections in one of two ways.  You can have
+                            the package handle it for you, or you can use a J2EE server's
+                            DataSource management.  It provides the same kind of access
+                            regardless of which method you choose--since they are obtained
+                            through Avalon's Component Manager infrastructure.
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Monitor</td>
+                    <td>
+                        <p>
+                            Avalon Excalibur's resource management code allows you to
+                            be notified when a resource has changed.  There are two
+                            methods of resource management: active and passive.  Passive
+                            resource management acts as a holder for resources, and after
+                            the resource has been modified through it's normal API,
+                            notification goes to all listeners.  Active resource management
+                            does the same, but it also polls the resources periodically
+                            to see if the resource was modified through an external method.
+                            Active resource management is perfect for monitoring files
+                            because they can be modified by external programs, and your
+                            program will be notified when the change occurs instead of
+                            constantly polling it.
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Pool</td>
+                    <td>
+                        <p>
+                            Find Avalon Excalibur's Pool implementations in the
+                            <code>org.apache.avalon.excalibur.pool</code> package.
+                            There are many implementations that are ThreadSafe, and
+                            one that is not.  You have the option of not limiting
+                            used resources at all, or limiting the used resources
+                            based on specific rules.
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="sourceresolve/index.html">Sourceresolver</a>
+                    </td>
+                    <td>
+                        <p>
+                            A very common problem is resolving a source, which means
+                            finding a source using a URI.
+                        </p>
+                        <p>
+                            The source resolver of Avalon Excalibur is a component
+                            helping you in this task. It resolves sources from a given
+                            URI. The URI can use all available protocols of the JRE.
+                            In addition own protocols can be plugged-in. So using
+                            the standard protocols like HTTP, FTP or file can be handled
+                            in the same way, like dealing with custom, self-build
+                            protocols such as myxmldatabase://root/documents/test.xml.
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="store/index.html">Store</a>
+                    </td>
+                    <td>
+                        <p>
+                            The Store Package provides a way to store named objects without
+                            taking care about where and how they are stored.
+                            You can choose between different implementations that store
+                            the data e.g. in memory or on the file system etc.
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Thread</td>
+                    <td>PENDING</td>
+                </tr>
+                <tr>
+                    <td><a href="xmlutil/index.html">XMLUtil</a></td>
+                    <td>
+                        <p>
+                            Excalibur's XML Utilities provide simplified wrappers
+                            for XML parsers, transformers and XPath evaluators. It
+                            also provides interfaces and classes useful for
+                            constructing a pipeline of XML components by defining interfaces
+                            for consuming and producing XML in either SAX or DOM formats.
+                        </p>
+                    </td>
+                </tr>
+            </table>
+        </section>
+        <section name="Container building blocks">
+            <p>
+                Please see <a href="containerkit.html">this page</a> for information on
+                subprojects like Excalibur-Logger and Excalibur-Lifecycle, which are primarily
+                used to build containers.
+            </p>
+        </section>
+        <section name="Deprecated components">
+            <p>
+                Please see <a href="deprecation.html">this page</a> for information on
+                older components that have been deprecated.
+            </p>
+        </section>
+    </body>
+</document>

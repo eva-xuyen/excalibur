@@ -1,0 +1,240 @@
+<?xml version="1.0"?>
+
+<!--
+Copyright 2004 The Apache Software Foundation
+Licensed  under the  Apache License,  Version 2.0  (the "License");
+you may not use  this file  except in  compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed  under the  License is distributed on an "AS IS" BASIS,
+WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+implied.
+
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<document>
+    <properties>
+        <author email="leif.AT.tanukisoftware.DOT.com">Leif Mortenson</author>
+        <title>Excalibur Instrument - XML Client - Instrument Manager</title>
+    </properties>
+    <body>
+        <section name="XML Client - Instrument Manager">
+            <p>
+                The Instrument Manager URL is used to obtain information about the
+                Instrument Manager as a whole, including any root Instrumentables.
+                By providing a <b>recurse</b> parameter, it is possible to request
+                the entire instrument tree for the system in a single request.
+            </p>
+        </section>
+        <section name="Request">
+            <p>
+                Request parameters are set as HTTP GET parameters when sending the
+                request to the server.
+            </p>
+            <p>
+                For example, to request the entire Instrument tree in a single request,
+                the following URL can be used:
+            </p>
+            <source><a href="http://localhost:15080/instrument-manager.xml?recurse=true">http://localhost:15080/instrument-manager.xml?recurse=true</a></source>
+            <subsection name="Parameters">
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <th>Data Type</th>
+                        <th>Description</th>
+                        <th>Notes</th>
+                    </tr>
+                    <tr>
+                        <td><b>packed</b></td>
+                        <td>boolean</td>
+                        <td>
+                            Normally XML is returned in a human-readable pretty format
+                            with indenting and line feeds.   While this makes it easy to
+                            work with, it also adds several percent to the size of the
+                            XML returned to the client.  By setting the packed parameter
+                            to "true", all white space is removed from the generated XML. 
+                        </td>
+                        <td>Optional.  Defaults to "false".</td>
+                    </tr>
+                    <tr>
+                        <td><b>recurse</b></td>
+                        <td>boolean</td>
+                        <td>
+                            By default, the Instrument Manager URL will return information
+                            about the Instrument Manager itself along with any top level
+                            Instrumentables.  By setting the recurse parameter to "true",
+                            the generated XML will recurse all the way down through the
+                            Instrument tree returning information about each object.  This
+                            can be quite useful to initialize a client application with
+                            the current state of the Instrument tree.  Once initialized,
+                            it is more efficient to monitor the <b>state-version</b>
+                            attributes and only request information which has changed.
+                        </td>
+                        <td>Optional.  Defaults to "false".</td>
+                    </tr>
+                </table>
+            </subsection>
+        </section>
+        <section name="Response XML">
+            <p>
+                The XML received in the response will be UTF-8 encoded.  The root node
+                will be named <b>instrument-manager</b> and have the following attributes.
+            </p>
+            <p>
+                Each root Instrumentable will be given a <b>instrumentable</b> child
+                element.  If the <b>recurse</b> parameter was specified in the request
+                then each of the Instrumentables will have all of the attributes and
+                child elements described for the
+                <a href="xml-client-instrumentable.html">Instrumentable</a> URL.
+            </p>
+            <subsection name="Attributes">
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <th>Data Type</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td><b>name</b></td>
+                        <td>String</td>
+                        <td>
+                            The name of the Instrument Manager, or the Application of
+                            which the Instrument Manager is a part.  It is specified in the
+                            <a href="configuration.html">Instrument configuration file</a>
+                            and can not be modified from a client.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>description</b></td>
+                        <td>String</td>
+                        <td>
+                            A human readable descripton of the Instrument Manager.  It
+                            is specified in the
+                            <a href="configuration.html">Instrument configuration file</a>
+                            and can not be modified from a client.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>state-version</b></td>
+                        <td>int</td>
+                        <td>
+                            Current State-Version of the Instrument Manager.  The
+                            state version will be incremented whenever there are any
+                            changes to the Instrument Manager or any of its child
+                            elements.  It can be compared with a last known state
+                            version to decide whether or not it is necessary to to
+                            request further details.
+                            <p/>
+                            If the application is running long enough, the
+                            state version will eventially overflow.  To make
+                            sure your application will handle this case use
+                            an equality test when comparing state versions.
+                            Because this is the root of the tree, this would
+                            be the first value to eventually overflow.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>batched-updates</b></td>
+                        <td>boolean</td>
+                        <td>
+                            The batched updates attributes is used to indicate that the
+                            HTTP Connector supports the following batch update URLs:
+                            <ul>
+                                <li><a href="xml-client-create-samples.html">Create Samples</a></li>
+                                <li><a href="xml-client-sample-leases.html">Sample Leases</a></li>
+                            </ul>
+                            This attribute will be set to "true" in all new versions of
+                            the HTTP Connector and can be ignored unless your client
+                            application will be making connections to versions of the HTTP
+                            Connector prior to the version 1.2 release.  If the attribute does
+                            not exist, then it should be assumed to have a value of "false".
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>read-only</b></td>
+                        <td>boolean</td>
+                        <td>
+                            The read-only attribute is used to indicate that the HTTP
+                            Connector is operating in read-only mode.  When operating
+                            in this mode, URLs which can be used to modify the state
+                            of the Instrument tree will not be available.  These include
+                            the following:
+                            <ul>
+                                <li><a href="xml-client-create-sample.html">Create Sample</a></li>
+                                <li><a href="xml-client-create-samples.html">Create Samples</a></li>
+                                <li><a href="xml-client-sample-lease.html">Sample Lease</a></li>
+                                <li><a href="xml-client-sample-leases.html">Sample Leases</a></li>
+                                <li><a href="xml-client-gc.html">Invoke Garbage Collection</a></li>
+                            </ul>
+                            The read-only status of the HTTP Connector is specified in the
+                            <a href="configuration.html">Instrument configuration file</a>.
+                        </td>
+                    </tr>
+                </table>
+            </subsection>
+            <subsection name="Child Elements">
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td><b>instrumentable</b></td>
+                        <td>
+                            Instrumentable elements will exist for each root Instrumentable
+                            that is currently registered with the Instrument Manager.  This
+                            list may increase as the application runs so the <b>state-version</b>
+                            of the parent <b>instrument-manager</b> should be monitored for
+                            changes.
+                            <p/>
+                            If the <b>recurse</b> parameter was set to "true" in the
+                            request, an expanded list of attributes and child
+                            elements will be available.   See the documentation for the
+                            <a href="xml-client-instrumentable.html">Instrumentable</a>
+                            URL for further details.
+                            <p/>
+                            Attributes:
+                            <table>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Data Type</th>
+                                    <th>Description</th>
+                                </tr>
+                                <tr>
+                                    <td><b>name</b></td>
+                                    <td>String</td>
+                                    <td>
+                                        Fully qualified name of the Instrumentable.  This
+                                        name is used to reference the Instrumentable in
+                                        other requests.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><b>state-version</b></td>
+                                    <td>int</td>
+                                    <td>
+                                        Current State-Version of the Instrumentable.  The
+                                        state version will be incremented whenever there
+                                        are any changes to the Instrumentable or any of
+                                        its child elements.  It can be compared with a
+                                        last known state version to decide whether or not
+                                        it is necessary to to request further details.
+                                        <p/>
+                                        If the application is running long enough, the
+                                        state version will eventially overflow.  To make
+                                        sure your application will handle this case use
+                                        an equality test when comparing state versions.
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </subsection>
+        </section>
+    </body>
+</document>

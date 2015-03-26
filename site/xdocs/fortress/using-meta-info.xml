@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+     Copyright 2004 The Apache Software Foundation
+     Licensed  under the  Apache License,  Version 2.0  (the "License");
+     you may not use  this file  except in  compliance with the License.
+     You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed  under the  License is distributed on an "AS IS" BASIS,
+     WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+     implied.
+
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<document>
+
+    <properties>
+        <title>Excalibur Fortress - Using Meta Info</title>
+
+    </properties>
+
+    <body>
+        <section name="What is Meta Information?">
+            <p>
+                Meta Information is information about your components.  The information that
+                Fortress needs to properly manage your components is fairly small.  It needs to
+                know which classes are components, which services that component implements, what
+                its dependencies are, and what type of lifestyle the component was designed for.
+                Using this information, Fortress can determine if there are some circular
+                dependencies as well as manage other aspects of your component.
+            </p>
+            <p>
+                Your container has to find the meta information in some way.  If you are used
+                to the Excalibur Component Manager (ECM), then you supplied the meta information
+                based on a "roles" file and certain marker interfaces that your component
+                implemented.  There are several drawbacks to this approach, some of which include
+                inheritance of conflicting meta information and having to manage your information
+                in separate files.
+            </p>
+            <p>
+                Fortress has adopted a practice that is available in both Phoenix and Merlin to
+                make managing meta information a breeze.  It is the use of JavaDoc tags to mark the
+                meta information right with the source code itself.  This scheme works much better,
+                and unlocks some features to you.  One of them is for Fortress to tell you that you
+                have a circular dependency (some components that require each other to work) at
+                initialization time instead of at run time.
+            </p>
+        </section>
+        <section name="How does the Meta Info Tags Look?">
+            <p>
+                The best way to demonstrate how these tags look and behave is to show some sample
+                code.  Fortress follows the AMTAGS proposal on the WIKI, and also supports a couple
+                extra tags.  Specifically, the set of tags that Fortress supports are
+                "avalon.dependency", "avalon.service", "x-avalon.info", "x-avalon.lifestyle",
+                "avalon.component", "fortress.name", "fortress.handler".  The two Fortress specific
+                tags are recognized, but are not encouraged for routine use.
+            </p>
+            <p>
+                Everything except for the "avalon.dependency" must be specified in the component's
+                class JavaDoc.  Below is a snippet:
+            </p>
+            <source>
+                <![CDATA[
+/**
+ * My component implementation.
+ *
+ * @avalon.component
+ * @avalon.service type="RoleInterface"
+ * @x-avalon.info name="my-component"
+ * @x-avalon.lifestyle type="pooled"
+ */
+public class MyComponent implements RoleInterface
+{
+    // ....
+}
+                ]]>
+            </source>
+            <p>
+                The "avalon.component" is a marker tag, and it is required to mark a class as a
+                component.  You must have one or more "avalon.service" tags (one per interface
+                type).  The value in the "type" attribute must be a resolvable class name.  If the
+                type of "RoleInterface" is in the same package, or in one of the imports, then all
+                is well.  The "x-avalon.info" tag is used to provide a configuration name for the
+                component.  In this case, the configuration name is "my-component".  If you do not
+                supply this tag, Fortress will create one for you based on the class name of the
+                component.  It is best if you supply your own.  The "x-avalon.lifestyle" tag is
+                used to choose how this component is managed.
+            </p>
+            <p>
+                Dependencies are declared in the
+                <code>service()</code> method for the component.
+                The component needs to implement the Serviceable interface.  Fortress knows how
+                to look at the code hierarchy to collect all the dependencies as long as you have
+                all your source code available.  The dependency declarations look like this:
+            </p>
+            <source>
+                <![CDATA[
+/**
+ * Get all the dependencies.
+ *
+ * @avalon.dependency type="OtherService"
+ * @avalon.dependency type="Foo"
+ */
+public void service( ServiceManager manager )
+{
+    // ...
+}
+                ]]>
+            </source>
+            <p>
+                All the "avalon.dependency" entries are collected by the same rules as the
+                "avalon.service" entries.  In other words, the "type" attribute is evaluated
+                based on the same rules as your Java compiler evaluates them.  Fortress will
+                take care of resolving them properly.
+            </p>
+        </section>
+        <section name="Collecting the Meta Information">
+            <p>
+                Fortress provides an ANT task to collect all your meta information and generate
+                the extra files that your JAR files need to have for Fortress to use the meta
+                information at run time.  You include the ANT task in your build.xml file like
+                this:
+            </p>
+            <source>
+                <![CDATA[
+<project>
+  <!-- ... -->
+
+  <taskdef name="collect-metainfo"
+           classname="org.apache.avalon.fortress.tools.ComponentMetaInfoCollector">
+    <classpath refid="tools.class.path"/>
+  </taskdef>
+
+  <target name="compile" depends="jar-tools" description="Compiles the source code">
+    <mkdir dir="${build.classes}"/>
+
+    <!-- Compile all classes excluding the tests. -->
+    <javac srcdir="${java.dir}"
+           destdir="${build.classes}">
+      <classpath>
+        <path refid="tools.class.path"/>
+        <pathelement location="${loader.classes}"/>
+      </classpath>
+      <include name="**/*.java"/>
+    </javac>
+
+    <collect-metainfo destdir="${build.classes}">
+      <fileset dir="${java.dir}"/>
+    </collect-metainfo>
+  </target>
+
+  <!-- ... -->
+</project>
+                ]]>
+            </source>
+            <p>
+                Once you include all the generated files in your JAR for the components, you
+                don't have to do anything more than include the JAR in your classpath for Fortress.
+                Everything else is taken care of.
+            </p>
+        </section>
+        <section name="The x-avalon.lifestyle Tag">
+            <p>
+                The "x-avalon.lifestyle" tag needs a little further explanation.  It can have one
+                of four values in the "type" attribute:
+            </p>
+            <ul>
+                <li>
+                    <strong>singleton</strong> One instance of the component shared with all clients.
+                </li>
+                <li>
+                    <strong>thread</strong> One instance of the component per thread of execution.
+                </li>
+                <li>
+                    <strong>pooled</strong> One instance of the component per request, with instances reused from a pool.
+                </li>
+                <li>
+                    <strong>transient</strong> One instance of the component per request, with instances destroyed on release.
+                </li>
+            </ul>
+        </section>
+    </body>
+</document>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project default="jar:install"  xmlns:maven="jelly:maven" xmlns:j="jelly:core" xmlns:util="jelly:util" xmlns:ant="jelly:ant">
+
+    <!-- ===================================================================== -->
+    <!-- Generate fortress meta descriptors                                    -->
+    <!-- ===================================================================== -->
+
+    <postGoal name="java:compile">
+        <attainGoal name="provide-fortress-meta"/>
+    </postGoal>
+
+    <goal
+        name="provide-fortress-meta"
+        description="Add fortress meta descriptors to the compiled classes">
+
+        <taskdef name="fortress-collect-meta"
+            classname="org.apache.avalon.fortress.tools.ComponentMetaInfoCollector">
+            <classpath>
+                <path refid="maven.dependency.classpath"/>
+                <pathelement path="${java.build.dir}"/>
+            </classpath>
+        </taskdef>
+
+        <fortress-collect-meta destdir="${maven.build.dir}/classes">
+            <fileset dir="${maven.src.dir}/java"/>
+        </fortress-collect-meta>
+    </goal>
+    
+    <postGoal name="jar:jar">
+        <checksum file="${maven.build.dir}/${maven.final.name}.jar" fileext=".md5" />
+        <j:if test="${maven_gpg_exe != null}">
+            <ant:exec executable="${maven_gpg_exe}">
+                <ant:arg value="-a"/>
+                <ant:arg value="-b"/>
+                <ant:arg value="${maven.build.dir}/${maven.final.name}.jar"/>
+            </ant:exec>
+        </j:if>
+    </postGoal>
+    
+    <postGoal name="dist:prepare-bin-filesystem">
+        <ant:copy toDir="${maven.dist.bin.assembly.dir}">
+            <fileset dir="${avalon.buildsystem}/site">
+                <include name="LICENSE*"/>
+                <include name="NOTICE*"/>
+            </fileset>
+        </ant:copy>
+    </postGoal>
+    
+    <postGoal name="dist:prepare-src-filesystem">
+        <ant:copy toDir="${maven.dist.src.assembly.dir}">
+            <fileset dir="${avalon.buildsystem}/site">
+                <include name="LICENSE*"/>
+                <include name="NOTICE*"/>
+            </fileset>
+        </ant:copy>
+    </postGoal>
+    
+    <postGoal name="dist:build-src">
+        <checksum file="${maven.build.dir}/distributions/${maven.final.name}.tar.gz" fileext=".md5" />
+        <j:if test="${maven_gpg_exe != null}">
+            <ant:exec executable="${maven_gpg_exe}">
+                <ant:arg value="-a"/>
+                <ant:arg value="-b"/>
+                <ant:arg value="${maven.build.dir}/distributions/${maven.final.name}.tar.gz"/>
+            </ant:exec>
+        </j:if>
+        <checksum file="${maven.build.dir}/distributions/${maven.final.name}.zip" fileext=".md5" />
+        <j:if test="${maven_gpg_exe != null}">
+            <ant:exec executable="${maven_gpg_exe}">
+                <ant:arg value="-a"/>
+                <ant:arg value="-b"/>
+                <ant:arg value="${maven.build.dir}/distributions/${maven.final.name}.zip"/>
+            </ant:exec>
+        </j:if>
+        <checksum file="${maven.build.dir}/distributions/${maven.final.name}-src.tar.gz" fileext=".md5" />
+        <j:if test="${maven_gpg_exe != null}">
+            <ant:exec executable="${maven_gpg_exe}">
+                <ant:arg value="-a"/>
+                <ant:arg value="-b"/>
+                <ant:arg value="${maven.build.dir}/distributions/${maven.final.name}-src.tar.gz"/>
+            </ant:exec>
+        </j:if>
+        <checksum file="${maven.build.dir}/distributions/${maven.final.name}-src.zip" fileext=".md5" />
+        <j:if test="${maven_gpg_exe != null}">
+            <ant:exec executable="${maven_gpg_exe}">
+                <ant:arg value="-a"/>
+                <ant:arg value="-b"/>
+                <ant:arg value="${maven.build.dir}/distributions/${maven.final.name}-src.zip"/>
+            </ant:exec>
+        </j:if>
+    </postGoal>
+    
+</project>

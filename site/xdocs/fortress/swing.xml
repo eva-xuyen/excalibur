@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+     Copyright 2004 The Apache Software Foundation
+     Licensed  under the  Apache License,  Version 2.0  (the "License");
+     you may not use  this file  except in  compliance with the License.
+     You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed  under the  License is distributed on an "AS IS" BASIS,
+     WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+     implied.
+
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<document>
+
+    <properties>
+        <title>Fortress Getting Started</title>
+
+    </properties>
+
+    <body>
+        <section name="Swing Based Applications">
+            <p>
+        Swing applications are those applications that have a lovely graphical
+        interface for you to interact with.  When you are done with the
+        application, you close it and are done with it.  Some examples of a
+        Swing based application include Apache JMeter, JEdit, and Avalon
+        Instrument Client.
+            </p>
+            <p>
+        Swing applications are very similar to CLI based applications in the
+        way they are set up and torn down.  What differs is that the GUI runs
+        in a different set of threads, so the main routine has to wait until
+        the GUI is done.  There are two strategies to do that.  The first is
+        to extend the DefaultContainer and use that to enclose your Swing
+        based JFrame and implement the Runnable interface.  The second is to
+        manage the Swing GUI separately, but give your container or its
+        ServiceManager to the Swing code to interact with.
+            </p>
+            <subsection name="Extending DefaultContainer">
+                <p>
+          If we extend the DefaultContainer, our main method will look pretty
+          much the same:
+                </p>
+                <source>
+                    <![CDATA[
+public int main(String [] args)
+{
+    // You would have to implement the referenced method here...
+    FortressConfig config = configWithArgs( args );
+    ContainerManager cm = new DefaultContainerManager( config.getContext() );
+    ContainerUtil.initialize( cm );
+
+    // Get the root container and use it
+    ((MySwingContainer) cm.getContainer()).run();
+
+    // Clean up after ourselves
+    ContainerUtil.dispose( cm );
+}
+                  ]]>
+                </source>
+                <p>
+          The extensions to DefaultContainer that you do are different for
+          each application.  However, they will have some common elements.
+          Here is an excerpt from both the Swing example and the Viewer
+          example included in CVS.
+                </p>
+                <source>
+                    <![CDATA[
+public class MySwingContainer extends DefaultContainer implements Runnable
+{
+     JFrame m_frame = new JFrame();
+
+     // skipping non relevant parts
+
+     public void run()
+     {
+         while ( m_frame.isVisible() )
+         {
+             try
+             {
+                 Thread.sleep(1000);
+             }
+             catch (InterruptedException ie)
+             {
+                 // you can either ignore the exception or you can
+                 // close the application.  Remove the next line
+                 // if you don't want to end the application:
+
+                 m_frame.setVisible( false );
+             }
+         }
+     }
+}
+                  ]]>
+                </source>
+            </subsection>
+        </section>
+    </body>
+</document>

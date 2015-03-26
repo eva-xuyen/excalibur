@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+     Copyright 2004 The Apache Software Foundation
+     Licensed  under the  Apache License,  Version 2.0  (the "License");
+     you may not use  this file  except in  compliance with the License.
+     You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed  under the  License is distributed on an "AS IS" BASIS,
+     WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+     implied.
+
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<document>
+
+    <properties>
+        <title>Fortress - Features</title>
+
+    </properties>
+
+    <body>
+        <section name="Features">
+            <p>
+        Fortress provides a framework for you to easily create your
+        own application specific containers.  We strive to make it
+        easy for you to do without sacrificing any power.  Fortress
+        allows you to focus on the core issues in your system, without
+        worrying about the component management getting in your way.
+            </p>
+            <subsection name="Asynchronous Component Management">
+                <p>
+          Most component management functions don't take that long to
+          perform, but the time they do take can directly affect how
+          many requests your system can process at the same time.  For
+          that reason, we use the CommandManager from the Event package
+          to manage our components.  By moving all the management
+          functions to a limited number of background threads, we are
+          able to save you time in the critical processing path.
+                </p>
+                <p>
+          The CommandManager can be extended to your components as well.
+          That way, your components can perform management tasks in the
+          background as well.  Fortress will likely be your choice of
+          containers if you have strict performance constraints.
+                </p>
+            </subsection>
+            <subsection name="Extensible Lifecycle">
+                <p>
+          Fortress has support for an experimental feature that allows
+          you to extend your component lifecycle in an application
+          specific manner.  If it proves to be a truly useful feature,
+          other Avalon containers will adopt it.
+                </p>
+            </subsection>
+            <subsection name="Instrumentation">
+                <p>
+          Fortress is integrated with the Instrumentation package so
+          you can get a graphical view of the health of your system
+          at runtime.  We integrate sampling points for each of the
+          component handlers so that you can see how many component
+          instances each handler is responsible for.  Using that
+          information, you can tune your container more intelligently.
+                </p>
+            </subsection>
+            <subsection name="Attribute Enabled Meta Information">
+                <p>
+          Instead of using a "roles" file to keep track of the component
+          configuration name, and what kind of lifestyle the component
+          has, Fortress provides some tools so that you can keep track
+          of that information with your java source code.  You have to
+          use the ANT tasks that are defined in the Fortress tools jar.
+          It collects all the attributes defined as JavaDoc doc tags
+          and generates the meta info files which are then read at
+          runtime.  It makes it a whole lot easier to manage critical
+          aspects like lifestyle and which classes represent components.
+                    <a href="using-meta-info.html">You can find out more about it
+          here.</a>
+                </p>
+            </subsection>
+        </section>
+    </body>
+</document>
+
+
+
+

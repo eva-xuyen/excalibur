@@ -1,0 +1,193 @@
+<!--
+     Copyright 2004 The Apache Software Foundation
+     Licensed  under the  Apache License,  Version 2.0  (the "License");
+     you may not use  this file  except in  compliance with the License.
+     You may obtain a copy of the License at
+     
+     http://www.apache.org/licenses/LICENSE-2.0
+     
+     Unless required by applicable law or agreed to in writing, software
+     distributed  under the  License is distributed on an "AS IS" BASIS,
+     WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+     implied.
+     
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<document>
+    <properties>
+        <title>Fortress Lifecycle Extensions</title>
+    </properties>
+    <body>
+        <section name="Example">
+
+            <p>
+    Let's look at a simple example. The following is also available as a working sample
+    in Fortress' examples directory.
+            </p>
+
+            <p>
+    Our example implements a Lifecycle extension for passing a
+                <code>SecurityManager</code> to
+    Components. We'll call it the
+                <code>SecurityManageable</code> interface.
+            </p>
+
+            <section name="Define the component extension interface">
+
+                <p>
+    First we define the new Component extension interface.
+                </p>
+
+                <source>
+   /**
+    * Simple custom lifecycle extension interface for supplying a component
+    * with a security manager.
+    */
+   public interface SecurityManageable
+   {
+       /**
+        * Pass a SecurityManager object to the component
+        *
+        * @param manager a SecurityManager value
+        */
+       void secure( SecurityManager manager )
+           throws SecurityException;
+   }
+                </source>
+
+            </section>
+
+            <section name="Create the lifecycle extensions class">
+
+                <p>
+    Next we define the actual extension implementation which invokes the
+                    <code>secure()</code>
+    method. We extend from
+                    <code>AbstractAccessor</code> since we only want
+                    <code>secure()</code> to be invoked upon each access (ie. lookup()) to the component, and
+    don't need to implement the other 3 LifecycleExtension methods (create, release, and
+    destroy).
+                </p>
+
+                <source>
+   /**
+    * Some custom extensions for this container's components.
+    */
+   public class Extensions
+       extends AbstractAccessor
+   {
+       /**
+        * Access, called when the given component is being
+        * accessed (ie. via lookup() or select()).
+        *
+        * @param component a Component instance
+        * @param context a Context instance
+        * @exception Exception if an error occurs
+        */
+       public void access( Object component, Context context )
+           throws Exception
+       {
+           if ( component instanceof SecurityManageable )
+           {
+               // pass in a simple security manager, a real system might want to pass
+               // in specialized/custom security managers
+               ( ( SecurityManageable ) component ).secure( new SecurityManager() );
+           }
+       }
+   }
+                </source>
+
+                <note>An extension class may run components through any given number of
+    extensions, and are not limited to just one.</note>
+
+            </section>
+
+            <section name="Register the lifecycle extensions class">
+
+                <p>
+    We then inform our container about the extension. This could be done in several different
+    ways, for simplicity we'll extend
+                    <code>initialize()</code> and add it to the
+                    <code>LifecycleExtensionManager</code> there.
+                </p>
+
+                <p>
+    (an alternative might be to initialize a LifecycleExtensionManager before creating the
+    container and pass it in via the
+                    <code>FortressConfig.setExtensionManager()</code> method,
+    or to create a LifecycleExtensionManager subclass that includes the extension preset)
+                </p>
+
+                <source>
+   /**
+    * Simple container that includes custom lifecycle extensions.
+    */
+   public final class ExtendedContainer
+       extends DefaultContainer
+   {
+       public void initialize()
+           throws Exception
+       {
+           super.initialize();
+
+           m_extManager.addExtension( new Extensions() );
+       }
+   }
+                </source>
+
+            </section>
+
+            <section name="Use the new component interface">
+
+                <p>
+    To use the new SecurityManageable lifecycle extension, we simply implement
+    SecurityManageable just as we do with any other Avalon lifecycle interfaces
+    (assuming a predefined Component interface
+                    <code>ExtendedComponent</code>).
+                </p>
+
+                <source>
+   /**
+    * ExtendedComponentImpl, demonstrating the use of a custom
+    * lifecycle stage SecurityManageable. This code does
+    * a simple access check for several files on the file system and logs
+    * the results accordingly.
+    */
+   public class ExtendedComponentImpl
+       extends AbstractLogEnabled
+       implements ExtendedComponent, SecurityManageable
+   {
+       /**
+        * Pass a SecurityManager object to the component
+        *
+        * @param manager a SecurityManager value
+        */
+       public void secure( final SecurityManager manager )
+           throws SecurityException
+       {
+           getLogger().info( "Received SecurityManager instance: " + manager );
+
+           final String[] files = { "/tmp", "/vmlinuz", "/usr/lib/libc.a" };
+
+           for ( int i = 0; i &lt; files.length; ++i )
+           {
+               try
+               {
+                   manager.checkRead( files[ i ] );
+                   getLogger().info( "Thread can read " + files[ i ] );
+               }
+               catch ( SecurityException e )
+               {
+                   getLogger().info( "Thread can not read " + files[ i ] );
+               }
+           }
+       }
+   }
+                </source>
+            </section>
+
+        </section>
+
+    </body>
+</document>

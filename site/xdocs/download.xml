@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
+ Copyright 2004 Apache Software Foundation
+ Licensed  under the  Apache License,  Version 2.0  (the "License");
+ you may not use  this file  except in  compliance with the License.
+ You may obtain a copy of the License at 
+ 
+   http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed  under the  License is distributed on an "AS IS" BASIS,
+ WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+ implied.
+ 
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<document>
+  <properties>
+    <author email="dev@excalibur.apache.org">Excalibur Documentation Team</author>
+    <title>Apache Excalibur: Products</title>
+  </properties> 
+
+  <body>
+    <section name="Excalibur Download Site">
+      <p>
+        Use the links below to download binary or source distributions of
+        Excalibur from one of our mirrors.  It's a good idea to
+        verify the integrity 
+        of the downloaded files using signatures downloaded from our
+        main distribution directory (see below).
+      </p>
+
+      <p>
+        Excalibur is distributed as <code>zip</code> and <code>tar.gz</code>
+        archives - the contents are the same. Please note that the <code>tar.gz</code>
+        archives contain file names longer than 100 characters and have been
+        created using GNU tar extensions.  They must be untarred with a GNU
+        compatible version of <code>tar</code>.
+      </p>
+
+      <p>
+        If you do not see the file you need in the links below, please
+        see the <a href="http://www.apache.org/dist/excalibur/">master
+        distribution directory</a> or, preferably, its
+        <a href="[preferred]/excalibur/">mirror</a>.
+      </p>
+
+      <subsection name="Mirror">
+        <p>
+          You are currently using the <strong>[preferred]</strong>.
+          If you encounter a problem with this mirror, please select another
+          mirror.  If all mirrors are failing, there are <em>backup</em>
+          mirrors (at the end of the mirrors list) that should be available.
+        </p>
+      
+        <form action="[location]" method="get" id="SelectMirror">
+<p>Other mirrors: </p><select name="Preferred">
+[if-any http]
+  [for http]<option value="[http]">[http]</option>[end]
+[end]
+[if-any ftp]
+  [for ftp]<option value="[ftp]">[ftp]</option>[end]
+[end]
+[if-any backup]
+  [for backup]<option value="[backup]">[backup] (backup)</option>[end]
+[end]
+          </select>
+          <input type="submit" value="Change" />
+        </form>
+
+      </subsection>
+
+      <subsection name="License" >
+        <p>
+          All avalon products are distributed under the terms of The Apache 
+          Software License (version 2.0). See our 
+          <a href="../license.html">License</a> page, or the LICENSE.txt 
+          files included in each distribution.
+        </p>
+      </subsection>
+      
+      <subsection name="Jar Repository">
+        <p>
+          All Excalibur jars can also be found in the 
+          <a href="http://www.ibiblio.org/maven">iBiblio.org</a>
+          repository for use with <a href="http://maven.apache.org">Maven</a>
+          and other repository-aware applications.
+        </p>
+      </subsection>
+
+      </section>
+      <section name="Product Downloads" >
+     
+      <!-- template subsection:  we should divide the long list of components into subsections
+      <subsection name="Fortress" >
+        <table >
+          <tr>
+            <th>Product</th>
+            <th>Binary</th>
+            <th>Source</th>
+            <th>Jars</th>
+          </tr>
+      <tr>
+            <td><a href="[preferred]/excalibur/XXX"></a></td>
+        <td><a href="[preferred]/excalibur/XXX/binaries">binaries</a></td>
+        <td><a href="[preferred]/excalibur/XXX/source">source</a></td>
+        <td><a href="[preferred]/excalibur/XXX/jars">jars</a></td>
+      </tr>
+        </table>
+      </subsection>
+ 
+      -->
+
+        <table>
+          <tr>
+            <th>Product</th>
+            <th>Binary</th>
+            <th>Source</th>
+            <th>Jars</th>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-component-examples">excalibur-component-examples</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-component-examples/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-component-examples/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-component-examples/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-component-tests">excalibur-component-tests</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-component-tests/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-component-tests/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-component-tests/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-component">excalibur-component</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-component/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-component/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-component/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-datasource">excalibur-datasource</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-datasource/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-datasource/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-datasource/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-docs">excalibur-docs</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-docs/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-docs/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-docs/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-event-api">excalibur-event-api</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-event-api/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-event-api/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-event-api/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-event-impl">excalibur-event-impl</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-event-impl/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-event-impl/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-event-impl/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-bean">excalibur-fortress-bean</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-bean/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-bean/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-bean/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-cli">excalibur-fortress-cli</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-cli/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-cli/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-cli/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-container-api">excalibur-fortress-container-api</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-container-api/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-container-api/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-container-api/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-container-impl">excalibur-fortress-container-impl</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-container-impl/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-container-impl/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-container-impl/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-container-test">excalibur-fortress-container-test</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-container-test/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-container-test/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-container-test/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-examples">excalibur-fortress-examples</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-examples/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-examples/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-examples/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-meta">excalibur-fortress-meta</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-meta/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-meta/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-meta/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-migration">excalibur-fortress-migration</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-migration/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-migration/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-migration/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-platform">excalibur-fortress-platform</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-platform/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-platform/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-platform/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-servlet">excalibur-fortress-servlet</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-servlet/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-servlet/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-fortress-servlet/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-instrument-api">excalibur-instrument-api</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-instrument-api/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-instrument-api/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-instrument-api/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-instrument-client">excalibur-instrument-client</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-instrument-client/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-instrument-client/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-instrument-client/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-instrument-mgr-http">excalibur-instrument-mgr-http</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-instrument-mgr-http/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-instrument-mgr-http/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-instrument-mgr-http/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-instrument-mgr-api">excalibur-instrument-mgr-api</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-instrument-mgr-api/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-instrument-mgr-api/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-instrument-mgr-api/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-instrument-mgr-impl">excalibur-instrument-mgr-impl</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-instrument-mgr-impl/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-instrument-mgr-impl/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-instrument-mgr-impl/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-javadocs">excalibur-javadocs</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-javadocs/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-javadocs/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-javadocs/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-lifecycle-api">excalibur-lifecycle-api</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-lifecycle-api/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-lifecycle-api/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-lifecycle-api/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-lifecycle-impl">excalibur-lifecycle-impl</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-lifecycle-impl/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-lifecycle-impl/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-lifecycle-impl/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-lifecycle">excalibur-lifecycle</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-lifecycle/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-lifecycle/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-lifecycle/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-logger">excalibur-logger</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-logger/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-logger/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-logger/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-monitor">excalibur-monitor</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-monitor/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-monitor/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-monitor/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-pool-api">excalibur-pool-api</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-pool-api/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-pool-api/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-pool-api/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-pool-impl">excalibur-pool-impl</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-pool-impl/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-pool-impl/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-pool-impl/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-pool-instrumented">excalibur-pool-instrumented</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-pool-instrumented/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-pool-instrumented/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-pool-instrumented/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-pool">excalibur-pool</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-pool/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-pool/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-pool/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-sourceresolve">excalibur-sourceresolve</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-sourceresolve/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-sourceresolve/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-sourceresolve/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-store">excalibur-store</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-store/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-store/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-store/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-testcase">excalibur-testcase</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-testcase/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-testcase/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-testcase/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-thread-api">excalibur-thread-api</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-thread-api/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-thread-api/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-thread-api/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-thread-impl">excalibur-thread-impl</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-thread-impl/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-thread-impl/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-thread-impl/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-thread-instrumented">excalibur-thread-instrumented</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-thread-instrumented/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-thread-instrumented/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-thread-instrumented/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-thread">excalibur-thread</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-thread/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-thread/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-thread/jars">jars</a></td>
+          </tr>
+          <tr>
+            <td><a href="[preferred]/excalibur/excalibur-xmlutil">excalibur-xmlutil</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-xmlutil/binaries">binaries</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-xmlutil/source">source</a></td>
+            <td><a href="[preferred]/excalibur/excalibur-xmlutil/jars">jars</a></td>
+          </tr>          
+    </table>
+
+      <subsection name="Verify Releases" >
+        <p>
+          It is essential that you verify the integrity of the downloaded
+          files using the PGP or MD5 signatures.
+        </p>
+        <p>
+          The PGP signatures can be verified using PGP or GPG.  First
+          download the <a href="http://www.apache.org/dist/excalibur/KEYS">KEYS</a>
+          as well as the <code>asc</code> signature file for the particular
+          distribution.  Make sure you get these files from the
+          <a href="http://www.apache.org/dist/excalibur/">main distribution
+          directory</a>, rather than from a mirror. Then verify the signatures
+          using
+        </p>
+        <source>
+% pgpk -a KEYS
+% pgpv name-of-distributed-file.tar.gz.asc
+</source>
+        <p>
+          <strong><em>or</em></strong>
+        </p>
+        <source>
+% pgp -ka KEYS
+% pgp name-of-distributed-file.tar.gz.asc
+</source>
+        <p>
+          <strong><em>or</em></strong>
+        </p>
+        <source>
+% gpg --import KEYS<br />
+% gpg --verify name-of-distributed-file.tar.gz.asc
+</source>
+      </subsection>
+    </section>
+  </body>
+</document>
+ 

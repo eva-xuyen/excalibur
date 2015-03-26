@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright 2003-2004 The Apache Software Foundation
+Licensed  under the  Apache License,  Version 2.0  (the "License");
+you may not use  this file  except in  compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed  under the  License is distributed on an "AS IS" BASIS,
+WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+implied.
+
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<project>
+    <extend>${basedir}/../project-common.xml</extend>
+
+    <name>Excalibur Fortress Examples</name>
+    <id>excalibur-fortress-examples</id>
+    
+    <shortDescription>Excalibur Fortress Examples component</shortDescription>
+    <description>
+     Provides some simple examples showing basic Excalibur Fortress
+     usage.
+    </description>
+
+    <shortDescription>Apache Server Framework</shortDescription>
+    <description>
+        The Avalon project is an effort to create, design, develop and
+        maintain a common framework and set of components for
+        applications written using the Java language.
+    </description>
+
+    <dependencies>
+        <dependency>
+            <id>servletapi</id>
+            <version>2.3</version>
+        </dependency>
+
+        <!-- dependencies for container -->
+        <dependency>
+          <groupId>avalon-framework</groupId>
+          <artifactId>avalon-framework-api</artifactId>
+          <version>4.1.5</version>
+        </dependency>
+        <dependency>
+          <groupId>avalon-framework</groupId>
+          <artifactId>avalon-framework-impl</artifactId>
+          <version>4.1.5</version>
+        </dependency>
+        <dependency>
+            <groupId>avalon-logkit</groupId>
+            <artifactId>avalon-logkit</artifactId>
+            <version>2.0</version>
+        </dependency>
+        <dependency>
+            <id>commons-collections</id>
+            <version>2.1</version>
+        </dependency>
+        <dependency>
+            <id>concurrent</id>
+            <version>1.3.1</version>
+        </dependency>
+
+        <!-- fortress dependencies -->
+        <dependency>
+            <groupId>excalibur-fortress</groupId>
+            <artifactId>excalibur-fortress-container-api</artifactId>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>excalibur-fortress</groupId>
+            <artifactId>excalibur-fortress-container-impl</artifactId>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>excalibur-fortress</groupId>
+            <artifactId>excalibur-fortress-meta</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>excalibur-instrument</groupId>
+            <artifactId>excalibur-instrument-api</artifactId>
+            <version>1.2-dev</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>excalibur-lifecycle</groupId>
+            <artifactId>excalibur-lifecycle-api</artifactId>
+            <version>1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>excalibur-lifecycle</groupId>
+            <artifactId>excalibur-lifecycle-impl</artifactId>
+            <version>1.1</version>
+        </dependency>
+        
+        <!-- dependencies for tools -->
+        <dependency>
+            <id>qdox</id>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
+            <id>ant</id>
+            <version>1.5.1</version>
+        </dependency>
+    </dependencies>
+
+</project>

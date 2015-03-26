@@ -1,0 +1,312 @@
+<!--
+     Copyright 2004 The Apache Software Foundation
+     Licensed  under the  Apache License,  Version 2.0  (the "License");
+     you may not use  this file  except in  compliance with the License.
+     You may obtain a copy of the License at
+     
+     http://www.apache.org/licenses/LICENSE-2.0
+     
+     Unless required by applicable law or agreed to in writing, software
+     distributed  under the  License is distributed on an "AS IS" BASIS,
+     WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+     implied.
+     
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<document>
+    <properties>
+        <title>Lifecycle Extensions</title>
+    </properties>
+    <body>
+        <section name="What are lifecycle extensions ?">
+            <p>
+    Lifecycle extensions are additional stages a component can traverse through during
+    it's lifetime. Lifecycle extensions allow a container to provide extra functionality
+    to components in addition to the standard stages defined by Avalon Framework.
+            </p>
+
+            <p>
+    Avalon Framework defines a set of standard interfaces often termed as Lifecycle
+    stages that can be used by a container to determine the components requirements
+    during deployment and subsequent decommissioning.
+            </p>
+
+            <p>
+    These interfaces allows the developer to separate the various concerns involved when
+    writing a component. Often termed SoC and IoC (Separation of Concerns and Inversion of
+    Control), these concepts represent one of the primary advantages of using Avalon.
+            </p>
+
+            <p>
+    Sometimes it's useful to extend this development paradigm from the framework level
+    into the application domain, to create customized lifecycle extensions that are called
+    upon in addition to the standard set defined by the Avalon Framework.
+            </p>
+
+            <p>
+    Such custom lifecycle stages can further enable domain specific logic across many,
+    perhaps even unrelated components, can reduce code duplication, and allows the developer
+    to reuse the same development and thinking paradigm as the standard lifecycle stages.
+            </p>
+
+            <p>
+    For example, you might want to pass a specialized SecurityManager to some of your
+    components before they are initialized, or have their internal state persistently cached
+    during system shutdown and restored at during startup. You might want to pass user
+    dependent decryption keys to your component, or give components the opportunity to
+    recycle themselves before being disposed or returned to a pooled component handler.
+            </p>
+
+            <p>
+    The possibilities and number of extensions are only limited by the requirements of your
+    particular application domain.
+            </p>
+
+            <p>
+    This document describes how to add new lifecycle extensions using
+                <strong>Fortress</strong>
+    and
+                <strong>Merlin</strong> containers.
+    This document assumes a knowledge of what an Avalon lifecycle is, and a basic understanding
+    of the standard lifecycle interfaces Avalon Framework defines. References in this document to
+    Service and ServiceManager can also be freely interpreted as Component and ComponentManager
+    by the reader.
+            </p>
+
+            <note>As at the time of writing, Fortress and Merlin is the only Avalon container that
+    supports lifecycle extensions, which means components that use this feature will not work
+    with the other Avalon containers (ExcaliburComponentManager, Phoenix, Tweety, etc)</note>
+
+            <p>
+    Support for lifecycle extensions in the other Avalon containers is technically possible but
+    has not yet been discussed. Please check with the Avalon developer mailing list if you use
+    one of these containers and would like to use lifecycle extensions.
+            </p>
+
+        </section>
+
+        <section name="How do I extend a Component's lifecycle ?">
+            <p>
+    Extending a Component's lifecycle is straightforward. An overview of the process
+    follows:
+            </p>
+
+            <ol>
+                <li>Define the new component interface
+
+                    <br/>
+                    <br/>
+      Create the new interface defining the operations that should be called upon components
+      that implement this interface. Using the previously mentioned examples, this would be
+      your
+                    <code>SecurityManageable</code>,
+                    <code>Cacheable</code>,
+                    <code>Decryptable</code>,
+                    <code>Recycleable</code> interfaces.
+                </li>
+
+                <li>Define an extension object that calls upon the methods defined in the new interface,
+         during one or more of the pre-defined phases of component's lifecycle
+
+                    <br/>
+                    <br/>
+      Create a class that implements the
+                    <code>Creator</code> and/or
+                    <code>Accessor</code>
+      interfaces and implemets the interaction with target components supplied under the
+      create, destroy, access and relase operations.
+                </li>
+
+                <li>Register your extension object
+
+                    <br/>
+                    <br/>
+       This depends on the container you are using.  In
+       Merlin you need to include the &lt;extensions&gt; tag in the component .xinfo file and
+       Merlin will automatically recognize it.  In Fortress you register the extension object
+       with a
+                    <code>LifecycleExtensionManager</code>
+                </li>
+
+                <li>Implement the new component interface on your component
+                    <br/>
+                    <br/>
+        
+      Add the new
+                    <code>implements</code> clause to your Component, or Component implementation,
+      and write any methods defined in the implemented interface.
+                    <br/>
+                    <br/>
+
+      Proceed as normal. Checking for extensions is done implicitly within both Fortress and
+      Merlin. Once lifecycle extensions are registered they will be activated during the 4
+      phases defined later in this document.
+                </li>
+            </ol>
+        </section>
+
+        <section name="When can a Component's lifecycle be extended ?">
+            <p>
+    The life of any component can be broken down to the following phases:
+            </p>
+
+            <ol>
+                <li>Creation
+
+                    <br/>
+                    <br/>
+      When the component is instantiated.
+                </li>
+
+                <li>Access
+
+                    <br/>
+                    <br/>
+      When the component is accessed via a ServiceManager/Selector
+      (
+                    <code>lookup()/select()</code>).
+                </li>
+
+                <li>Release
+
+                    <br/>
+                    <br/>
+      When the component is released via a ServiceManager/Selector (
+                    <code>release()</code>).
+                </li>
+
+                <li>Destruction
+
+                    <br/>
+                    <br/>
+      When the component is decommissioned, ready for garbage collection.
+
+                </li>
+
+            </ol>
+
+            <note>A component will go through it's Creation and Destruction phase only once. Since
+    extension classes can implement different handling strategies (Poolable, ThreadSafe,
+    etc), the access and release phases of a component can be applied multiple times.</note>
+
+            <p>
+    Lifecycle extensions can be added to any of the above defined phases. This allows
+    you to control the interception point your particular extension will be applied under.
+            </p>
+
+            <p>
+    For example, thread or user dependent extensions would be added at the access and release
+    levels (ie. when the component is retrieved and returned to the ServiceManager) as they
+    depend on runtime data not available until they are actually used.
+            </p>
+
+            <p>
+    More static, or global extensions would be added at the creation or destruction level, since
+    they do not depend on any external data that change during runtime, nor are they particular
+    to any one context of use.
+            </p>
+
+        </section>
+
+        <section name="Lifestyle Extension Interfaces">
+
+            <p>
+      A container manages extensions using an extension handler.  Handlers may implement
+      the
+                <code>Creator</code> and/or
+                <code>Accessor</code> interfaces.  A creator extension
+      will be activated during the create and destroy stages of a component lifecycle.  A
+      accessor extension will be activated during the access and release stages.
+            </p>
+
+            <section name="The Creator Interface">
+
+                <p>The
+                    <code>Creator</code> interface describes the create and destroy
+stages that occur between a component and a container
+during service management.  Lifecycle extensions supporting create
+and destroy stages must implement this interface.
+                </p>
+
+                <source>
+ package org.apache.avalon.lifecycle;
+
+ import org.apache.avalon.framework.context.Context;
+
+ public interface Creator
+ {
+    /**
+     * Create stage handler.
+     *
+     * @param object the object that is being created
+     * @param context the context instance required by the create handler
+     *    implementation
+     * @exception Exception if an error occurs
+     */
+    void create( Object object, Context context )
+        throws Exception;
+
+    /**
+     * Destroy stage handler.
+     *
+     * @param object the object that is being destroyed
+     * @param context the context instance required by the handler
+     *    implementation
+     */
+    void destroy( Object object, Context context );
+
+ }
+                </source>
+            </section>
+
+            <section name="Accessor Interface">
+                <p>
+The
+                    <code>Accessor</code> interface describes the access and release
+stages that occur between a service or component manager and a container
+during service deployment.  Lifecycle extensions supporting access
+and release stages must implement this interface.
+                </p>
+                <source>
+ package org.apache.avalon.lifecycle;
+
+ import org.apache.avalon.framework.context.Context;
+
+ public interface Accessor
+ {
+    /**
+     * Access stage handler.
+     *
+     * @param object the object that is being accessed
+     * @param context the context instance required by the access handler
+     *    implementation
+     * @exception Exception if an error occurs
+     */
+    void access( Object object, Context context )
+        throws Exception;
+
+    /**
+     * Release stage handler.
+     *
+     * @param object the object that is being released
+     * @param context the context instance required by the release handler
+     *    implementation
+     */
+    void release( Object object, Context context );
+
+ }
+                </source>
+            </section>
+        </section>
+
+        <section name="Need more information ?">
+            <p>
+    If you have any particular questions, comments, etc, please send an email to the Avalon
+    developer mailing
+                <a href="mailto:dev@avalon.apache.org">list</a>.
+            </p>
+        </section>
+
+    </body>
+</document>

@@ -1,0 +1,56 @@
+<project default="dev" xmlns:maven="jelly:maven" xmlns:j="jelly:core" xmlns:util="jelly:util"
+        xmlns:deploy="deploy">
+
+    <property file="${basedir}/../project.properties"/>
+    <property file="${basedir}/project.properties"/>
+
+    <goal name="dev"
+        prereqs="jar"
+        description="Creates a dev directory containing a build for development testing.">
+        
+        <mkdir dir="${basedir}/dev"/>
+
+        <!-- bin directory -->
+        <mkdir dir="${basedir}/dev/bin"/>
+        <copy todir="${basedir}/dev/bin">
+            <fileset dir="${maven.src.dir}/bin">
+                <include name="*"/>
+            </fileset>
+        </copy>
+        
+        <!-- lib directory -->
+        <mkdir dir="${basedir}/dev/lib"/>
+        <deploy:copy-deps todir="${basedir}/dev/lib"/>
+        <copy todir="${basedir}/dev/lib">
+          <fileset dir="${maven.build.dir}">
+            <include name="${maven.final.name}.jar"/>
+          </fileset>
+        </copy>
+        
+        <!-- conf directory -->
+        <mkdir dir="${basedir}/dev/conf"/>
+    </goal>
+    
+    <postGoal name="dist:prepare-bin-filesystem">
+        <mkdir dir="${maven.dist.bin.assembly.dir}/bin"/>
+
+        <copy todir="${maven.dist.bin.assembly.dir}/bin">
+            <fileset dir="${maven.src.dir}/bin">
+                <include name="*"/>
+            </fileset>
+        </copy>
+        
+        <mkdir dir="${maven.dist.bin.assembly.dir}/lib"/>
+
+        <deploy:copy-deps todir="${maven.dist.bin.assembly.dir}/lib"/>
+        
+        <!-- The dist:prepare-bin-filesystem goal puts the client jar in the
+            root directory, but we want it in the lib directory. -->
+        <copy todir="${maven.dist.bin.assembly.dir}/lib">
+          <fileset dir="${maven.build.dir}">
+            <include name="${maven.final.name}.jar"/>
+          </fileset>
+        </copy>
+        <delete file="${maven.dist.bin.assembly.dir}/${maven.final.name}.jar"/>
+    </postGoal>
+</project>

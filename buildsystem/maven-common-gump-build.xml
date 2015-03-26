@@ -1,0 +1,350 @@
+<?xml version="1.0"?> 
+
+<!-- this ant buildfile provides base functionality for gump
+     integration. You should not normally have to modify this
+     by hand. -->
+<project name="Gump Build Support" default="warning" basedir=".">
+    <!-- note the lack of property file inclusion. You should
+         do that from the script which calls this file. -->
+
+    <target name="avalon:warning" unless="do.not.warn">
+        <echo>
+=======================================================================
+                          WARNING!
+
+  This buildfile is only here for gump integration. Please use
+  maven (http://maven.apache.org/) for normal builds.
+=======================================================================
+        </echo>
+    </target>
+
+    <target name="avalon:debug" unless="do.not.debug">
+        <echo>
+=======================================================================
+DEBUG INFO
+
+  maven.src.dir             = ${maven.src.dir}
+  maven.build.dir           = ${maven.build.dir}
+  maven.compile.debug       = ${maven.compile.debug}
+  maven.compile.deprecation = ${maven.compile.deprecation}
+  maven.compile.optimize    = ${maven.compile.optimize}
+
+  project.name              = ${project.name}
+  project.version           = ${project.version}
+  project.copyright.year    = ${project.copyright.year}
+
+  java sources = ${maven.src.dir}/java
+  java classes = ${maven.build.dir}/classes
+  jarfile      = ${maven.build.dir}/${project.name}-${project.version}.jar
+  javadocs     = ${maven.build.dir}/docs/apidocs
+  junitreports = ${maven.build.dir}/docs/junitreports
+=======================================================================
+        </echo>
+    </target>
+
+    <target name="avalon:warn-project.name" unless="project.name.set">
+        <echo>
+=======================================================================
+                          WARNING!
+
+  The property 'project.name' has not been set. This will result in a
+  jar file with a rather dumb name, being
+
+  ${maven.build.dir}/${project.name}-${project.version}.jar
+
+  To fix this, add a property to the gump build definition or the
+  properties file for the current component.
+=======================================================================
+        </echo>
+    </target>
+
+    <target name="avalon:warn-avail-test-src" unless="test.src.present">
+        <echo>
+=======================================================================
+                          NOTE!
+
+  The directory
+
+            ${maven.src.dir}/test
+
+  does not exist. This means no unit tests will be run.
+=======================================================================
+        </echo>
+    </target>
+
+    <target name="avalon:warn-avail-no-sources" if="no.sources.available">
+        <fail>
+=======================================================================
+                          ERROR!
+
+  This project does not contain any java source files in
+
+            ${maven.src.dir}/java       or
+            ${maven.src.dir}/test       or
+
+  that means it is not possible to generate any classes, jars or
+  javadocs.
+=======================================================================
+        </fail>
+    </target>
+
+    <target name="avalon:warn-avail">
+        <antcall target="avalon:warn-avail-no-sources"/>
+        <antcall target="avalon:warn-avail-test-src"/>
+    </target>
+
+    <target name="avalon:init">
+
+        <echo>
+=======================================================================
+ Build initialization using 
+ /avalon/buildsystem/maven-common-gump-build.xml
+=======================================================================
+        </echo>
+
+        <antcall target="avalon:warning"/>
+        <antcall target="avalon:debug"/>
+
+        <!-- defaults -->
+        <property name="maven.src.dir" value="${basedir}/src"/>
+        <property name="maven.build.dir" value="${basedir}/target"/>
+        <property name="maven.compile.debug" value="on"/>
+        <property name="maven.compile.optimize" value="off"/>
+        <property name="maven.compile.deprecation" value="off"/>
+        <property name="maven.junit.fork" value="off"/>
+        <property name="maven.junit.dir" value="${basedir}"/>
+        <property name="maven.junit.usefile" value="true"/>
+
+        <property name="project.name" value="some-nameless-gump-built-component"/>
+        <tstamp>
+            <format property="project.version" pattern="yyyyMMdd"/>
+        </tstamp>
+        <property name="project.copyright.year" value="1997-2003"/>
+
+        <condition property="project.name.set">
+            <isset property="project.name"/>
+        </condition>
+        <antcall target="avalon:warn-project.name"/>
+
+        <available file="${basedir}/src/java" property="java.src.present"/>
+        <available file="${basedir}/src/test" property="test.src.present"/>
+
+        <condition property="no.sources.available">
+                <and>
+                    <not><isset property="java.src.present"/></not>
+                    <not><isset property="test.src.present"/></not>
+                </and>
+        </condition>
+
+        <antcall target="avalon:warn-avail"/>
+    </target>
+
+    <target name="avalon:jar"
+        depends="avalon:init, avalon:java-compile, avalon:test, avalon:regular-jar"/>
+
+    <target name="avalon:java-compile" if="java.src.present"
+            depends="avalon:init">
+        <echo>
+=======================================================================
+ Compiling Sources
+=======================================================================
+        </echo>
+        <mkdir dir="${maven.build.dir}"/>
+        <mkdir dir="${maven.build.dir}/classes"/>
+        <javac
+                destdir="${maven.build.dir}/classes"
+                excludes="**/package.html"
+                debug="${maven.compile.debug}"
+                deprecation="${maven.compile.deprecation}"
+                optimize="${maven.compile.optimize}">
+
+            <src>
+                <pathelement path="${maven.src.dir}/java"/>
+            </src>
+        </javac>
+
+        <mkdir dir="${maven.build.dir}/src"/>
+        <copy todir="${maven.build.dir}/src">
+            <fileset dir="${maven.src.dir}/java"/>
+        </copy>
+    </target>
+
+    <target name="avalon:test" if="test.src.present"
+        depends="avalon:init,avalon:java-compile">
+        <echo>
+=======================================================================
+ Compiling Tests
+======================================================================
+        </echo>
+        <mkdir dir="${maven.build.dir}/test-classes"/>
+        <mkdir dir="${maven.build.dir}/classes"/>
+
+        <!-- 
+        copy resource from the src/test to the target/test-classes
+        directory
+        -->
+        <copy todir="${maven.build.dir}/test-classes">
+          <fileset dir="${maven.src.dir}/test">
+            <exclude name="**/*.java"/>
+            <exclude name="**/package.html"/>
+          </fileset>
+        </copy>
+        <javac
+                destdir="${maven.build.dir}/test-classes"
+                excludes="**/package.html"
+                debug="${maven.compile.debug}"
+                deprecation="${maven.compile.deprecation}"
+                optimize="${maven.compile.optimize}">
+
+            <src>
+                <pathelement path="${maven.src.dir}/test"/>
+            </src>
+            <classpath>
+                <pathelement path="${maven.build.dir}/classes"/>
+            </classpath>
+        </javac>
+
+        <echo>
+=======================================================================
+ Running tests
+=======================================================================
+        </echo>
+
+        <taskdef
+          name="junit"
+          classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask"/>
+
+        <mkdir dir="${maven.build.dir}/test-reports"/>
+
+        <junit printSummary="yes"
+               failureProperty="maven.test.failure"
+               fork="${maven.junit.fork}"
+               dir="${maven.junit.dir}">
+          <sysproperty key="basedir" value="${basedir}"/>
+
+          <formatter type="xml"/>
+          <formatter type="plain" usefile="${maven.junit.usefile}"/>
+          <classpath>
+              <pathelement location="${maven.build.dir}/classes"/>
+              <pathelement location="${maven.build.dir}/test-classes"/>
+          </classpath>
+          <batchtest todir="${maven.build.dir}/test-reports">
+            <fileset dir="${maven.src.dir}/test">
+                <include name="**/*TestCase.java"/>
+                <exclude name="**/*Abstract*"/>
+            </fileset>
+          </batchtest>
+        </junit>
+
+        <echo>
+=======================================================================
+ Generating test reports
+=======================================================================
+        </echo>
+
+        <!-- note: this completely deviates from the approach maven
+             takes to generating the junit reports and stores them
+             in a different location. -->
+
+        <mkdir dir="${maven.build.dir}/docs/junitreports"/>
+
+        <junitreport todir="${maven.build.dir}/docs/junitreports">
+            <fileset dir="${maven.build.dir}/test-reports">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${maven.build.dir}/docs/junitreports"/>
+        </junitreport>
+
+    </target>
+   
+    <target name="avalon:regular-jar"
+            depends="avalon:init,avalon:java-compile">
+        <echo>
+=======================================================================
+ Building jar
+=======================================================================
+        </echo>
+        <mkdir dir="${maven.build.dir}/classes"/>
+        <jar destfile="${maven.build.dir}/${project.name}-${project.version}.jar" basedir="${maven.build.dir}/classes"/>
+    </target>
+
+    <target name="avalon:javadocs" depends="avalon:init,avalon:jar">
+        <mkdir dir="${maven.build.dir}/docs"/>
+        <mkdir dir="${maven.build.dir}/docs/apidocs"/>
+        <mkdir dir="${maven.build.dir}/classes"/>
+
+        <property name="copyright"
+          value="Copyright &amp;copy; ${project.copyright.year} Apache Software Foundation. All Rights Reserved." />
+
+        <property name="title" value="Avalon ${project.name} API"/>
+
+        <javadoc
+          sourcepath="${maven.build.dir}/src"
+          packagenames="org.apache.*"
+          destdir="${maven.build.dir}/docs/apidocs"
+          windowtitle="${title}"
+          doctitle="${title}"
+          bottom="${copyright}">
+
+          <link href="http://java.sun.com/j2se/1.4.1/docs/api/"/>
+          <link href="http://avalon.apache.org/framework/api/"/>
+          <classpath>
+            <path location="${maven.build.dir}/classes"/>
+          </classpath>
+
+        </javadoc>
+    </target>
+
+    <target name="avalon:distclean">
+        <delete dir="${maven.build.dir}/${project.name}-${project.version}"/>
+        <delete dir="${maven.build.dir}/dist"/>
+    </target>
+
+    <target name="avalon:dist" depends="avalon:init,avalon:distclean,avalon:jar,avalon:javadocs">
+        <mkdir dir="${maven.build.dir}"/>
+        <mkdir dir="${maven.build.dir}/${project.name}-${project.version}"/>
+        <mkdir dir="${maven.build.dir}/dist"/>
+
+        <echo>
+=======================================================================
+ Building Binary Distribution
+=======================================================================
+        </echo>
+        <mkdir dir="${maven.build.dir}/${project.name}-${project.version}/bin"/>
+        <copy todir="${maven.build.dir}/${project.name}-${project.version}/bin">
+            <fileset dir="${maven.build.dir}">
+                <include name="*.jar"/>
+                <include name="*.txt"/>
+                <include name="*.zip"/>
+                <include name="docs"/>
+            </fileset>
+        </copy>
+        <zip destfile="${maven.build.dir}/dist/${project.name}-${project.version}-bin.zip">
+            <zipfileset dir="${maven.build.dir}/${project.name}-${project.version}/bin"
+                prefix="${project.name}-${project.version}"/>
+        </zip>
+
+        <echo>
+=======================================================================
+ Building Source Distribution
+=======================================================================
+        </echo>
+        <mkdir dir="${maven.build.dir}/${project.name}-${project.version}/src"/>
+        <copy todir="${maven.build.dir}/${project.name}-${project.version}/src">
+            <fileset dir="${maven.src.dir}"/>
+            <fileset dir="${maven.build.dir}">
+                <include name="*.txt"/>
+            </fileset>
+            <fileset dir="${basedir}">
+                <include name="README*"/>
+                <include name="LICENSE*"/>
+                <include name="maven.*"/>
+                <include name="project.*"/>
+            </fileset>
+        </copy>
+        <zip destfile="${maven.build.dir}/dist/${project.name}-${project.version}-src.zip">
+            <zipfileset dir="${maven.build.dir}/${project.name}-${project.version}/src"
+                prefix="${project.name}-${project.version}"/>
+        </zip>
+    </target>
+</project>

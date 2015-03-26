@@ -1,0 +1,257 @@
+<?xml version="1.0"?>
+
+<!--
+     Copyright 2004 The Apache Software Foundation
+     Licensed  under the  Apache License,  Version 2.0  (the "License");
+     you may not use  this file  except in  compliance with the License.
+     You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed  under the  License is distributed on an "AS IS" BASIS,
+     WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+     implied.
+
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<document>
+    <properties>
+        <author email="leif.AT.tanukisoftware.DOT.com">Leif Mortenson</author>
+        <title>Excalibur Instrument - Instrument Examples</title>
+    </properties>
+    <body>
+        <section name="Instrument Examples">
+            <p>
+                This section will walk you through several simple examples of how
+                Instruments can be put to use within an component.
+            </p>
+            <p>
+                Instruments are themselves completely thread safe.  However the code in which
+                they are embedded is usually not.  Where necessary, it is the responsibility
+                of the component developer to take synchronization issues into account.  Use
+                of the Instrument API should not require any extra work in this area.
+            </p>
+            <ul>
+                <li><a href="#Counting_Method_Calls">Counting Method Calls</a></li>
+                <li><a href="#Counting_Loop_Iterations">Counting Loop Iterations</a></li>
+                <li><a href="#Tracking_Collection_or_Pool_Sizes">Tracking Collection or Pool Sizes</a></li>
+                <li><a href="#Tracking_Execution_Time">Tracking Execution Time</a></li>
+                <li><a href="#Counting_Values">Counting Values</a></li>
+            </ul>
+        </section>
+        <section name="Counting Method Calls">
+            <p>
+                One obvious example is to track method calls.  This can be done by creating
+                a <b>CounterInstrument</b> and then calling its <b>increment</b> method each
+                time the method is called.
+            </p>
+            <source><![CDATA[public void add( Object obj )
+{
+    m_list.add( obj );
+
+    m_instrumentAdds.increment();
+}
+
+public Object remove( Object obj )
+{
+    Object removed m_list.remove( obj );
+    
+    if ( removed != null )
+    {
+        m_instrumentRemoves.increment();
+    }
+
+    return removed;
+}]]></source>
+            <p>
+                Note that in both methods, the Instrument is incremented after the action in
+                the method has taken place.  This is done to make sure that the counter is
+                not incremented should an Exception be thrown while performing the action.
+            </p>
+            <p>
+                While the following method is slightly simpler than the above example, it
+                would increment the counter even if the object did not exist in the list,
+                or an exception had been thrown.
+            </p>
+            <source><![CDATA[public Object remove( Object obj )
+{
+    m_instrumentRemoves.increment();
+    return m_list.remove( obj );
+}]]></source>
+            <p>
+                How this is implemented really depends on what is being done in the method
+                and what the actual meaning of the counter is meant to be.
+            </p>
+        </section>
+        <section name="Counting Loop Iterations">
+            <p>
+                There are a number of ways to count the number of cyles that a loop goes
+                through in an application.   How exactly the cycles are counted depends 
+                on the frequency of the loop and what information is to be provided via
+                the counter instrument.
+            </p>
+            <p>
+                If the loop cycles a couple times per second over several seconds or even
+                minutes.  Then it may be useful to a user to see how the loop is
+                progressing over time.   This can be accomplished by adding instrumentation
+                to the loop as follows, so that each individual loop cycle is recorded.
+            </p>
+            <source><![CDATA[while( test )
+{
+    // Do something that takes a little while.
+    
+    m_instrumentLoops.increment();
+}]]></source>
+            <p>
+                The increment method of an instrument is designed to be very light weight
+                especially when nothing is actually monitoring the data.  When the user
+                has registered to collect sample data from the counter, there will be a
+                small amount of additional overhead added to each call.   In the above
+                example, this is trivial.
+            </p>
+            <p>
+                However if the loop being instrumented is very tight, but loops for a short
+                period of time, then it makes no sense to call <b>increment</b> every time
+                through the loop.   In such cases, it is better to maintain a seperate
+                counter and then call <b>increment</b> a single time when the loop has
+                completed.
+            </p>
+            <source><![CDATA[int count = 0;
+while( test )
+{
+    // Do something that takes a little while.
+    
+    count++;
+}
+
+if ( count > 0 )
+{
+    m_instrumentLoops.increment( count );
+}]]></source>
+            <p>
+                Notice that the count passed to the <b>increment</b> method must be greater
+                than 0.
+            </p>
+            <p>
+                If there is a chance that an exception could be thrown partway through the
+                loop, it may be necessary to track how many cycles were successful.  This
+                can be acomplished using a <b>finally</b> block as follows:
+            </p>
+            <source><![CDATA[int count = 0;
+try
+{
+    while( test )
+    {
+        // Do something that takes a little while.
+        
+        count++;
+    }
+}
+finally
+{
+    if ( count > 0 )
+    {
+        m_instrumentLoops.increment( count );
+    }
+}]]></source>
+        </section>
+        <section name="Tracking Collection or Pool Sizes">
+            <p>
+                Quantitative values like collection or pool sizes can be tracked using a
+                <b>ValueInstrument</b>.   Value Instruments allow integer values to be
+                set as the component runs.  The InstrumentManager then makes use of the
+                individual values to present values like the maximum, minimum, or mean
+                value over a given period of time.
+            </p>
+            <p>
+                To track the size of a collection, it is necessary to notify the
+                instrument each time the size of the collection is changed.   Notice
+                that the instrument is always notified <i>after</i> the size of the
+                collection has changed.  This is done to ensure that the value is
+                always correct even if an exception is thrown while modifying the
+                collection.
+            </p>
+            <p>
+                This example makes use of synchronization to ensure that the component
+                is thread safe when modifying the collection.  Synchronization would be
+                necessary even without Instrumentation.
+            </p>
+            <source><![CDATA[public void add( Object obj )
+{
+    int size;
+    synchronized( m_list )
+    {
+        m_list.add( obj );
+        size = m_list.size();
+    }
+    m_instrumentSize.setValue( size );
+}
+
+public Object remove( Object obj )
+{
+    Object removed;
+    int size;
+    synchronized( m_list )
+    {
+        removed = m_list.remove( obj );
+        if ( removed == null )
+        {
+            return null;
+        }
+        size = m_list.size();
+    }
+    m_instrumentSize.setValue( size );
+    return removed;
+}]]></source>
+            <p>
+                There are a couple things to point out about the above example.  The first is
+                how synchronization and the Instruments are handled.   It is perfectly valid
+                to set values to the instruments within the synchronization blocks.  However,
+                depending on what listeners have been registered with the instrument, this
+                could result in poor performance.  By taking the extra step of accessing the
+                instruments after the synchronization block has completed, other threads will
+                be able to access the method while the instrument value is being set.
+            </p>
+            <p>
+                It is often useful to combine the use of CounterInstruments in the above
+                methods.  It is then easy for users to track the number of adds and removes
+                as well as the overall collection size.
+            </p>
+        </section>
+        <section name="Tracking Execution Time">
+            <p>
+                Value Instruments can also be used to record the amount of time that an
+                operation takes to complete.  This can be quite useful to debug things
+                like database query or servlet response times as load on an application
+                increases.
+            </p>
+            <source><![CDATA[public void process()
+{
+    long start = System.currentTimeMillis();
+    
+    // Do something.
+    
+    m_instrumentTime.setValue( (int)( System.currentTimeMillis() - start ) );
+}]]></source>
+        </section>
+        <section name="Counting Values">
+            <p>
+                Some quantitative values are better counter than set to a value instrument.
+                Example would be the number of bytes returned by a servlet, or the number
+                of records returned from a database query.  Values such as these are
+                cumulative rather than absolute.
+            </p>
+            <source><![CDATA[public void query()
+ {
+    // Execute query
+    
+    if ( records > 0 )
+    {
+        m_instrumentRecords.increment( records );
+    }
+}]]></source>
+        </section>
+    </body>
+</document>

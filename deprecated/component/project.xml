@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Copyright 2004 The Apache Software Foundation
+Licensed  under the  Apache License,  Version 2.0  (the "License");
+you may not use  this file  except in  compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed  under the  License is distributed on an "AS IS" BASIS,
+WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+implied.
+
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<project>
+    <extend>${basedir}/../../buildsystem/project-common.xml</extend>
+
+    <name>Excalibur Component Manager</name>
+    <id>excalibur-component</id>
+    <currentVersion>1.3</currentVersion>
+    <inceptionYear>1997</inceptionYear>
+    <shortDescription>A lightweight avalon container</shortDescription>
+    <description>
+This project contains utilities for managing components. ECM
+is what we call an "avalon container", though it is somewhat
+different in architecture to newer developments like Phoenix
+and Fortress. Our intend is to someday completely replace ECM
+with Fortress. In particular, this package contains the
+ExcaliburComponentManager, usually abbreviated to ECM.
+    </description>
+
+    <dependencies>
+        <dependency>
+            <groupId>avalon-logkit</groupId>
+            <artifactId>avalon-logkit</artifactId>
+            <version>2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>avalon-framework</groupId>
+            <artifactId>avalon-framework-api</artifactId>
+            <version>4.1.5</version>
+        </dependency>
+        <dependency>
+            <groupId>avalon-framework</groupId>
+            <artifactId>avalon-framework-impl</artifactId>
+            <version>4.1.5</version>
+        </dependency>
+
+        <dependency>
+            <id>excalibur-logger</id>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>excalibur-instrument</groupId>
+            <artifactId>excalibur-instrument-api</artifactId>
+            <version>1.2-dev</version>
+        </dependency>
+        <dependency>
+            <groupId>excalibur-instrument</groupId>
+            <artifactId>excalibur-instrument-mgr-api</artifactId>
+            <version>1.2-dev</version>
+        </dependency>
+        <dependency>
+            <groupId>excalibur-instrument</groupId>
+            <artifactId>excalibur-instrument-mgr-impl</artifactId>
+            <version>1.2-dev</version>
+        </dependency>
+        <dependency>
+            <groupId>excalibur-pool</groupId>
+            <artifactId>excalibur-pool-api</artifactId>
+            <version>2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>excalibur-pool</groupId>
+            <artifactId>excalibur-pool-impl</artifactId>
+            <version>2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>excalibur-pool</groupId>
+            <artifactId>excalibur-pool-instrumented</artifactId>
+            <version>2.0</version>
+        </dependency>
+        <dependency>
+            <id>commons-collections</id>
+            <version>2.1</version>
+        </dependency>
+        <dependency>
+            <id>concurrent</id>
+            <version>1.3.1</version>
+        </dependency>
+        <dependency>
+            <id>servletapi</id>
+            <version>2.2</version>
+        </dependency>
+        <dependency>
+            <id>junit</id>
+            <version>3.8</version>
+        </dependency>
+    </dependencies>
+
+    <properties>
+        <use-forrest>true</use-forrest>
+    </properties>
+</project>

@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+
+<!--
+     Copyright 2004 The Apache Software Foundation
+     Licensed  under the  Apache License,  Version 2.0  (the "License");
+     you may not use  this file  except in  compliance with the License.
+     You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed  under the  License is distributed on an "AS IS" BASIS,
+     WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+     implied.
+
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<document>
+    <properties>
+        <title>Store - Overview</title>
+    </properties>
+
+    <body>
+
+        <section name="Introduction">
+            <p>
+          The Store Package provides a way to store named objects without 
+          taking care about where and how they are stored.
+          You can choose between different implementations that store
+          the data e.g. in memory or on the file system etc.
+            </p>
+            <p>
+        This project provides some general components for dealing with stores.
+        It contains different store implementations, like the
+                <a href="mru.html">MRU Store</a> and a montoring component,
+        the
+                <a href="janitor.html">Store Janitor</a>.
+            </p>
+            <p>
+        These components have been donated by the
+                <a href="http://cocoon.apache.org">Apache Cocoon project</a>.
+            </p>
+        </section>
+    </body>
+</document>
+
