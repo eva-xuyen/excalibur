@@ -1,0 +1,13 @@
+ ------
+ Maven 2 Fortress Plugin: configuration examples
+ ------
+ The Excalibur Team
+ <dev@excalibur.apache.org>
+ ------
+ December 25, 2005
+
+ Introduction
+
+ The Fortress plugin allows extraction of Avalon/Fortress service meta-data from Java source files.
+
+ The full description of goals is available {{{index.html}here}}.

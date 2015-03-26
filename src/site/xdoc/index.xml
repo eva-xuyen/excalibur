@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+
+<!--
+     Licensed to the Apache Software Foundation (ASF) under one or more
+     contributor license agreements.  See the NOTICE file distributed with
+     this work for additional information regarding copyright ownership.
+     The ASF licenses this file to You under the Apache License, Version 2.0
+     (the "License"); you may not use this file except in compliance with
+     the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed  under the  License is distributed on an "AS IS" BASIS,
+     WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+     implied.
+
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<document>
+
+    <properties>
+        <title>Front Page</title>
+    </properties>
+
+    <body>
+
+        <section name="What is excalibur?">
+            
+<p>
+                Excalibur is an <a href="http://www.opensource.org/">open source</a> software
+                project of <a href="http://www.apache.org/">The Apache Software Foundation</a>.
+                Our primary product is a lightweight, embeddable
+                <a href="http://www.martinfowler.com/articles/injection.html">Inversion of Control</a>
+                <em>container</em> named <a href="fortress/index.html">Fortress</a> that is written
+                in <a href="http://java.sun.com/">java</a>.
+            </p>
+
+            <p>
+                Inversion of control, also known as the hollywood principle ("don't call us,
+                we'll call you"), is a simple but powerful concept. The idea is that we
+                don't "wire up" all the pieces that make up an application (the "components") by
+                writing lots of this-component-uses-that-one-like-so code, nor do we use some
+                kind of lookup directory (like
+                <a href="http://java.sun.com/products/jndi/">JNDI</a>, for example) where each component
+                decides what components to interact with itself. Instead, we instruct a smart piece
+                of software, the container, to <em>tell</em> the components how to interact.
+            </p>
+
+            <p>
+                Fortress (and also its predecessor, "ECM") is such a container. It is
+                <em>lightweight</em>, by which we mean that it doesn't need a lot of resources,
+                take a lot of disk or memory, or impose all sorts of demands on its environment. Fortress
+                is also <em>embeddable</em>, by which we mean that you can use fortress inside just
+                about every java environment. More concretely, you can use it as the basis of a
+                large standalone development platform (like the
+                <a href="http://www.keelframework.org/">Keel</a> project), at the core of a
+                servlet-based web application (like
+                <a href="http://cocoon.apache.org/">Cocoon</a>) or even as the basis of a GUI
+                application (like
+                <a href="http://projects.d-haven.org/modules/mydownloads/singlefile.php?cid=2&amp;lid=2">GuiApp</a>).
+            </p>
+
+            <p>
+                Fortress knows how to manage components that have been developed using a
+                rigid <em>lifecycle</em> contract called
+                <a href="http://wiki.apache.org/excalibur/AvalonFramework">Avalon-Framework</a>.
+                In the next upcoming release, fortress will also be able to manage ordinary
+                javabeans, and support for other kinds of Inversion of Control are planned.
+            </p>
+
+            <p>
+                Besides providing fortress, excalibur also provides a small library of very
+                useful <a href="http://excalibur.apache.org/component-list.html">components</a>.
+                We also distribute some of the libraries used to build fortress (and some
+                other containers) seperately. This selection of libraries is called
+                <a href="http://excalibur.apache.org/containerkit.html">containerkit</a>.
+            </p>
+
+        </section>
+
+        <section name="So why is excalibur an interesting project?">
+
+            <p>Here's a few partial answers.</p>
+
+            <p>
+                <strong>good code</strong>. Code that comes from the mature avalon project
+                (everything that used to be branded as "Avalon Excalibur" and "Avalon Fortress").
+                This includes two lightweight Inversion of Control containers. One of these powers,
+                among other things,
+                <a href="http://cocoon.apache.org/">Cocoon</a>. The other ("fortress") is the basis
+                of projects like
+                <a href="http://www.keelframework.org/">Keel</a>. Excalibur also includes powerful
+                and mature reusable "components" and "libraries", handling tasks ranging from thread
+                management to component pooling to (URI-and-similar-) source resolving.
+            </p>
+
+            <p>
+                <strong>smart developers</strong>. See
+                <a href="/team-list.html">this list</a>.
+            </p>
+
+            <p>
+                Most of these people are or have been active in the avalon project in various roles.
+                Several of them are apache members. Together they have loads and loads experience
+                under their belts related to inversion of control development. In fact, I&#39;m
+                confident to say this list includes some of the biggest experts on
+                inversion-of-control-style container development.</p>
+
+            <p>
+                <strong>exciting community</strong>. Several open source and commercial projects
+                (both at apache and elsewhere) depend on and contribute to the excalibur project. A
+                strong team of enthousiastic developers (with strong ties to several other projects
+                in the same problem domain) has various big and small plans with excalibur. One of
+                the leading open source organisations in the world,
+                <a href="http://www.apache.org/">The Apache Software Foundation</a>, is hosting the
+                project, providing insight, advice, infrastructure, legal backing, a time- and
+                battle-proven development process, and much more.
+            </p>
+
+        </section>
+    </body>
+</document>

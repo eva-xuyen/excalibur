@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+ 
+   http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed  under the  License is distributed on an "AS IS" BASIS,
+ WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+ implied.
+ 
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<document>
+  <properties>
+    <author email="dev@excalibur.apache.org">Excalibur Documentation Team</author>
+    <title>Apache Excalibur - Downloads</title>
+  </properties> 
+
+  <body>
+    <section name="Download distributions">
+      <p>
+        Use the links below to download binary or source distributions of
+        Excalibur from one of our mirrors. It's a good idea to
+        verify the integrity 
+        of the downloaded files using signatures downloaded from our
+        main distribution directory (see below).
+      </p>
+
+      <p>
+        Excalibur is distributed as <code>zip</code> and <code>tar.gz</code>
+        archives - the contents are the same. Please note that the <code>tar.gz</code>
+        archives contain file names longer than 100 characters and have been
+        created using GNU tar extensions.  They must be untarred with a GNU
+        compatible version of <code>tar</code>.
+      </p>
+
+      <p>
+        If you do not see the file you need in the links below, please
+        see the <a href="http://www.apache.org/dist/excalibur/">master
+        distribution directory</a> or, preferably, its
+        <a href="[preferred]/excalibur/">mirror</a>.
+      </p>
+
+      <subsection name="Mirror">
+        <p>
+          You are currently using the <strong>[preferred]</strong>.
+          If you encounter a problem with this mirror, please select another
+          mirror. If all mirrors are failing, there are <em>backup</em>
+          mirrors (at the end of the mirrors list) that should be available.
+        </p>
+      
+        <form action="[location]" method="get" id="SelectMirror">
+<p>Other mirrors: </p><select name="Preferred">
+[if-any http]
+  [for http]<option value="[http]">[http]</option>[end]
+[end]
+[if-any ftp]
+  [for ftp]<option value="[ftp]">[ftp]</option>[end]
+[end]
+[if-any backup]
+  [for backup]<option value="[backup]">[backup] (backup)</option>[end]
+[end]
+          </select>
+          <input type="submit" value="Change" />
+        </form>
+
+      </subsection>
+
+      <subsection name="License">
+        <p>
+          All Excalibur products are distributed under the terms of The Apache 
+          Software License (version 2.0, and version 1.1 for some older releases).
+          See our 
+          <a href="../license.html">License</a> page, or the LICENSE.txt 
+          file included in each distribution.
+        </p>
+      </subsection>
+      
+      <subsection name="Jar Repository">
+        <p>
+          All Excalibur jars can also be found in the 
+          <a href="http://repo1.maven.org/maven2">public Maven 2</a>
+          repository for use with <a href="http://maven.apache.org">Maven 2</a>
+          and other repository-aware applications.
+        </p>
+      </subsection>
+
+      </section>
+      <section name="Product Downloads">
+      <subsection name="Excalibur Source Resolver 2.2.3 (5 Jul 2007)">
+        <ul>
+          <li>Jar distribution 
+            (<a href="[preferred]/excalibur/excalibur-sourceresolve/excalibur-sourceresolve-current.jar">jar</a>) 
+            (<a href="[preferred]/excalibur/excalibur-sourceresolve/excalibur-sourceresolve-current.jar.asc">ppg</a>) 
+            (<a href="[preferred]/excalibur/excalibur-sourceresolve/excalibur-sourceresolve-current.jar.md5">md5</a>)
+          </li>
+          <li>Source distribution 
+            (<a href="[preferred]/excalibur/excalibur-sourceresolve/excalibur-sourceresolve-source-current.jar">jar</a>) 
+            (<a href="[preferred]/excalibur/excalibur-sourceresolve/excalibur-sourceresolve-source-current.jar.asc">ppg</a>) 
+            (<a href="[preferred]/excalibur/excalibur-sourceresolve/excalibur-sourceresolve-source-current.jar.md5">md5</a>)
+          </li>
+          <li>Javadocs 
+            (<a href="[preferred]/excalibur/excalibur-sourceresolve/excalibur-sourceresolve-javadoc-current.jar">jar</a>) 
+            (<a href="[preferred]/excalibur/excalibur-sourceresolve/excalibur-sourceresolve-javadoc-current.jar.asc">ppg</a>) 
+            (<a href="[preferred]/excalibur/excalibur-sourceresolve/excalibur-sourceresolve-javadoc-current.jar.md5">md5</a>)
+          </li>
+        </ul>
+      </subsection>
+      <subsection name="Feb 2007 Release (r508111)">
+        <ul>
+          <li><a href="[preferred]/excalibur/releases/200702/RELEASE_NOTES">Release Notes</a></li>
+          <li>Binary distribution 
+            (<a href="[preferred]/excalibur/releases/200702/excalibur-r508111-15022007.tar.gz">tar.gz</a>) 
+            (<a href="[preferred]/excalibur/releases/200702/excalibur-r508111-15022007.tar.gz.asc">ppg</a>) 
+            (<a href="[preferred]/excalibur/releases/200702/excalibur-r508111-15022007.tar.gz.md5">md5</a>)
+          </li>
+          <li>Source distribution 
+            (<a href="[preferred]/excalibur/releases/200702/excalibur-src-r508111-15022007.tar.gz">tar.gz</a>) 
+            (<a href="[preferred]/excalibur/releases/200702/excalibur-src-r508111-15022007.tar.gz.asc">ppg</a>) 
+            (<a href="[preferred]/excalibur/releases/200702/excalibur-src-r508111-15022007.tar.gz.md5">md5</a>)
+          </li>
+          <li>Javadocs 
+            (<a href="[preferred]/excalibur/releases/200702/excalibur-javadoc-r508111-15022007.tar.gz">tar.gz</a>) 
+            (<a href="[preferred]/excalibur/releases/200702/excalibur-javadoc-r508111-15022007.tar.gz.asc">ppg</a>) 
+            (<a href="[preferred]/excalibur/releases/200702/excalibur-javadoc-r508111-15022007.tar.gz.md5">md5</a>)
+          </li>
+          <li>Maven 2 repository distribution 
+            (<a href="[preferred]/excalibur/releases/200702/excalibur-maven2-repo-r508111-15022007.tar.gz">tar.gz</a>) 
+            (<a href="[preferred]/excalibur/releases/200702/excalibur-maven2-repo-r508111-15022007.tar.gz.asc">ppg</a>) 
+            (<a href="[preferred]/excalibur/releases/200702/excalibur-maven2-repo-r508111-15022007.tar.gz.md5">md5</a>)
+          </li>
+   </ul>
+      </subsection>
+      <subsection name="Verify Releases">
+        <p>
+          It is essential that you verify the integrity of the downloaded
+          files using the PGP or MD5 signatures.
+        </p>
+        <p>
+          The MD5 checksums can be verified using the <code>md5</code> utility (called
+          <code>md5sum</code> on some systems). Download the <code>md5</code> file that
+          corresponds to the distributions you want to check. Make sure you get these
+          checksums from the
+          <a href="http://www.apache.org/dist/excalibur/">main distribution
+          directory</a>, rather than from a mirror.
+        </p>
+        <p>
+          The PGP signatures can be verified using PGP or GPG.  First
+          download the <a href="http://www.apache.org/dist/excalibur/KEYS">KEYS</a>
+          as well as the <code>asc</code> signature file for the particular
+          distribution. Make sure you get these files from the
+          <a href="http://www.apache.org/dist/excalibur/">main distribution
+          directory</a>, rather than from a mirror. Then verify the signatures
+          using
+        </p>
+        <source>
+% pgpk -a KEYS
+% pgpv name-of-distributed-file.tar.gz.asc
+</source>
+        <p>
+          <strong><em>or</em></strong>
+        </p>
+        <source>
+% pgp -ka KEYS
+% pgp name-of-distributed-file.tar.gz.asc
+</source>
+        <p>
+          <strong><em>or</em></strong>
+        </p>
+        <source>
+% gpg --import KEYS<br />
+% gpg --verify name-of-distributed-file.tar.gz.asc
+</source>
+      </subsection>
+    </section>
+  </body>
+</document>
+ 

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<document>
+  <header>
+    <title>Patterns in Avalon</title>
+    <authors>
+      <person name="Avalon Documentation Team" email="dev@avalon.apache.org"/>
+    </authors>
+  </header>
+  <body>
+    <section name="Getting Started with Patterns">
+      <p>
+        Avalon takes many design patterns and architectural mindsets, and
+        implements the best ones for servers.  There are different kinds of
+        patterns that represent different aspects of Avalon. Avalon uses four
+        main conceptual patterns called Separation of Interface and
+        Implementation, Inversion of Control, Multi-Dimensional Separation
+        of Concerns, and Aspect Oriented Programming.  Avalon also uses several
+        architectural patterns like the Singleton and the Factory.
+      </p>
+    </section>
+    <section name="The Avalon Patterns in short">
+      <p>
+        We provide you with a short description of the patterns first, with a
+        detailed description of each pattern on a separate page.
+      </p>
+
+      <subsection name="Separation of Interface and Implementation">
+        <p>
+<strong>Summary:</strong> The Separation of Interface and Implementation is
+        a core feature of the Java language. However, it is often misused so we
+        list it as one of the Avalon patterns, and our use of it is extensive.
+        </p>
+        <p>
+<a href="guide-patterns-soii.html">
+          More Information...
+        </a>
+</p>
+      </subsection>
+
+      <subsection name="Inversion of Control">
+        <p>
+<strong>Summary:</strong> Avalon not only has an inheritance hierarchy, but also a
+        component hierarchy. In this hierarchy, the control of program flow is
+        completely in the hands of the parent component(s), as soldiers in the
+        military take orders from their officers.
+        </p>
+        <p>
+<link href="guide-patterns-ioc.html">
+          More Information...
+        </link>
+</p>
+      </subsection>
+
+      <subsection name="Multi-Dimensional Separation of Concerns">
+        <p>
+<strong>Summary:</strong> You just read the introduction about patterns before
+        reading about Avalon's patterns because that enables you to reuse the
+        knowledge you gained about patterns in a context other than that of
+        Avalon. We do this with software as well.
+        </p>
+        <p>
+<link href="guide-patterns-soc.html">
+          More Information...
+        </link>
+</p>
+      </subsection>
+
+      <subsection name="Aspect-Oriented Programming">
+        <p>
+<strong>Summary:</strong> this is the next logical step ofter Separation of
+        Concerns. Many concerns cannot be centrally addressed using the standard
+        OOP mechanisms. Using AOP (which is an extension to OOP), we would be
+        able to do so in a simple fashion. As there is no good AOP facility
+        in Java, we use "aspect marker interfaces" and COP instead.
+        </p>
+      </subsection>
+    </section>
+
+  </body>
+</document>

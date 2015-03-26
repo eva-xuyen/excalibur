@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<document>
+  <header>
+    <title>Avalon Framework - Designing a Component</title>
+    <version>1.0</version>
+    <authors>
+      <person name="Berin Loritsch" email="bloritsch@apache.org"/>
+      <person name="Leo Simons" email="leosimons@apache.org"/>
+    </authors>
+  </header>
+  <body>
+      <section name="Designing a Component">
+        <p>
+          The first step in writing the component is determining how it is going
+          to be used.  There will be a number of times where you have a powerful
+          component that can be used in many different contexts.  Those contexts
+          may include executing the component from the command line (separate
+          from Avalon), using it as a part of a sub system, or using it as an
+          integral part of Avalon.
+        </p>
+        <subsection name="Part of Avalon">
+          <p>
+            All components are an integral part of Avalon, so there is really
+            nothing to be done beyond specifying its interface (role).  It is
+            important to identify and document its social contract with the
+            rest of the system.  What I mean by social contract is the order
+            of dependencies, what it needs to function, and what it supplies
+            to the rest of the system.
+          </p>
+        </subsection>
+        <subsection name="Part of a Sub System">
+          <p>
+            A sub system can either be part of Avalon, or live in a separate
+            context.  A perfect example would be a component that can function
+            within a Servlet or Enterprise Application.  Neither of those
+            contexts are native to Avalon (though they can easily be built
+            on top of Avalon).
+          </p>
+          <p>
+            It is important to do even more careful planning than in the
+            first scenario.  The reason is that you want the interface to be
+            as generic as possible and still accurately represent its role.
+          </p>
+          <p>
+            Because the contexts may not be an integral part of Avalon,
+            you must take care to use the component in the same manner as
+            Avalon would.  That means that you follow the order of concerns
+            that Avalon has specified for those concerns.
+          </p>
+        </subsection>
+        <subsection name="A Stand Alone Program">
+          <p>
+            When you are designing a component to be run from the command
+            line (or directly by the operating system), try to separate
+            the main function from the component itself.  This is imperative
+            in order to maintain the passive API of Avalon.  By designing
+            your component in the manner stated in the previous section,
+            you have effectively minimized what the main function has to
+            do.
+          </p>
+          <p>
+            Follow the practice of having an object dedicated to the main
+            function that includes the parsing of the command line parameters
+            and initialization of the component.  When the component is used
+            the exact same way in every context (including the command line),
+            you minimize the number of locations to look while debugging.
+          </p>
+          <p><i>
+            A common mistake is to combine the main function in the
+            implementation of the component.  This requires violating the
+            contracts and principles that Avalon is built upon.  This
+            violation of the pattern of "Inversion of Control" is
+            aptly dubbed "Subversion of Control" (thanks to Steven Coffman
+            for the name of the anti-pattern).
+          </i></p>
+        </subsection>
+      </section>
+  </body>
+</document>

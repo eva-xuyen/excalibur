@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<document>
+
+  <properties>
+    <author email="leosimons@apache.org">Leo Simons</author>
+    <title>OOP best Practices</title>
+  </properties>
+
+  <body>
+    <section name="OOP best Practices">
+    <subsection name="Recursion Introduction">
+      <p>
+        Use the same interface for communication with components of
+        the same type.  It allows the swapping of those components
+        for other components of the same type without breaking existing
+        code.
+      </p>
+      <p>
+        If you need additional functionality, either create proxy
+        objects that implement the interface, or add it by subclassing
+        (hence the name "Recursion Introduction").  Even if
+        there is no recursion happening, it appears to operate in the
+        same manner.
+      </p>
+    </subsection>
+    <subsection name="Eliminate Case Analysis">
+      <p>
+        Avoid testing to see if an object is an instance of a particular
+        class.  Usually, if you think you need that approach then a
+        redesign will help immensely.
+      </p>
+    </subsection>
+    <subsection name="Reduce the Number of Arguments">
+      <p>
+        Methods with a half-dozen arguments are hard to read, and can
+        usually be accomplished with an object that represents that
+        set of arguments.  It also makes it easier to track down the
+        problems.
+      </p>
+    </subsection>
+    <subsection name="Reduce the Size of Methods">
+      <p>
+        Most of your methods should only need to be a few lines long.
+        Methods that are very long (like 50 lines or so) are too complex,
+        and should be considered guilty of bad design until proven
+        innocent.
+      </p>
+    </subsection>
+    <subsection name="The Top of the Class Hierarchy Should be Abstract">
+      <p>
+        In many cases it is beneficial to provide an abstract base class 
+        to extend for your specializations.  The majority of the 
+        functionality and behavior is well defined. This makes it easier
+        to decipher what the intents of the interface designer were.
+      </p>
+    </subsection>
+    <subsection name="Minimize Accesses to Variables">
+      <p>
+        This point formalizes the principles of data hiding.  Try not
+        to expose class attributes to other classes, but protect them
+        by methods.  If an attribute changes name, then you only have
+        one place to update the code instead of hundreds.
+      </p>
+    </subsection>
+    <subsection name="Subclasses Should be Specializations">
+      <p>
+        A [subclass] "is a" [superclass].  If what you
+        are trying to do is make a Component into a ComponentManager,
+        then you are violating the spirit of the framework.  A better
+        approach is to use containment in that case (i.e. a [class]
+        "has a" [external class]).
+      </p>
+    </subsection>
+    <subsection name="Split Large Classes">
+      <p>
+        If a class has 50+ methods, then it is most likely trying to
+        do too much.  Look at separating the functionality into
+        separate components.  Like methods that are too long, classes
+        that violate this rule should be considered guilty of wrong
+        design until proven innocent.
+      </p>
+    </subsection>
+    <subsection name="Factor Implementation Differences Into Subcomponents">
+      <p>
+        If a subclass implements a method completely different from
+        the superclass, then it is not really a specialization.  It
+        should be split off from that class hierarchy tree.
+      </p>
+    </subsection>
+    <subsection name="Separate Methods that Do Not Communicate">
+      <p>
+        Sometimes in building a framework you run into a case where
+        you have different views of the same data.  In these cases,
+        you can have some attributes that describe how to generate
+        the data, and some attributes that describe the data itself.
+        It is better to separate these two views into separate classes.
+        The semantics are different enough to justify this solution.
+      </p>
+    </subsection>
+    <subsection name="Send Messages to Components instead of to This">
+      <p>
+        The point of this point is that you want to build your framework
+        based on components, and not inheritance.  Avalon takes this
+        point to heart.  In order to illustrate, I will give two examples
+        of the same thing.  The scenario is that we have a data structure
+        that we want to output to an arbitrary format.
+      </p>
+      <p>
+        In the following example, we will use the Java <code>this</code>
+        object and an inheritance based framework.  As you can see, this
+        would be a bear to maintain, and it won't easily be extended.
+      </p>
+      <source>
+abstract class AbstractExampleDocument 
+{
+  // skip some code ...
+public void output(Example structure) 
+{
+    if( null != structure )
+    {
+      this.format( structure );
+    }
+}
+
+  protected void format(Example structure);
+}
+      </source>
+      <p>
+        In the next example, we will use the Avalon component based
+        architecture.  There is a clean separation between the purpose
+        of the objects, and you can exchange and extend formatting
+        without worrying about any other concerns.
+      </p>
+      <source>
+class DefaultExampleDocument 
+{
+// skip some code ...
+public void output(Example structure) 
+{
+   ExampleFormatter formatter = 
+     (ExampleFormatter) manager.lookup(Roles.FORMATTER);
+   if( null != structure ) 
+   {
+     formatter.format(structure);
+   }
+}
+}
+      </source>
+      <p>
+        An inheritance based framework (White Box) can be converted
+        into a component based framework (Black Box) structure by
+        replacing overridden methods with method calls (message sends)
+        to components.  Component based architecture is much more
+        flexible in this regard.
+      </p>
+    </subsection>
+    <subsection name="Eliminate Implicit Parameter Passing">
+      <p>
+        Just because two methods share the same information within the
+        class does not mean that it should be done in that manner.
+        Many times, the attribute that is shared should be passed
+        as a parameter of the method instead of directly accessing
+        the attribute.
+      </p>
+    </subsection>
+    </section>
+  </body>
+</document>

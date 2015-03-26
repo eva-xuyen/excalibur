@@ -1,0 +1,1106 @@
+<?xml version="1.0"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+
+  <properties>
+    <author email="hammant@apache.org">Paul Hammant</author>
+    <author email="bloritsch@apache.org">Berin Loritsch</author>
+    <title>Using Avalon Frameowork</title>
+  </properties>
+
+<body>
+  <section name="Using Avalon Framework">
+  <p>
+    After your analysis is complete, you need to create the Components and
+    Services that make up your system.  Avalon would be of little use if it
+    only described some idioms for you to use.  Even then, the use of those
+    idioms and patterns would still help in understanding the overall system.
+    Avalon Excalibur provides some useful Components and utilities that you can
+    incorporate into your own system that will make your life much easier.  For
+    our demonstration, we will go through the process of defining a Component
+    that retrieves a document instance from a repository.  If you recall our
+    discussion about the theoretical Business Server, we identified this
+    Component as a Service.  In practical situations, a Service is a Component
+    that has a larger scope.
+  </p>
+  </section>
+  <section name="Implementing the Component">
+    <p>
+      At this point, we define how to implement our Component.  We will go
+      through the process of implementing the DocumentRepository Component
+      previously mentioned.  The first things we need to figure out are the
+      concern areas for our Component.  Then we have to figure out how our
+      Component will be created and managed.
+    </p>
+    <section name="Choosing the Concern Areas">
+      <p>
+        We have already defined the Role and the Interface for our
+        DocumentRepository Component in the last chapter, we are ready to
+        create the implementation.  Because the interface for the
+        DocumentRepository only defines one method, we have an opportunity to
+        create a thread-safe Component.  This is the most desired type of
+        component because it allows for the least amount of resource
+        utilization.  In order for our implementation to be thread-safe, we do
+        need to be careful about how we implement the Component.  Since all of
+        our documents are stored in a database, and we desire to use an
+        external Guardian Component, we will need access to other Components.
+        As responsible developers, we will want to log messages that will help
+        us debug our component, and track down what is going on internally.
+        The beauty of the Avalon Framework is that you only implement the
+        interfaces you need, and ignore the ones you don't.  This is where
+        Separation of Concerns pays off.  As you find you need a new concern
+        area addressed, you merely implement the associated interface, and
+        incorporate the new functionality.  To the client of your Component,
+        there is no difference.
+      </p>
+      <p>
+        Since it is a design goal to be thread-safe, we already know that we
+        need to implement the ThreadSafe interface.  The DocumentRepository
+        interface only has one method, so the use of the Component's work
+        interface is compatible with that requirement.  Furthermore, we know
+        that a Component will not be used before it is fully initialized, nor
+        will it be used once it is destroyed.
+      </p>
+      <p>
+        There are a couple of implicit interfaces that we need to implement to
+        accomplish the design.  We want our solution to be as secure as
+        possible and explicitly track whether the Component is fully
+        initialized or not.  To accomplish this goal, we will implement the
+        Initializable and Disposable interfaces.  Since specific information
+        about our environment may change, or may need to be customized, we need
+        to make our DocumentRepository Configurable.  Our Component makes use
+        of other Components, and the method that Avalon provides to get
+        instances of the required Component is by using a ServiceManager.  We
+        will need to implement the Serviceable interface to get an instance of
+        the ServiceManager.
+      </p>
+      <p>
+        Because the DocumentRepository accesses the documents in the database,
+        we need to make a decision.  Do we want to take advantage of the Avalon
+        Excalibur DataSourceComponent, or do we want to implement our own
+        Connection management code.  For the sake of this paper, we will use
+        the DataSourceComponent.
+      </p>
+      <p>
+        At this point, our skeleton class looks like this:
+      </p>
+      <source>
+<![CDATA[
+public class DatabaseDocumentRepository
+extends AbstractLogEnabled
+implements DocumentRepository , Configurable, Serviceable, Initializable,
+           Disposable, ThreadSafe
+{
+    private boolean initialized = false;
+    private boolean disposed = false;
+    private ServiceManager manager = null;
+    private String dbResource = null;
+
+    /**
+     * Constructor.  All Components need a public no argument constructor
+     * to be a legal Component.
+     */
+    public DatabaseDocumentRepository() {}
+
+    /**
+     * Configuration.  Notice that I check to see if the Component has
+     * already been configured?  This is done to enforce the policy of
+     * only calling Configure once.
+     */
+    public final void configure(Configuration conf)
+        throws ConfigurationException
+    {
+        if (initialized || disposed)
+        {
+            throw new IllegalStateException ("Illegal call");
+        }
+
+        if (null == this.dbResource)
+        {
+            this.dbResource = conf.getChild("dbpool").getValue();
+            getLogger().debug("Using database pool: " + this.dbResource);
+            // Notice the getLogger()?  This is from AbstractLogEnabled
+            // which I extend for just about all my components.
+        }
+    }
+
+    /**
+     * Composition.  Notice that I check to see if the Component has
+     * already been initialized or disposed?  This is done to enforce
+     * the policy of proper lifecycle management.
+     */
+    public final void service(ServiceManager smanager)
+        throws ServiceException
+    {
+        if (initialized || disposed)
+        {
+            throw new IllegalStateException ("Illegal call");
+        }
+
+        if (null == this.manager)
+        {
+            this.manager = smanager;
+        }
+    }
+
+    public final void initialize()
+        throws Exception
+    {
+        if (null == this.manager)
+        {
+            throw new IllegalStateException("Not Composed");
+        }
+
+        if (null == this.dbResource)
+        {
+            throw new IllegalStateException("Not Configured");
+        }
+
+        if (disposed)
+        {
+            throw new IllegalStateException("Already disposed");
+        }
+
+        this.initialized = true;
+    }
+
+    public final void dispose()
+    {
+        this.disposed = true;
+        this.manager = null;
+        this.dbResource = null;
+    }
+
+    public final Document getDocument(Principal requestor, int refId)
+    {
+        if (!initialized || disposed)
+        {
+            throw new IllegalStateException("Illegal call");
+        }
+
+        // TODO: FILL IN LOGIC
+    }
+}
+]]>
+      </source>
+      <p>
+        You will notice some constructs in the above code.  When you are
+        designing with security in mind, you should explicitly enforce every
+        contract on your Component.  Security is only as strong as the weakest
+        link.  You should only use a Component when you are certain it is fully
+        initialized, and never use it when it is disposed of.  I placed the
+        logic that you would need in this skeleton class because that way you
+        can adopt the same practices in classes that you write.
+      </p>
+    </section>
+    <section name="Instantiating and Managing Components">
+      <p>
+        In order for you to understand how the Container/Component relationship
+        works, we will first discuss the manual method of managing Components.
+        Next, we will discuss how Avalon's Excalibur Component infrastructure
+        hides the complexity from you.  You will still find times when you
+        would rather manage components yourself.  Most of the time the power
+        and flexibility of Excalibur is just what you need.
+      </p>
+      <section name="The Manual Method">
+        <p>
+          All of Avalon's Components are created somewhere.  The code that
+          creates the Component is that Component's Container.  The Container
+          is responsible for managing the Component's lifecycle from
+          construction through destruction.  A Container can be the static
+          "main" method called from a command line, or it can be another
+          Component.  Remember the Inversion of Control pattern when you
+          design your Containers.  Information and method calls should only
+          flow from the Container to the Component.
+        </p>
+        <warning>
+          <title>Subversion of Control</title>
+          <p>
+            Subversion of Control is the anti-pattern to Inversion of Control.
+            Subversion of control is done when you pass a reference to a
+            Component's Container to the Component.  It is also done when you
+            have a Component manage it's own lifecycle.  Code that operates in
+            this manner should be considered defective.  The interactions that
+            happen when you confuse the Container/Component relationship make
+            the system harder to debug and security harder to audit.
+          </p>
+        </warning>
+        <p>
+          In order to manage the child Components, you need to keep a reference
+          to them for their entire lifetime.  Before the Container or any other
+          Component can use the child Component, it must go through the
+          initialization phase of its lifecycle.  For our DocumentRepository,
+          the code will look something like the following:
+        </p>
+        <source>
+<![CDATA[
+class ContainerComponent implements Initializable, Disposable
+{
+    DocumentRepository docs = new DatabaseDocumentRepository();
+    GuardianComponent guard = new DocumentGuardianComponent();
+    DefaultComponentManager manager = new DefaultComponentManager();
+
+    public void initialize()
+        throws Exception
+    {
+        Logger docLogger = new LogKitLogger( Hierarchy.defaultHierarchy()
+                                             .getLoggerFor( "document" ) );
+
+        this.docs.enableLogging( docLogger.childLogger( "repository" ) );
+        this.guard.enableLogging( docLogger.childLogger( "security" ) );
+
+        DefaultConfiguration pool = new DefaultConfiguration("dbpool");
+        pool.setValue("main-pool");
+        DefaultConfiguration conf = new DefaultConfiguration("");
+        conf.addChild(pool);
+
+        this.manager.addComponent( DocumentRepository.ROLE, this.docs );
+        this.manager.addComponent( GuardianComponent.ROLE, this.guard );
+        this.docs.compose( this.manager );
+        this.guard.compose( this.manager );
+
+        this.docs.configure(conf);
+
+        this.guard.initialize();
+        this.docs.initialize();
+    }
+
+    public void dispose()
+    {
+        this.docs.dispose();
+        this.guard.dispose();
+    }
+}
+]]>
+        </source>
+        <p>
+          For the sake of brevity, I removed all the explicit checking from the
+          above code.  You can see that manually creating and managing
+          Components is very detailed.  If you forget to do one step in the
+          life of a Component, you will see bugs.  This also requires intimate
+          knowledge of the Components you are instantiating.  An alternate
+          approach would be to add a couple methods to the above
+          <code>ContainerComponent</code> that handles the
+          initialization of the components dynamically.
+        </p>
+      </section>
+      <section name="Automated Autonomy">
+        <p>
+          Developer's are naturally lazy, so they would spend the time to write
+          a specialized ComponentManager that became the Container for all of
+          their Components in the system.  That way they would not have to be
+          bothered with intimately knowing the interfaces of all the Components
+          in a system.  That can be a daunting task.  The Avalon developers
+          have created just such a beast.  Avalon Excalibur's Component
+          architecture includes a ComponentManager that is controlled by
+          configuration files written in XML.
+        </p>
+        <p>
+          There is a tradeoff when you relinquish the responsibility of
+          managing a Component to Excalibur's ComponentManager.  You relinquish
+          the fine control over what Components are included in the
+          ComponentManager.  However, if you have a large system, you will find
+          that manual control is a daunting task.  In that case, it is better
+          for the stability of the system for one entity to centrally manage
+          all the Components in a system.
+        </p>
+        <p>
+          Since there are varying levels of integration you want to achieve
+          with Excalibur's Component Architecture, we will start with the
+          lowest level.  Excalibur has a group of ComponentHandler objects that
+          act as individual Containers for one type of Component.  They manage
+          the complete life of your Component.  Let me introduce the concept of
+          lifestyle interfaces.  A lifestyle interface describes how the system
+          treats a Component.  Since the lifestyle of a component has impact on
+          the running of a system, we need to discuss the implications of the
+          current lifestyle interfaces:
+        </p>
+        <ol>
+          <li>
+            <p>org.apache.avalon.framework.thread.SingleThreaded</p>
+            <ol>
+              <li>
+                <p>
+                  Not thread-safe or reusable.
+                </p>
+              </li>
+              <li>
+                <p>
+                  When no lifestyle interface is supplied, this is assumed.
+                </p>
+              </li>
+              <li>
+                <p>
+                  A brand new instance is created every time the Component is
+                  requested.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Creation and initialization is delayed until you request the
+                  Component.
+                </p>
+              </li>
+            </ol>
+          </li>
+          <li>
+            <p>org.apache.avalon.framework.thread.Threadsafe</p>
+            <ol>
+              <li>
+                <p>
+                  Component is fully reentrant, and complies with all
+                  principles of thread safety.
+                </p>
+              </li>
+              <li>
+                <p>
+                  One instance is created and shared with all Composables that
+                  request it.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Creation and initialization is done when ComponentHandler is
+                  created.
+                </p>
+              </li>
+            </ol>
+          </li>
+          <li>
+            <p>org.apache.avalon.excalibur.pool.Poolable</p>
+            <ol>
+              <li>
+                <p>
+                  Not thread-safe, but is fully reusable.
+                </p>
+              </li>
+              <li>
+                <p>
+                  A pool of instances is created and the free instances are
+                  returned to Composables that request it.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Creation and initialization is done when ComponentHandler is
+                  created.
+                </p>
+              </li>
+            </ol>
+          </li>
+        </ol>
+        <p>
+          The ComponentHandler interface is very simple to deal with.  You
+          initialize the Constructor with the Java class, the Configuration
+          object, the ComponentManager, a Context object, and a RoleManager.
+          If you know that your Component will not need any of the
+          aforementioned items, you can pass a null in its place.  After
+          that, when you need a reference to the Component, you call the "get"
+          method.  After you are done with it, you call the "put" method and
+          pass the Component back to the ComponentHandler.  The following code
+          will make it easier to understand.
+        </p>
+        <source>
+<![CDATA[
+class ContainerComponent implements Initializable, Disposable
+{
+    ComponentHandler docs = null;
+    ComponentHandler guard = null;
+    DefaultComponentManager manager = new DefaultComponentManager();
+
+    public void initialize()
+        throws Exception
+    {
+        DefaultConfiguration pool = new DefaultConfiguration("dbpool");
+        pool.setValue("main-pool");
+        DefaultConfiguration conf = new DefaultConfiguration("");
+        conf.addChild(pool);
+        this.docs.configure(conf);
+
+        this.docs = ComponentHandler.getComponentHandler(
+                                        DatabaseDocumentRepository.class,
+                                        conf, this.manager, null, null);
+        this.guard = ComponentHandler.getComponentHandler(
+                                        DocumentGuardianComponent.class,
+                                        null, this.manager, null, null);
+
+        Logger docLogger = new LogKitLogger( Hierarchy.defaultHierarchy()
+                                             .getLoggerFor( "document" ) );
+
+        this.docs.enableLogging( docLogger.childLogger( "repository" ) );
+        this.guard.enableLogging( docLogger.childLogger( "security" ) );
+
+        this.manager.addComponent(DocumentRepository.ROLE, this.docs);
+        this.manager.addComponent(GuardianComponent.ROLE, this.guard);
+
+        this.guard.initialize();
+        this.docs.initialize();
+    }
+
+    public void dispose()
+    {
+        this.docs.dispose();
+        this.guard.dispose();
+    }
+}
+]]>
+        </source>
+        <p>
+          At this point, we only saved ourselves a few lines of code.  We still
+          manually created our Configuration object, we still had to set the
+          Logger, and we still had to initialize and dispose of the
+          ComponentHandler objects.  What we did at this point is simply protect
+          ourselves from changing interfaces.  You may find it better for your
+          code to use this approach.  Excalibur went further though.  Most
+          complex systems have configuration files, and they allow an
+          administrator to alter vital Configuration information.  Excalibur
+          can read a configuration file in the following format, and build the
+          Components in a system from it.
+        </p>
+        <source>
+<![CDATA[
+<my-system>
+  <component
+    role="org.apache.avalon.excalibur.datasource.DataSourceComponentSelector"
+    class="org.apache.avalon.excalibur.component.ExcaliburComponentSelector">
+     <component-instance name="documents"
+       class="org.apache.avalon.excalibur.datasource.JdbcDataSource">
+         <pool-controller min="5" max="10"/>
+         <auto-commit>false</auto-commit>
+         <driver>org.gjt.mm.mysql.Driver</driver>
+         <dburl>jdbc:mysql:localhost/mydb</dburl>
+         <user>test</user>
+         <password>test</password>
+      </component-instance>
+      <component-instance name="security"
+        class="org.apache.avalon.excalibur.datasource.JdbcDataSource">
+         <pool-controller min="5" max="10"/>
+         <auto-commit>false</auto-commit>
+         <driver>org.gjt.mm.mysql.Driver</driver>
+         <dburl>jdbc:mysql:localhost/myotherdb</dburl>
+         <user>test</user>
+         <password>test</password>
+      </component-instance>
+  </component>
+  <component
+    role="org.apache.bizserver.docs.DocumentRepository"
+    class="org.apache.bizserver.docs.DatabaseDocumentRepository">
+      <dbpool>documents</dbpool>
+  </component>
+  <component
+    role="org.apache.bizserver.docs.GuardianComponent"
+    class="org.apache.bizserver.docs.DocumentGuardianComponent">
+      <dbpool>security</dbpool>
+      <policy file="/home/system/document.policy"/>
+  </component>
+</my-system>
+]]>
+        </source>
+        <p>
+          The root element can be anything you want.  You will notice that we
+          now have several Components defined.  We have our familiar
+          DocumentRepository class and GuardianComponent class, as well as a
+          couple of Excalibur DataSourceComponent classes.  In addition, now we
+          have some specific configuration information for our Guardian
+          Component.  In order to read that information into your system,
+          Avalon Framework provides some conveniences for you:
+        </p>
+        <source>
+<![CDATA[
+DefaultConfigurationBuilder builder = new DefaultConfigurationBuilder();
+Configuration systemConf = builder.buildFromFile("/path/to/file.xconf");
+]]>
+        </source>
+        <p>
+          This does simplify all the code we had for hand-building the
+          Configuration element earlier, and it limits the amount of
+          information we need to explicitly know right away.  We will take one
+          last look at our Container class and see if we really have some
+          savings.  Keep in mind that we have five components specified (a
+          ComponentSelector counts as a Component), and configurations for
+          each of them.
+        </p>
+        <source>
+<![CDATA[
+class ContainerComponent implements Initializable, Disposable {
+    ExcaliburComponentManager manager = new ExcaliburComponentManager();
+
+    public void initialize()
+        throws Exception
+    {
+        DefaultConfigurationBuilder builder = new DefaultConfigurationBuilder();
+        Configuration sysConfig = builder.buildFromFile("./conf/system.xconf");
+
+        this.manager.setLogger(  Hierarchy.getDefaultHierarchy()
+                                          .getLoggerFor("document") );
+        this.manager.contextualize( new DefaultContext() );
+        this.manager.configure( sysConfig );
+        this.manager.initialize();
+    }
+
+    public void dispose()
+    {
+        this.manager.dispose();
+    }
+}
+]]>
+        </source>
+        <p>
+          Isn't this amazing?  We have more than twice the number Components
+          initialized and ready for use with less than half the code (six lines
+          of code instead of thirteen lines of code).  There is the drawback of
+          the Configuration file looking somewhat crazy, but it minimizes the
+          amount of code you have to write.
+        </p>
+        <p>
+          There is a lot of activity happening under the hood of the
+          ExcaliburComponentManager.  For each "component" element in the
+          configuration file, Excalibur creates a ComponentHandler for each
+          class entry and maps it to the role entry.  The "component" element
+          and all it's child elements are used for the Configuration of the
+          Component.  When the Component is an ExcaliburComponentSelector, the
+          Excalibur reads each "component-instance" element and performs the
+          same type of operation as before-this time mapping to the hint entry.
+        </p>
+        <section>
+          <title>Making the Configuration Pretty</title>
+          <p>
+            We can manage the configuration file's appearance with the use of
+            aliases.  Excalibur uses a RoleManager to provide aliases for the
+            configuration system.  A RoleManager can either be a dedicated
+            class that you create, or you can use the DefaultRoleManager and
+            pass in a Configuration object.  If I use the DefaultRoleManager, I
+            will hide the role configuration file inside the jar with the rest
+            of the system.  This is because the role configuration file is only
+            going to be altered by developers.  Below is the interface for the
+            RoleManager:
+          </p>
+          <source>
+<![CDATA[
+interface RoleManager
+{
+    String getRoleForName( String shorthandName );
+    String getDefaultClassNameForRole( String role );
+    String getDefaultClassNameForHint( String hint, String shorthand );
+}
+]]>
+          </source>
+          <p>
+            Let's take a look at how Excalibur uses the RoleManager in our
+            scheme.  First, Excalibur will cycle through all the elements that
+            are direct children of the root element.  This includes all
+            "component" elements like before, but this time when Excalibur
+            doesn't recognize an element name, it asks the RoleManager which
+            role we should use for this Component.  If the RoleManager returns
+            null, the element and all it's child elements are ignored.  Next,
+            Excalibur derives the class name from the role name.  The last
+            method is to dynamically map a class name to a ComponentSelector's
+            child type.
+          </p>
+          <p>
+            Excalibur provides a default implementation of the RoleManager that
+            is configured with an XML configuration file.  The markup is very
+            simple, and it hides all the extra information you don't want your
+            administrator to see.
+          </p>
+          <source>
+<![CDATA[
+<role-list>
+  <role
+    name="org.apache.avalon.excalibur.datasource.DataSourceComponentSelector"
+    shorthand="datasources"
+    default-class="org.apache.avalon.excalibur.component.ExcaliburComponentSelector">
+     <hint shorthand="jdbc"
+       class="org.apache.avalon.excalibur.datasource.JdbcDataSourceComponent"/>
+     <hint shorthand="j2ee"
+       class="org.apache.avalon.excalibur.datasource.J2eeDataSourceComponent"/>
+  </role>
+  <role
+    name="org.apache.bizserver.docs.DocumentRepository"
+    shorthand="repository"
+    default-class="org.apache.bizserver.docs.DatabaseDocumentRepository"/>
+  <role
+    name="org.apache.bizserver.docs.GuardianComponent"
+    shorthand="guardian"
+    default-class="org.apache.bizserver.docs.DocumentGuardianComponent"/>
+</role-list>
+]]>
+          </source>
+          <p>
+            In order to use the RoleManager, you do need to alter the
+            "initialize" method of our Container class.  You are using the
+            configuration builder to build a Configuration tree from this
+            file.  Please remember, if you are going to use a RoleManager, you
+            must call the "setRoleManager" method <em>before</em>
+            the "configure" method.  To demonstrate how you would retrieve this
+            XML file from the class loader, I will demonstrate the technique
+            below:
+          </p>
+          <source>
+<![CDATA[
+DefaultConfigurationBuilder builder = new DefaultConfigurationBuilder();
+Configuration sysConfig = builder.buildFromFile("./conf/system.xconf");
+Configuration roleConfig = builder.build(
+            this.getClass().getClassLoader()
+            .getResourceAsStream("/org/apache/bizserver/docs/document.roles"));
+
+DefaultRoleManager roles = new DefaultRoleManager();
+roles.enableLogging(Hierarchy.getDefaultHierarchy().getLoggerFor("document.roles"));
+roles.configure(roleConfig);
+
+this.manager.setLogger( Hierarchy.getDefaultHierarchy()
+                           .getLoggerFor("document") );
+this.manager.contextualize( new DefaultContext() );
+this.manager.setRoleManager( roles );
+this.manager.configure( sysConfig );
+this.manager.initialize();
+]]>
+          </source>
+          <p>
+            Since we added six more lines of code, we need to see what it
+            bought us.  Our final configuration file can be written like this:
+          </p>
+          <source>
+<![CDATA[
+<my-system>
+  <datasources>
+     <jdbc name="documents">
+         <pool-controller min="5" max="10"/>
+         <auto-commit>false</auto-commit>
+         <driver>org.gjt.mm.mysql.Driver</driver>
+         <dburl>jdbc:mysql:localhost/mydb</dburl>
+         <user>test</user>
+         <password>test</password>
+      </jdbc>
+      <jdbc name="security">
+         <pool-controller min="5" max="10"/>
+         <auto-commit>false</auto-commit>
+         <driver>org.gjt.mm.mysql.Driver</driver>
+         <dburl>jdbc:mysql:localhost/myotherdb</dburl>
+         <user>test</user>
+         <password>test</password>
+      </jdbc>
+  </datasources>
+  <repository>
+      <dbpool>documents</dbpool>
+  </repository>
+  <guardian>
+      <dbpool>security</dbpool>
+      <policy file="/home/system/document.policy"/>
+  </guardian>
+</my-system>
+]]>
+          </source>
+          <p>
+            As you can see, this is much more readable than how we started.
+            Now we can add any number of components to our system, and we won't
+            have to write any more code to support them.
+          </p>
+        </section>
+      </section>
+    </section>
+  </section>
+  <section name="Using the Component">
+    <p>
+      Now that we have created our Components, we will want to use them.  You
+      access Components the same way regardless of how they were instantiated
+      or managed.  You must implement the Composable interface to get a
+      reference to the ComponentManager.   The ComponentManager holds all the
+      references to the Components you need.  For the sake of our discussion,
+      we will assume that the ComponentManager given to us is configured in the
+      same manner as the final Configuration file in the last section.  This
+      means that we have a Repository, a Guardian, and two DataSources.
+    </p>
+    <section name="Rules for Using the Component Management Infrastructure">
+      <p>
+        The Component management infrastructure requires that you release any
+        Component for which you have obtained a reference.  The reason for this
+        restriction is so that the Component's resources can be properly
+        managed.  A ComponentManager is designed for cases when you have
+        multiple types of Components with distinct roles.  A ComponentSelector
+        is designed for cases when you have multiple types of Components
+        with the same role.  Another unique aspect of the ComponentSelector is
+        that it is a Component by design.  This enables us to get a
+        ComponentSelector from a ComponentManager.
+      </p>
+      <p>
+        There are two valid approaches for handling references to external
+        Components.  You can obtain your references during initialization, and
+        release them during disposal.  You may also encapsulate the Component
+        handling in a try/catch/finally block.  Each has its advantages and
+        disadvantages.
+      </p>
+      <section name="Initialization and Disposal Approach">
+        <source>
+<![CDATA[
+class MyClass implements Serviceable, Disposable
+{
+    ServiceManager manager;
+    Guardian myGuard;
+
+    /**
+     * Obtain a reference to a guard and keep the reference to
+     * the ServiceManager.
+     */
+    public void service(ServiceManager manager)
+        throws ServiceException
+    {
+        if (this.manager == null)
+        {
+            this.manager = manager;
+            myGuard = (Guardian) this.manager.lookup(Guardian.ROLE);
+        }
+    }
+
+    /**
+     * This is the method that uses the Guardian.
+     */
+    public void myMethod()
+        throws SecurityException
+    {
+        this.myGuard.checkPermission(new BasicPermission("test"));
+    }
+
+    /**
+     * Get rid of our references
+     */
+    public void dispose()
+    {
+        this.manager.release(this.myGuard);
+        this.myGuard = null;
+        this.manager = null;
+    }
+}
+]]>
+        </source>
+        <p>
+          As you can see by the sample code, this is easy to follow.  The
+          object gets a reference to a Guardian Component when it first
+          receives the ComponentManager.  If you could be guaranteed that the
+          Guardian Component was ThreadSafe, then this is all that is
+          necessary.  Unfortunately, you cannot guarantee this for the long
+          term.  To properly manage resources, we must release the Component
+          when we are done with it.  That's why we kept a reference to the
+          ComponentManager.
+        </p>
+        <p>
+          The main disadvantage of this approach comes into play when you are
+          dealing with pooled Components.  The reference of the Component is
+          kept for the life of this object.  It might not be a problem if the
+          object had a short life span, but if it was a Component managed by
+          the Excalibur component management architecture, its life span is as
+          long as the Component whose reference it has.  What this means is
+          that we are essentially turning the Component's pool into a Factory.
+        </p>
+        <p>
+          The main advantage of this approach is that the code is very clear on
+          how a Component is obtained and released.  You don't have to have any
+          understanding of exception handling.
+        </p>
+        <p>
+          One other nuance is that you are tying the existence of the Guardian
+          to the ability to initialize this object.  Once an Exception is
+          thrown during the initialization phase of an object, you must assume
+          that the object is not valid.  Sometimes you want to fail if a
+          required Component does not exist so this is not a problem.  You do
+          need to be aware of this implication when you are designing your
+          Components though.
+        </p>
+      </section>
+      <section name="Exception Handling Approach">
+        <source>
+<![CDATA[
+class MyClass implements Serviceable, Disposable
+{
+    ServiceManager manager;
+
+    /**
+     * Obtain a reference to a guard and keep the reference to
+     * the ServiceManager.
+     */
+    public void service(ServiceManager manager)
+        throws ComponentException
+    {
+        if (this.manager == null)
+        {
+            this.manager = manager;
+        }
+    }
+
+    /**
+     * This is the method that gets the Guardian.
+     */
+    public void myMethod()
+        throws SecurityException
+    {
+        Guardian myGuard = null;
+        try
+        {
+            myGuard = (Guardian) this.manager.lookup(Guardian.ROLE);
+            this.criticalSection(myGuard);
+        }
+        catch (ComponentException ce)
+        {
+            throw new SecurityException(ce.getMessage());
+        }
+        catch (SecurityException se)
+        {
+            throw se;
+        }
+        finally
+        {
+            if (myGuard != null)
+            {
+                this.manager.release(myGuard);
+            }
+        }
+    }
+
+    /**
+     * Perform critical part of code.
+     */
+    public void criticalSection(Guardian myGuard)
+        throws SecurityException
+    {
+        myGuard.checkPermission(new BasicPermission("test"));
+    }
+}
+]]>
+        </source>
+        <p>
+          As you can see, the code is a bit more complex.  In order to
+          understand it, you have to understand Exception handling.  This is
+          not necessarily a problem, because most Java developers know how to
+          handle them.  You don't have to worry so much about the Component
+          life style with this approach, because we are releasing it as soon
+          as we no longer need it.
+        </p>
+        <p>
+          The main disadvantage of this approach is the added complexity of the
+          exception handling code.  In order to minimize the complexity and
+          make the code more maintainable, we extracted the working code into
+          another method.  Keep in mind that we can get the reference to as
+          many Components as we possibly want inside the try block.
+        </p>
+        <p>
+          The main advantage of this approach is that you are managing your
+          Component references more efficiently.  Again, there is no real
+          difference if you are using ThreadSafe Components, but it makes a
+          real difference when you have pooled Components.  There is a slight
+          overhead dealing with getting a new reference every time you use a
+          Component, but the likelihood of being forced to create a new
+          instance of the Component is minimized.
+        </p>
+        <p>
+          Just like the Initialization and Disposal Approach, you have to
+          understand a subtle nuance.  The Exception Handling Approach does not
+          fail on initialization if the Component is missing from the manager.
+          As mentioned before, this is not entirely bad.  Many times, you want
+          an object to exist, but it is not a failure if a desired Component
+          is missing.
+        </p>
+      </section>
+    </section>
+    <section name="Getting Components from a ServiceSelector">
+      <p>
+        For most operations, you will only need the ServiceManager.  Since we
+        decided that we needed multiple instances of the DataSourceComponent,
+        we need to know how to get the instance we want.  ServiceSelectors
+        are a little trickier than ServiceManagers because we are dealing
+        with hints to get the reference we need.  A Component has a specific
+        Role, and this contract is well documented.  However, sometimes we need
+        to select one of many Components for a Role.  A ServiceSelector uses
+        an arbitrary object for the hint.  Most of the time, the object is a
+        String, although you might want to use a Locale object to get a proper
+        internationalization Component.
+      </p>
+      <p>
+        In our system we have set up, we chose to use Strings to select the
+        correct instance of the DataSourceComponent.  We even gave ourselves a
+        Configuration element that references the exact string we need to get
+        the right Component.  This is a good practice to follow, as it makes it
+        easier on administrators of a system.  It is easier for an
+        administrator to see a reference to another Component than it is for
+        them to remember magic values for the configuration.
+      </p>
+      <p>
+        Conceptually, getting a Component from a ServiceSelector is no
+        different than getting a Component from a ServiceManager.  You just
+        have one more step.  Remember that a ServiceSelector is a Component.
+        The ServiceManager will be set up to return the ServiceSelector
+        when you lookup its role.  You then need to select the component from
+        the selector.  To demonstrate, I will extend the code from the
+        Exception Handling Approach discussed previously.
+      </p>
+      <source>
+<![CDATA[
+public void myMethod()
+    throws Exception
+{
+    ServiceSelector dbSelector = null;
+    DataSourceComponent datasource = null;
+    try
+    {
+        dbSelector = (ServiceSelector)
+                this.manager.lookup(DataSourceComponent.ROLE + "Selector");
+        datasource = (DataSourceComponent)
+                dbSelector.select(this.useDb);
+
+        this.process(datasource.getConnection());
+    }
+    catch (Exception e)
+    {
+        throw e;
+    }
+    finally
+    {
+        if (datasource != null)
+        {
+            dbSelector.release(datasource);
+        }
+
+        if (dbSelector != null)
+        {
+            this.manager.release(dbSelector);
+        }
+    }
+}
+]]>
+      </source>
+      <p>
+        As you can see, we got the reference to the ServiceSelector using the
+        Role specified for the Component.  We followed the Role naming
+        guidelines outlined in a previous chapter by adding the "Selector"
+        suffix to the Role name.  It is also perfectly acceptable to use a
+        static interface for all the Role names in your system to minimize the
+        number of String concatenation in your code.
+      </p>
+      <p>
+        Next, we obtained the reference to the DataSourceComponent from the
+        ServiceSelector.  Our sample code assumed that we had already pulled
+        the required information from the Configuration object and placed it in
+        a class variable named "useDb".
+      </p>
+    </section>
+  </section>
+  <section name="Excalibur's Utilities">
+    <p>
+      This last section is included to give you an idea of the types of
+      Components and utilities that are included with Apache Avalon Excalibur.
+      These utilities are robust, and fully usable in production systems.  We
+      do have an unofficial staging project called "Scratchpad" where we iron
+      out implementation details for potential new utilities.  Scratchpad
+      utilities are of varying quality, and their use is not guaranteed to
+      remain the same -- although you may have good experience with them.
+    </p>
+    <section name="Command Line Interface (CLI)">
+      <p>
+        The CLI utilities are used by a number of projects including Avalon
+        Phoenix and Apache Cocoon to process command line arguments.  It
+        provides facilities to print help responses, and to process options by
+        either a short name or a long name.
+      </p>
+    </section>
+    <section name="Collection Utilities">
+      <p>
+        The collection utilities provide some enhancements to the
+        Java Collections API.  Among them is the ability
+        to find the intersections between two lists and a
+        <code>PriorityQueue</code> that is an enhancement to
+        <code>Stack</code> to allow the priority of objects override
+        the simple first in/last out <code>Stack</code>
+        implementation.
+      </p>
+    </section>
+    <section name="Component Management">
+      <p>
+        We already discussed the use of this in the previous section.  This is
+        Excalibur's most complex beast, but it provides a lot of functionality
+        in just a few classes.  It will make one distinction more than simple
+        <code>SingleThreaded</code> or
+        <code>ThreadSafe</code> for managing a component type:
+        <code>Poolable</code>.  If a Component implements Excalibur's
+        <code>Poolable</code> interface instead of the
+        <code>SingleThreaded</code> interface, it will maintain a
+        pool of Components and reuse instances.  Most of the time this works
+        great.  For those last remaining times where a Component cannot be
+        reused, use the <code>SingleThreaded</code> interface.
+      </p>
+    </section>
+    <section name="LogKit Management">
+      <p>
+        The Avalon development team realized that many people wanted a simple
+        mechanism to build complex Logging target heirarchies.  In the same
+        spirit as the <code>RoleManager</code> the team developed
+        a <code>LogKitManager</code> that can be given to the
+        Excalibur Component Management system meantioned above.  Based on the
+        "logger" attribute it will give the proper <code>Logger</code>
+        object to the different Components.
+      </p>
+    </section>
+    <section name="Thread Utilities">
+      <p>
+        The <em>concurrent</em> package contains several classes
+        to assist in multithreaded programming: <code>Lock</code>
+        (a mutex implementation), <code>DjikstraSemaphore</code>,
+        <code>ConditionalEvent</code>, and
+        <code>ThreadBarrier</code>.
+      </p>
+    </section>
+    <section name="Datasources">
+      <p>
+        This is modeled after the <code>javax.sql.DataSource</code>
+        class, but simplified.  There are two implementations of the
+        <code>DataSourceComponent</code>: one that pools JDBC
+        connections explicitly, and one that uses a J2EE application server's
+        <code>javax.sql.DataSource</code> class.
+      </p>
+    </section>
+    <section name="Input/Output (IO) Utilities">
+      <p>
+        The IO utilties provide a number of <code>FileFilter</code>s
+        and other <code>File</code> and IO specific utilities.
+      </p>
+    </section>
+    <section name="Pool Implementations">
+      <p>
+        The Pool implementations provide a <code>Pool</code> for
+        every occasion.  You have an implementation that is blazingly fast, but
+        only usable in one thread -- which should be ok for implementing a
+        FlyWeight pattern.  You also have <code>DefaultPool</code>,
+        which does not manage the number of objects in its pool.
+        <code>SoftResourceManagingPool</code> decommissions objects
+        that exceed a threshold when they are returned.  Lastly,
+        <code>HardResourceManagingPool</code> throws an exception
+        when you have reached the maximum number of objects.  The last three
+        pools are all <code>ThreadSafe</code>.
+      </p>
+    </section>
+    <section name="Property Utilities">
+      <p>
+        The property utilities are used in conjunction with Context objects.
+        They give you the ability to expand "variables" in your
+        <code>Resolvable</code> object.  It works like this:
+        <parameter>"${resource}"</parameter> will look for a Context value
+        named <parameter>"resource"</parameter> and substitute its value
+        for the symbol.
+      </p>
+    </section>
+  </section>
+ </body>
+</document>

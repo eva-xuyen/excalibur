@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<document>
+  <header>
+    <title>Avalon Framework - Guide - Inversion of Control</title>
+    <authors>
+      <person name="Berin Loritsch" email="bloritsch@apache.org"/>
+      <person name="Leo Simons" email="leosimons@apache.org"/>
+    </authors>
+  </header>
+  <body>
+    <section name="Introduction">
+      <p>
+        One of the key design principles behind Avalon is the principle
+        of <em>Inversion of Control</em>.  <em>Inversion of Control</em> is
+        a concept promoted by one of the founders of the Avalon project,
+        <link href="mailto:stefano@apache.org">Stefano Mazzocchi</link>.  The
+        principle enforces security by design.
+      </p>
+      <p>
+        It is difficult to track down one paper that defines this pattern
+        at length, so here are a couple of different definitions of
+        <em>Inversion of Control</em>.
+      </p>
+    </section>
+    <section name="What it Means">
+        <p>
+          The Framework plays the role of the main program in coordinating
+          and sequencing events and application activity.
+        </p>
+        <p>
+          A designer sets up a chain among objects that can all react
+          to certain messages in a delegation hierarchy.  There is one
+	  major semantic detail: Inversion of Control refers to a parent
+	  object <em>controlling</em> a child object.  With this distinction,
+	  the SAX API is not considered Inversion of Control because its
+	  purpose is to send <em>information</em> from a source to a handler.
+        </p>
+
+        <subsection name="Definition by Analogy">
+          <p>
+            There are a couple of different analogies that make
+            understanding <em>Inversion of Control</em> easier.  We
+            experience this in many different ways in regular life,
+            so we are borrowing the form in code.  One analogy is called
+	    the "Chain of Command" in the military.
+          </p>
+        </subsection>
+
+        <subsection name="Chain of Command">
+            <p>
+              This is probably the clearest parallel to <em>Inversion
+              of Control</em>.  The military provides each new recruit
+              with the basic things he needs to operate at his rank,
+              and issues commands that recruit must obey.  The same
+              principle applies in code.  Each component is given the
+              provisions it needs to operate by the instantiating
+              entity (i.e. Commanding Officer in this analogy).  The
+              instantiating entity then acts on that component how it
+              needs to act.
+            </p>
+	    <p>
+	      There are some deficiencies in this analogy as some military
+	      or ex-military people have explained to me.  In the military,
+	      <strong>any</strong> Commanding Officer can issue commands to
+	      anyone under his or her rank.  In the development world, to
+	      ensure proper security, this is not a pattern you want in your
+	      software.  In Avalon, Inversion of Control (IoC) is from one
+	      parent (controlling) object to a child (controlled) component.
+	      A parent may have many children, but children only have one
+	      parent.
+	    </p>
+        </subsection>
+
+      </section>
+
+      <section name="How to Apply It">
+        <p>
+          <em>Inversion of Control</em> is applied in a very simple
+          manner.  Basically, it means that the component architecture
+          employs a <em>passive</em> structure.  See the following code:
+        </p>
+        <source>
+class MyComponent 
+    implements LogEnabled
+{
+    Logger logger;
+
+    public enableLogging(Logger newLogger)
+    {
+        this.logger = newLogger;
+    }
+
+    myMethod() 
+    {
+        logger.info("Hello World!");
+    }
+}
+        </source>
+        <p>
+          The parent of MyComponent instantiates MyComponent, sets the
+          Logger, and calls myMethod.  The component is not autonomous,
+	  and is given a logger that has been configured by the parent.
+        </p>
+        <p>
+          The MyComponent class has no state apart from the parent, and
+          has no way of obtaining a reference to the logger implementation
+          without the parent giving it the implementation it needs.
+        </p>
+      </section>
+
+      <section name="IOC promotes Security">
+      <p>A big advantage of IOC for server applications is that it promotes
+      security. You can read an analysis about this
+      <a href="guide-patterns-ioc-security.html">
+         here
+      </a>.</p>
+      </section>
+
+  </body>
+</document>

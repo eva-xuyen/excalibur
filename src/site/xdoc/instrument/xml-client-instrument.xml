@@ -1,0 +1,244 @@
+<?xml version="1.0"?>
+
+<!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed  under the  License is distributed on an "AS IS" BASIS,
+WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+implied.
+
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<document>
+    <properties>
+        <author email="leif.AT.tanukisoftware.DOT.com">Leif Mortenson</author>
+        <title>Excalibur Instrument - XML Client - Instrument</title>
+    </properties>
+    <body>
+        <section name="XML Client - Instrument">
+            <p>
+                The Instrument URL is used to obtain information about a particular
+                Instrument, including any permanent or leased Samples.
+            </p>
+        </section>
+        <section name="Request">
+            <p>
+                Request parameters are set as HTTP GET parameters when sending the
+                request to the server.
+            </p>
+            <p>
+                For example, to request the <b>instrument-manager.memory</b> Instrument,
+                the following URL can be used:
+            </p>
+            <source><a href="http://localhost:15080/instrument.xml?name=instrument-manager.memory">http://localhost:15080/instrument.xml?name=instrument-manager.memory</a></source>
+            <subsection name="Parameters">
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <th>Data Type</th>
+                        <th>Description</th>
+                        <th>Notes</th>
+                    </tr>
+                    <tr>
+                        <td><b>name</b></td>
+                        <td>String</td>
+                        <td>
+                            The fully qualified name of the Instrument being requested.
+                        </td>
+                        <td>Required.</td>
+                    </tr>
+                    <tr>
+                        <td><b>packed</b></td>
+                        <td>boolean</td>
+                        <td>
+                            Normally XML is returned in a human-readable pretty format
+                            with indenting and line feeds.   While this makes it easy to
+                            work with, it also adds several percent to the size of the
+                            XML returned to the client.  By setting the packed parameter
+                            to "true", all white space is removed from the generated XML. 
+                        </td>
+                        <td>Optional.  Defaults to "false".</td>
+                    </tr>
+                    <tr>
+                        <td><b>recurse</b></td>
+                        <td>boolean</td>
+                        <td>
+                            By default, the Instrument URL will return information
+                            about the Instrument itself along with any direct
+                            permanent or leased Samples.  By setting the recurse
+                            parameter to "true", the generated XML will include the
+                            full attribute list of the Samples.  This can be quite
+                            useful to initialize a client application with the current
+                            state of the Instrument tree.  Once initialized, it is more
+                            efficient to monitor the <b>state-version</b> attributes
+                            and only request information which has changed.
+                        </td>
+                        <td>Optional.  Defaults to "false".</td>
+                    </tr>
+                </table>
+            </subsection>
+        </section>
+        <section name="Response XML">
+            <p>
+                The XML received in the response will be UTF-8 encoded.  The root node
+                will be named <b>instrument</b> and have the following attributes.
+            </p>
+            <p>
+                Each Sample will be given a <b>sample</b> child element.
+                If the <b>recurse</b> parameter was specified in the request
+                then each of the Samples will have all of the attributes
+                described for the
+                <a href="xml-client-sample.html">Sample</a> URL.
+            </p>
+            <subsection name="Attributes">
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <th>Data Type</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td><b>name</b></td>
+                        <td>String</td>
+                        <td>
+                            Fully qualified name of the Instrument.  This
+                            name is used to reference the Instrument in
+                            other requests.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>description</b></td>
+                        <td>String</td>
+                        <td>
+                            A human readable descripton of the Instrument.  It
+                            is optionally specified in the
+                            <a href="configuration.html">Instrument configuration file</a>
+                            and can not be modified from a client.  If not configured
+                            then the description will be equal to the last token in the
+                            name.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>type</b></td>
+                        <td>int</td>
+                        <td>
+                            Specifies the type of the Instrument.
+                            <ul>
+                                <li><b>1</b> - Counter Instrument</li>
+                                <li><b>2</b> - Value Instrument</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>state-version</b></td>
+                        <td>int</td>
+                        <td>
+                            Current State-Version of the Instrument.  The
+                            state version will be incremented whenever there are any
+                            changes to the Instrument or any of its child
+                            elements.  It can be compared with a last known state
+                            version to decide whether or not it is necessary to to
+                            request further details.
+                            <p/>
+                            If the application is running long enough, the
+                            state version will eventially overflow.  To makes
+                            sure your application will handle this case use
+                            an equality test when comparing state versions.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>registered</b></td>
+                        <td>boolean</td>
+                        <td>
+                            Indicates whether or not the Instrument has been registered
+                            with the Instrument Manager after the application was started.
+                            <p/>
+                            It is possible for the Instrument to exist but not to have
+                            been registered if the Instrument was declared in the
+                            <a href="configuration.html">Instrument configuration file</a>
+                            or had any outstanding leases that survived from a previous
+                            application invocation.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>configured</b></td>
+                        <td>boolean</td>
+                        <td>
+                            Indicates whether or not the Instrument has been declared
+                            in the <a href="configuration.html">Instrument configuration file</a>.
+                        </td>
+                    </tr>
+                </table>
+            </subsection>
+            <subsection name="Child Elements">
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td><b>sample</b></td>
+                        <td>
+                            Sample elements will exist for each permanent or leased
+                            Instrument Sample that is currently registered with this
+                            Instrument.  Samples may be added or removed from this
+                            list as the application runs so the <b>state-version</b>
+                            of the parent <b>instrument</b> should be monitored for
+                            changes.
+                            <p/>
+                            If the <b>recurse</b> parameter was set to "true" in the
+                            request, an expanded list of attributes will be available.
+                            See the documentation for the
+                            <a href="xml-client-sample.html">Sample</a> URL for further
+                            details.
+                            <p/>
+                            Attributes:
+                            <table>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Data Type</th>
+                                    <th>Description</th>
+                                </tr>
+                                <tr>
+                                    <td><b>name</b></td>
+                                    <td>String</td>
+                                    <td>
+                                        Fully qualified name of the Sample.  This
+                                        name is used to reference the Sample in
+                                        other requests.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><b>state-version</b></td>
+                                    <td>int</td>
+                                    <td>
+                                        Current State-Version of the Sample.  The
+                                        state version will be incremented whenever there
+                                        are any changes to the Sample.  It can be compared
+                                        with a last known state version to decide whether
+                                        or not it is necessary to to request further
+                                        details.
+                                        <p/>
+                                        If the application is running long enough, the
+                                        state version will eventially overflow.  To make
+                                        sure your application will handle this case use
+                                        an equality test when comparing state versions.
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </subsection>
+        </section>
+    </body>
+</document>

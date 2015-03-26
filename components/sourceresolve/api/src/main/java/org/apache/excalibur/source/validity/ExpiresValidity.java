@@ -1,0 +1,73 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.excalibur.source.validity;
+
+import org.apache.excalibur.source.SourceValidity;
+
+/**
+ * A validation object that holds an expiration date.
+ * When the defined time/date has arrived, this validity object is
+ * not valid any more.
+ *
+ * @author <a href="mailto:dev@avalon.apache.org">Avalon Development Team</a>
+ * @version $Id: ExpiresValidity.java 641953 2008-03-27 19:09:20Z cziegeler $
+ */
+public final class ExpiresValidity
+    implements SourceValidity
+{
+    private long expires;
+
+    /**
+     * Constructor
+     * @param expires The delta from now when this validity object gets invalid.
+     */
+    public ExpiresValidity( long expires )
+    {
+        this.expires = System.currentTimeMillis() + expires;
+    }
+
+    /**
+     * Checks if the expires date is already reached.
+     *
+     * @see org.apache.excalibur.source.SourceValidity#isValid()
+     */
+    public int isValid()
+    {
+        final long currentTime = System.currentTimeMillis();
+        return (currentTime <= this.expires ? SourceValidity.VALID : SourceValidity.INVALID);
+    }
+
+    /**
+     * This method is never invoked as {@link #isValid()} can always perform
+     * the complete check.
+     *
+     * @see org.apache.excalibur.source.SourceValidity#isValid(SourceValidity)
+     */
+    public int isValid( SourceValidity newValidity )
+    {
+        return SourceValidity.INVALID;
+    }
+
+    /**
+     *
+     * @see java.lang.Object#toString()
+     */
+    public String toString()
+    {
+        return "ExpiresValidity: " + expires;
+    }
+}

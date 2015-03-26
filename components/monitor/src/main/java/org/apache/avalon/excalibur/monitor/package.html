@@ -1,0 +1,28 @@
+<html>
+  <head>
+    <title>Package Documentation for org.apache.avalon.excalibur.monitor Package</title>
+  </head>
+  <body bgcolor="white">
+    An extensible resource monitor framework and implementation.
+    <br><br>
+    <a name="doc.Description"></a>
+    <div align="center">
+      <a href="#doc.Intro">[Introduction]</a>
+    </div>
+
+    <a name="doc.Intro"></a>
+    <h2>Introduction</h2>
+    <p>The <code>org.apache.avalon.excalibur.monitor</code> package contains interfaces and classes
+    for resource monitoring. The design is sufficiently modular to allow for different implementations of the
+    monitoring strategies, and resource types.  A FileResource is included for your convenience.
+    </p>
+    <p>
+      In order to receive notification that a resource has been modified, you must implement the
+      <code>java.beans.PropertyChangeListener</code> interface.  You will be notified with a
+      <code>java.beans.PropertyChangeEvent</code> where the property name is "last-modified".
+      Because the PropertyChangeEvent works with Objects, you must recast the Object returned
+      into a <code>java.lang.Long</code> object.  From there you can derive the previously modified
+      time as well as the current modified time.
+    </p>
+  </body>
+</html>

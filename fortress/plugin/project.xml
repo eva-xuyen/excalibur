@@ -1,0 +1,114 @@
+<?xml version="1.0"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed  under the  License is distributed on an "AS IS" BASIS,
+WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+implied.
+
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<project>
+    <pomVersion>3</pomVersion>
+    <artifactId>maven-fortress-plugin</artifactId>
+    <name>Maven Fortress Plugin</name>
+    <groupId>maven-fortress-plugin</groupId>
+    <currentVersion>0.2</currentVersion>
+    <organization>
+        <name>Excalibur</name>
+        <url>http://excalibur.apache.org/</url>
+        <logo>http://excalibur.apache.org/logo.gif</logo>
+    </organization>
+    <inceptionYear>2004</inceptionYear>
+    <shortDescription>Fortress Maven Plugin</shortDescription>
+    <url>http://excalibur.apache.org/</url>
+    <issueTrackingUrl>http://nagoya.apache.org/jira/browse/FORTRESS</issueTrackingUrl>
+    <siteAddress>excalibur.apache.org</siteAddress>
+    <repository/>
+    <developers>
+        <developer>
+            <name>Marcus Crafter</name>
+            <id>1</id>
+            <email>crafterm@apache.org</email>
+            <roles>
+                <role>Engineering</role>
+            </roles>
+            <url>http://blogs.cocoondev.org/crafterm/</url>
+            <timezone>CET</timezone>
+        </developer>
+    </developers>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-project</artifactId>
+            <version>2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
+            <version>2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-model</artifactId>
+            <version>2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>plexus</groupId>
+            <artifactId>plexus-utils</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>excalibur-fortress</groupId>
+            <artifactId>excalibur-fortress-meta</artifactId>
+            <version>1.3-dev</version>
+        </dependency>
+        <dependency>
+            <groupId>ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>1.6.5</version>
+        </dependency>
+        <dependency>
+            <groupId>qdox</groupId>
+            <artifactId>qdox</artifactId>
+            <version>1.5</version>
+            <properties/>
+        </dependency>
+    </dependencies>
+    <build>
+        <sourceDirectory>src/java</sourceDirectory>
+        <unitTestSourceDirectory>src/java</unitTestSourceDirectory>
+        <unitTest>
+            <includes>
+                <include>**/*Test.java</include>
+            </includes>
+        </unitTest>
+        <resources>
+            <resource>
+                <directory>${basedir}/plugin-resources</directory>
+                <targetPath>plugin-resources</targetPath>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>${basedir}</directory>
+                <includes>
+                    <include>plugin.jelly</include>
+                    <include>plugin.properties</include>
+                    <include>project.properties</include>
+                    <include>project.xml</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+    </build>
+    <properties/>
+</project>

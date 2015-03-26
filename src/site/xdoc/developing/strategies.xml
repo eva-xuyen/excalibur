@@ -1,0 +1,156 @@
+<?xml version="1.0"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+
+  <properties>
+    <author email="hammant@apache.org">Paul Hammant</author>
+    <author email="bloritsch@apache.org">Berin Loritsch</author>
+    <title>It's a Stragedy!</title>
+  </properties>
+
+<body>
+   <section name="It's a Stragedy!">
+   <p>No, it's not a typo. The title has a deliberate play on words
+   that implies that incorrect strategies can end up in tragedy. While
+   the word "tragedy" may be a bit strong, the thought process does
+   have a ring of truth to it. In this chapter we attempt to give you
+   helpful hints and tips to boost the performance of your code and
+   your development team. We will break the discussion into logging
+   strategies, development strategies, component strategies, testing
+   strategies, and finally some notes on security strategies.</p>
+   </section>
+   <section name="Logging Strategies">
+
+      <p>Logging is a necessary function in any system. The problem
+      arises when the logging is not implemented in an efficient
+      manner. Before we get into the nuts and bolts of <em>how</em>
+      to create an efficient logging implementation, we have to identify
+      <em>what</em>
+      logging efficiency is.</p>
+
+      <p>In the spirit of the Separation of Concerns pattern, there
+      are two problem domains to consider: log organization and log
+      writing. Log organization is primarily concerned with how the
+      log categories are organized, and how the log files are
+      organized. Log writing has to do with the mechanics of writing
+      log entries.</p>
+
+      <subsection name="Log Organization">
+
+         <p>The Avalon framework and team advocate a category based
+         approach to organizing loggers as opposed to a class name
+         based approach. There is a very good reason for this. First
+         is that categorization allows you to put information of like
+         kind in one location. Second, it allows you to turn on and
+         off an entire category of log messages.</p>
+
+         <p>The arguments for the class name based logging usually
+         fall under these assumptions:</p>
+
+         <ol>
+            <li>
+               <p>There is an implicit match between a class and a category.</p>
+            </li>
+
+            <li>
+               <p>It makes it easier to get debug information from a
+            specific class if we are having problems with it.</p>
+            </li>
+
+            <li>
+               <p>The configuration file can handle the actual mapping
+            of classname to log file.</p> </li>
+        </ol>
+
+         <p>While these arguments have their point, so does a strict
+         category based logging approach:</p>
+
+         <ol>
+            <li>
+               <p>You can narrow your log messages farther than simple
+            class granularity. This way you can get information from
+            the part of the class that really needs it.</p> </li>
+
+            <li>
+               <p>More often than not, a group of classes make up a
+            Component. In most cases, the Component is what you are
+            really interested in--not the individual classes.</p>
+            </li>
+
+            <li>
+               <p>It is easier to manage a configuration file with
+            only a few categories that are bound to Component
+            instances during runtime you can separate the log files by
+            who is concerned with their contents.</p> </li>
+          </ol>
+      </subsection>
+
+      <subsection name="Log Category Organization">
+
+         <p>I would argue that it is a mistake to use only one
+         category for all logging. The reason is that you will
+         inevitably need to turn on and off a whole class of
+         messages. Another reason is that you will need at least one
+         category for each log file you have. One effective approach
+         is to separate your logging needs into roles and
+         classifications.</p>
+
+         <p>If you have already decomposed your system into
+         Components, then you have one set of categories defined. I
+         would use a shorthand name for the category names for simple
+         reference (e.g. "resource" instead of
+         "org.apache.avalon.excalibur.resource.ResourceManager"). The
+         simplified names can be used for a broad set of
+         classes. Using the same example, the name "resource" implies
+         the Resource class, its manager, and anything that is
+         directly associated with the concept of a "resource".</p>
+
+         <p>You can also use classifications as a specialization of
+         the main role classification. For example, all
+         ComponentManager code would have a category name of
+         "component". This would allow you to have a Category manager
+         for the aforementioned "resource" infrastructure. Typically
+         classifications are sub-categories. In this case, the full
+         name of the "component" category would be
+         "resource.component". This means that we are referring to the
+         "component" classification for the "resource" role.</p>
+
+         <p>Most of your logging needs can be organized into this two
+      dimensional cross-section of Role and Classification. Roles are
+      best for main categories due to their logical
+      separation. Typical classifications are "component", "security",
+      and "pool". These same classifications can be used as standard
+      sub-categories of the different roles. This way your log entries
+      can have fine-grained control that is logically organized.</p>
+      </subsection>
+
+      <subsection name="Log Writing">
+         <p>
+The mechanics of log writing can vastly affect the
+performance of your code. For instance, if you concatenate several
+strings together in your log messages, the Java Virtual Machine
+converts the concatenation to a StringBuffer, and performs the
+expensive <code>toString</code> operation on the result. The
+<code>Logger</code> interface provides a mechanism to optimize away
+these conversions when they are not needed.</p>
+
+    </subsection>
+   </section>
+  </body>
+</document>
+

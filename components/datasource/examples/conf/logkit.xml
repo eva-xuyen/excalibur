@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<logkit logger="lm" log-level="INFO">
+    <factories>
+        <factory type="stream" 
+                 class="org.apache.avalon.excalibur.logger.factory.StreamTargetFactory"/>
+        <factory type="file" 
+                 class="org.apache.avalon.excalibur.logger.factory.FileTargetFactory"/>
+        <factory type="priority-filter" 
+                 class="org.apache.avalon.excalibur.logger.factory.PriorityFilterTargetFactory"/>
+    </factories>
+    <targets>
+        <stream id="console">
+            <stream>System.out</stream>
+            <format type="avalon">
+%19.19{time:yyyy-MM-dd'T'HH:mm:ss.SSS} %5.5{priority} [%15.15{category}]: %{message}\n%{throwable}
+            </format>
+        </stream>
+    </targets>
+    <categories>
+        <!-- Role Manager Logger -->
+        <category name="rm" log-level="INFO">
+            <log-target id-ref="console"/>
+        </category>
+        
+        <!-- Component Manager Logger -->
+        <category name="cm" log-level="INFO">
+            <log-target id-ref="console"/>
+        </category>
+        
+        <!-- Application Loggers -->
+        <category name="app" log-level="INFO">
+            <log-target id-ref="console"/>
+            
+            <category name="jdbc" log-level="INFO">
+                <log-target id-ref="console"/>
+            </category>
+        </category>
+    </categories>
+</logkit>

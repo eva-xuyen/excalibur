@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<document>
+  <header>
+    <title>Avalon Framework - Guide - COP in Avalon</title>
+    <authors>
+      <person name="Berin Loritsch" email="bloritsch@apache.org"/>
+      <person name="Leo Simons" email="leosimons@apache.org"/>
+    </authors>
+  </header>
+  <body>
+    <section name="Components in Avalon">
+      <p>
+        At the core of the Avalon framework is the component. We define it as "a
+        passive entity that performs a specific role". This is important to grasp
+        because it requires a specific way of thinking.
+      </p>
+      <subsection name="A passive API">
+        <p>
+          A passive entity must employ a passive API. A passive API is one that is
+          acted upon, versus one that acts itself. See the
+          <a href="guide-patterns-ioc.html">Inversion of Control</a> pattern
+          for an explanation.
+        </p>
+      </subsection>
+      <subsection name="A specific Role">
+        <p>
+          The concept of roles comes from the theater.  A play, musical,
+          or movie will have a certain number of roles that actors play.
+          Although there never seems to be a shortage of actors, there
+          are a finite number of roles.  I am not going to make reference
+          to different types of roles at this point, but simply bring
+          the concept to light.  The function or action of a role is
+          defined by its script.
+        </p>
+        <p>
+          We are introducing this concept now because you need to have it
+          in mind when you are designing your system architecture.  Think
+          of the different roles in your system, and you will have your
+          "cast" of components so to speak.
+        </p>
+        <p>
+          For each role, you need to specify its script, or interface to
+          the rest of the system.  To be honest the interface is not enough.
+          There are specific contracts that you must define and keep in mind
+          when you specify your interfaces.  In other words, what users
+          of the component must provide, and what the component produces.
+          When the interfaces and contracts are defined, you can work on your
+          implementation.
+        </p>
+      </subsection>
+    </section>
+
+    <section name="The Component">
+      <p>
+        John Donne wrote, "No man is an island." to communicate that we
+        are all interdependent.  The same is true for the component.  That
+        is why there are different concerns regarding the component.  In
+        the section on roles we specified one of the concerns: the role.
+        The concerns directly supported by the Avalon Framework are:
+        configuration, external component use, management, and execution.
+      </p>
+      <p><i>
+        We used to have a marker interface component. This has been deprecated
+        because requiring all components extend this interface makes
+        integrating Avalon with other component systems like
+        <a href="http://www.omg.org">CORBA</a> very cumbersome.
+      </i></p>
+      <p>
+        As you might have guessed, each one of these concerns has a separate
+        interface that describes that concern.  We will delve deeper into
+        the interfaces and the reasoning behind them in other sections.  It
+        is important to know the order of precedence for the concerns so
+        that you know the overall contracts of how they are put together.
+      </p>
+      <ol>
+        <li>
+          <strong>Configurable:</strong> marks an object that can be configured.
+        </li>
+        <li>
+          <strong>Serviceable:</strong> marks an object that uses Components.
+        </li>
+        <li>
+          <strong>Initializable:</strong> marks an object that can be initialized.
+        </li>
+        <li>
+          <strong>Disposable:</strong> marks an object that can be disposed.
+        </li>
+        <li>
+          <strong>Stoppable:</strong> marks an object that can be started and stopped.
+        </li>
+      </ol>
+      <p>
+        The contract surrounding this order means that the methods defined
+        by each of those interfaces are called in a specific order by the object
+        that created the component.  Each interface represents a narrow view
+        of the component or object being controlled.
+      </p>
+      <p><i>
+        Notice that each interface is separate from Component, so you can use
+        them for simple objects.
+      </i></p>
+    </section>
+
+    <section name="The Serviceable">
+      <p>
+        In Avalon, Serviceable is defined as an active entity that controls
+        or uses components.  Its best analogy is that of a musical composer.
+        The musical composer chooses instruments (components) by their
+        role in the symphony (system) and tells them which notes to play.
+      </p>
+      <p>
+        The Avalon Serviceable follows the principles of Inversion of Control,
+        and is assigned a Service Manager.  Within this section we will
+        discuss how to look up specific components, and then how to prepare
+        the ServiceManager for the Serviceable.
+      </p>
+      <note>
+        The Serviceable has a specific contract that must be enforced for security
+        reasons.  The ServiceManager must only be set once.  That means that
+        the <code>compose</code> method must ignore all subsequent
+        requests to set the ServiceManager after it is successfully set.
+      </note>
+    </section>
+
+    <section name="Finding your Component">
+      <subsection name="The Service Manager">
+        <p>
+          For the majority of all cases, you will need to use the ServiceManager
+          to get the instance of the component you need.  If you recall the discussion
+          on component roles in the component documentation, you already have
+          a head start.  In Avalon, roles are defined by the work interface a
+          component has.  A work interface is different from any other interface
+          because it is the interface that defines the component's role.  Serviceable
+          and Component are concern interfaces because they address specific
+          concerns about the component.
+        </p>
+        <p>
+          The ServiceManager has one method to retrieve all of your components.
+          The <code>lookup</code> method will look up the component based on the
+          fully qualified name (FQN) of the work interface (Role).  See the following
+          example:
+        </p>
+        <source>
+final MyComponent component = (MyComponent)manager.
+     lookup( "com.mycompany.myproject.MyComponent" );
+        </source>
+        <p>
+          It is important to note that role is not the same thing as functional
+          equivalence.  In other words, if you have a MailSpooler that is functionally
+          equivalent to a FileStore (they do the same thing), it does not mean that
+          they perform the same role.  The FileStore is used to store objects to
+          files, and the MailSpooler is used to temporarily store messages until
+          they are sent.  Thus they are separate roles.  Some containers require
+          that the interface name match the key used to lookup component. In this
+          situation you may need to create a new interface that does nothing
+          more than extend another interface and add a new role.
+        </p>
+      </subsection>
+      <subsection name="The Service Selector">
+        <p>
+          Sometimes you will have several components that function in the same role.
+          For those cases, you will use the ServiceSelector to choose the exact
+          one you need.  The best way to describe its proper use is the scenario
+          described here.  You have several formatters that have the same role:
+          to take an input document and format it according to the rules in the
+          individual component implementations.  One formatter may take a text file
+          and remove all tabs and replace them with four spaces.  Another formatter
+          may reverse the formerly mentioned one.  Yet another takes the text file
+          and formats it for a canvas object.  For the Serviceable, it makes no difference
+          what the implementation does--just that it formats the text.
+        </p>
+        <p>
+          Using the processing chain example in the previous paragraph, we realize
+          the unsuitability of the ServiceManager for getting the right component.
+          The component addresses the concern of one component per role.  Fortunately,
+          the ServiceSelector is a component.  That means we use the ServiceManager
+          to lookup the ServiceSelector.  The ServiceSelector is designed to choose
+          the specific component out of many that perform the <strong>same</strong>
+          role.  The following code will help:
+        </p>
+        <source>
+final ServiceSelector selector = (ServiceSelector)manager.
+    lookup( "org.mycompany.myproject.FormatterSelector" );
+final Formatter formatter = (Formatter)selector.select( myURL );
+        </source>
+        <p>
+          The selector does not discriminate against lookup keys.  In that respect it
+          acts much like a hashtable lookup.  Keep in mind that the implementation of the
+          selector does not limit you to a hashtable lookup--you can dynamically
+          instantiate objects as well.  It takes an object (a hint), and returns the
+          specific component based on that hint.
+        </p>
+
+	<p><i>
+	Discussions are currently taking place about the ServiceSelector interface and
+	concept. It might be deprecated at some point in the future. There are indications
+	that usage of the ServiceSelector is only required when an application is
+	badly designed.
+	</i></p>
+      </subsection>
+      <subsection name="When you are done with the component">
+        <p>
+	  Both the ServiceManager and the ServiceSelector require you to
+	  release your component when you are done with it.  The method used
+	  to do this is "release".  One way of handling this is to use the
+	  try/catch/finally construct.  For your convenience, the following
+	  code can help:
+	</p>
+	<source>
+MyComponent component = null;
+
+try
+{
+    component = (MyComponent) manager.lookup("org.mycom.MyComponent");
+    component.myMethod();
+}
+catch (Exception e)
+{
+    getLogger().debug("Error using MyComponent", e);
+}
+finally
+{
+    if (component != null) manager.release(component);
+}
+	</source>
+	<p>
+	  The reason for this is so that smart component managers that
+	  select components from a pool can properly manage the resources.
+	</p>
+      </subsection>
+    </section>
+
+    <section name="Populating the ServiceManager">
+      <p>
+        It is the responsibility of the entity that creates the Serviceable to give it a
+        ServiceManager with all of the Roles populated.  If you create your own
+        implementations of the ServiceManager and ServiceSelector then you have
+        the liberty of deciding how to populate them.  Keep in mind that there are
+        default implementations included, and you should model their behavior as
+        much as possible.
+      </p>
+      <subsection name="DefaultComponentManager">
+        <p>
+          The DefaultComponentManager is nothing more than a Hashtable lookup of roles
+          and Components.  It even gives you the method <code>put</code> to populate
+          the ServiceManager.  One feature of the DefaultComponentManager is that
+          it can cascade.  In other words, if the role is not found in this ServiceManager,
+          the default implementation will look in the parent ServiceManager.
+        </p>
+        <p>
+          For the paranoid developer, the cascading feature of the ServiceManager
+          can be seen as a security hole as opposed to a usability enhancement.  You
+          are free to create your own implementation that does not use the cascading
+          feature--but you have to manually populate it with anything that would
+          have been in the parent ServiceManager that your child Serviceable needs.
+          Truth be told, there is very little risk due to the set-once contract for
+          ComponentManagers.  The method is never exposed to hostile agents before
+          the ServiceManager is set.
+        </p>
+      </subsection>
+      <subsection name="DefaultComponentSelector">
+        <p>
+          The DefaultComponentSelector again is simply a Hashtable selection of components
+          based on hints.  It gives the method <code>put</code> to populate the ServiceSelector.
+          The ServiceSelector does not have the cascading feature of the ServiceManager,
+          nor should it.  A ServiceSelector simply holds a number of components that
+          implement the same role--there really is no need to cascade.
+        </p>
+        <p>
+          After the ServiceSelector is populated, you must put it in the ServiceManager.
+          Please use the role of the component you are selecting, not the role of the selector
+          itself.  An acceptable convention is to add the "Selector" name to the end of the
+          role you are looking up.  Just be consistent.
+        </p>
+      </subsection>
+    </section>
+    <section>"The Container">
+    	<p>
+		The container is the entity that manages your components. It handles
+		things like loading of configuration files, resolution of dependencies,
+		component management, component isolation, and lifecycle support.
+	</p>
+	<p>
+		The container is not formalized in the form of an interface or contract
+		within Avalon Framework, though it might be at some point in the future.
+		The informal contract for the container is that it has the ability to
+		host any fully Avalon-Framework compliant component. Most current containers
+		place additional requirements on the component.
+	</p>
+    </section>
+  </body>
+</document>

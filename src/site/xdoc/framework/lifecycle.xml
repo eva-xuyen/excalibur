@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<document>
+  <header>
+    <title>Avalon Framework - The Component Lifecycle</title>
+    <authors>
+      <person id="BL" name="Berin Loritsch" email="bloritsch@apache.org"/>
+      <person id="PD" name="Peter Donald" email="peter at apache.org"/>
+      <person id="LS" name="Leo Simons" email="mail@leosimons.com"/>
+    </authors>
+  </header>
+  <body>
+    <section name="Introduction">
+      <p>
+        A component lives within something called a container. The contract between a 
+        container and a contained component is simple: the container is required to 
+        take a component through what is called its <strong>lifecycle</strong>.
+      </p>
+      <p>
+        The Avalon project provides an
+        application that functions as a container for componentized applications 
+        called <link href="http://avalon.apache.org/merlin">Merlin</link>.
+      </p>
+      <p>
+        The lifecyle methods from the Avalon Framework sub-project are designed to be
+        used by just about any component hosted by any container.  Of course, the API
+        in question may well require additional interfaces for strongly typed 
+        functionality, but these interfaces should negate the need for any duplication
+        of effort.
+      </p>
+    </section>
+    <section name="The Lifecycle">
+      <p>
+        The lifecycle of a component specifies the methods that can be called on it,
+        and the order in which this may happen. Some methods can be called only once
+        in a specific <code>phase</code> of a component's lifecycle, others may
+        be called multiple times. These methods are called the lifecycle methods.
+      </p>
+      <p>
+        It is up to each container to indicate which lifecycle methods it will honor.
+        This should be clearly documented together with the description of the
+        container. A sister project to Phoenix supports all of the lifecycle methods defined in the
+        Avalon Framework API.
+      </p>
+    </section>
+    <section name="The Lifecycle Interfaces">
+      <p>
+        A component exposes its lifecycle methods by implementing the lifecycle
+        interfaces. Each of these defines one or more methods that represent a
+        specific phase in a component's lifecycle. The defined interfaces are:
+      </p>
+      <ol>
+        <li>LogEnabled</li>
+        <li>Contextualizable</li>
+        <li>Serviceable (replacement for Composable)</li>
+        <li>Configurable</li>
+        <li>Parameterizable</li>
+        <li>Initializable</li>
+        <li>Startable</li>
+        <li>Suspendable</li>
+        <li>Recontextualizable</li>
+        <li>Recomposable</li>
+        <li>Reconfigurable</li>
+        <li>Reparameterizable</li>
+        <li>Stoppable</li>
+        <li>Disposable</li>
+      </ol>
+      <p><i>
+        <strong>Note:</strong>java.lang.Runnable has also been in use as a lifecycle
+        interface. This is not recommended and is not supported by Avalon. Instead,
+        the run() method is the responsibility of the component itself. If you wish
+        to use it, call it from within start() or another method.  
+      </i></p>
+    </section>
+    <section name="Phase Order">
+      <p>
+        The order in which the various lifecycle methods are called is very specific.
+        While none are required (it is possible to have a component implementing
+        none of the lifecycle methods, although the use of that would be limited),
+        some can only be used when others are as well. This is best explained using
+        a few examples.
+      </p>
+      <subsection name="Simple Examples">
+        <p>The lifecycle of a component implementing only Configurable for
+        example will be:</p>
+        <ol>
+          <li>constructor</li>
+          <li>configure</li>
+          <li>finalize</li>
+        </ol>
+        <p>The lifecycle of a component implementing only Serviceable will be:</p>
+        <ol>
+          <li>constructor</li>
+          <li>service</li>
+          <li>finalize</li>
+        </ol>
+      </subsection>
+      <subsection name="Complete">
+        <p>
+          If a component implements more than one interface the order of
+          the events (service, configure etc.) follow a specific order. A component
+          implementing all above interfaces (including Runnable) will follow these
+          specific paths.
+        </p>
+        <p>
+          Startup Phase:
+        </p>
+        <ol>
+          <li>constructor <strong>as a consequence of instantiation</strong>
+</li>
+          <li>contextualize</li>
+          <li>service or compose</li>
+          <li>configure</li>
+          <li>parameterize</li>
+          <li>initialize</li>
+          <li>start</li>
+        </ol>
+        <p>
+          At various or repeated times after startup:
+        </p>
+        <ol>
+          <li>suspend</li>
+          <li>recontextualize</li>
+          <li>recompose</li>
+          <li>reconfigure</li>
+          <li>reparameterize</li>
+          <li>resume</li>
+        </ol>
+        <p>
+          Shutdown Phase:
+        </p>
+        <ol>
+          <li>stop</li>
+          <li>dispose</li>
+          <li>finalize <strong>at some indeterminate moment by the garbage collector</strong>
+</li>
+        </ol>
+      </subsection>
+      <subsection name="Phases executed once">
+        <p>
+          These lifecycle methods are only called once in the entire life of a
+          component:
+        </p>
+        <ul>
+          <li>contextualize</li>
+          <li>service</li>
+          <li>configure</li>
+          <li>parameterize</li>
+          <li>initialize</li>
+          <li>dispose</li>
+        </ul>
+      </subsection>
+      <subsection name="Phases executed once or more">
+        <p>
+          These lifecycle methods are called at least once and possibly more, depending
+          on the container:
+        </p>
+        <ul>
+          <li>start</li>
+          <li>stop</li>
+        </ul>
+      </subsection>
+      <subsection name="The Suspendable Interface">
+        <p>
+          The methods suspend() and resume() are not guaranteed to be called at all,
+          even when implemented. They can be called more than once, but only after
+          one another and between start() and stop(). The reason they exist is so 
+          the container can notify the component it needs to temporarily stop 
+          any operations. The container may need to perform some synchronized operation 
+          on one of the components used by this component, or it may wish to call any 
+          of the following methods, which can also be called zero or more times, and 
+          only between a suspend() and a resume().
+        </p>
+        <ul>
+          <li>recontextualize()</li>
+          <li>recompose()</li>
+          <li>reconfigure()</li>
+          <li>reparameterize()</li>
+        </ul>
+      </subsection>
+    </section>
+  </body>
+</document>

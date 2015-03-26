@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<document>
+  <header>
+    <title>Avalon Framework - Guide - Security Concerns</title>
+    <authors>
+      <person name="Berin Loritsch" email="bloritsch@apache.org"/>
+    </authors>
+  </header>
+  <body>
+    <section name="Introduction">
+      <p>
+        One major concern for many companies is the security of a system.
+        In this context security is defined as protection of data, and
+        quality of service (QOS).  Both of these fall under security because
+        a system must protect itself from these two forms of attack.  When
+        a company loses a system, it loses business, and the money it
+        loses can reach scary amounts.
+      </p>
+      <p>
+        For the purpose of this discussion, we will address the first
+        aspect (protection from crackers and system infiltration).  Many
+        times, the same fixes for this type of protection inherently fix
+        the other (QOS).  System security has three distinct concerns
+        that have been well defined: authentication, authorization, and
+        architecture.  Why didn't I say encryption?  It is because
+        encryption does not equal security.  It is only part of the whole
+	system.
+      </p>
+      <subsection name="Authentication">
+        <p>
+          Authentication is the process of identifying parties.  In a completely
+          trusted system, authentication is as simple as grabbing a reference
+          to the object or entity you want to manipulate.  However, sometimes
+          you have trusted systems running in hostile environments (e.g. the
+          Internet).  In those cases you have to make sure that the entity
+          is the correct one.
+        </p>
+        <p>
+          There are two sides of authentication.  On one side, you are
+          authenticating an entity you want to do business with.  On the other
+          side, there is an entity wanting to do business with you.  This is
+          best understood when you bring it into a financial realm.  Let's say
+          you want to get a loan from XYZ bank.  If you initiate the exchange
+          at their facility, you have already authenticated them--although you
+          will have to jump through hoops to authenticate yourself.  If a
+          telemarketer calls from ACME Loan Machine, Inc., they know who you
+          are--although if you are smart, you will make them jump through
+          hoops to authenticate themselves.
+        </p>
+        <p>
+          Currently, Avalon identifies blocks as trusted parties.  In other
+          words, the fact that they are installed correctly in the proper
+          directory is enough to mark them as authenticated.  Much like a
+          good friend--you know them by their voice.  Because of the architecture
+          of Avalon, blocks define their own authentication system.  That
+          means that whether the block assumes all components are trusted
+          or it forces the blocks to authenticate themselves is up to the
+          block.
+        </p>
+        <p>
+          For systems that deal with sensitive information, authentication
+          becomes more of an issue.  You must validate that the components
+          in use are the ones you have authorized for use.  The more open a
+          system is, the more authentication and authorization play an important
+          role.  If you have components that are transmitted over some form
+          of communications system (wire, air, etc.) you must verify that
+          they are who they say they are.
+        </p>
+        <p>
+          For this purpose, protocols like Kerberos and Leighton-Micali have
+          been defined.  It is beyond the scope of this page to discuss the
+          pros and cons of each system.
+        </p>
+      </subsection>
+      <subsection name="Authorization">
+        <p>
+          Once a component has been authenticated (in other words its identity
+          has been authoritatively validated), then you must decide what access
+          it has to your systems.  A fully trusted component can do what it likes.
+          An untrusted component must be denied functions it is not allowed.
+        </p>
+        <p>
+          Authorization is part of the architecture, but is significant enough
+          to warrant its own concern.  The best rule of thumb is to hide access
+          to everything unless the component is trusted.  When hiding is not
+          an option, then you have to resort to denying access.  For the security
+          conscious, all denied accesses should be logged along with the component's
+          identifier.
+        </p>
+      </subsection>
+      <subsection name="Architecture">
+        <p>
+          Avalon already has the framework for the proper secure architecture.
+          With proper planning, security can be added without recoding the components.
+          However there are some rules of thumb for paranoid programming.
+        </p>
+        <ol>
+          <li>
+            Never expose anything that does not need to be exposed.  Information
+            hiding is as important in security as it is in Component
+            Oriented Programming (COP).
+          </li>
+          <li>
+            Any component that originates from your own jar should be trusted--you
+            provided it after all.
+          </li>
+          <li>
+            Any component that originates from another source, and especially over
+            a wire, should be treated with suspicion.  Authenticate it, and if it
+            checks out, trust it.  Otherwise, don't give it access--you don't know
+            where it's been or who created it.
+          </li>
+          <li>
+            Encrypt <strong>all</strong> communications.  Period.
+          </li>
+        </ol>
+      </subsection>
+    </section>
+    <section name="From the Sublime to the Ridiculous">
+      <p>
+        Throughout my short career I have been exposed to a wide range of security
+        implementations.  Having worked for a DoD contractor, I learned about physical
+        security requirements (how to manage paper files, and the rules and regulations
+        regarding secure information).  However in a recent attempt to install a
+        solution at our customer's site, I learned more about computer security
+        than I have at any other time.
+      </p>
+      <p>
+        Our customer, a well known corporation whom I will call ACME for
+        anonymity, is in custody of sensitive information.  Product movement data,
+        financial data, and demographic data are all stored in one of a couple of
+        huge server farms.  Our application was to reside in the De-Militarized
+        Zone (DMZ), and talk to a database behind the firewall.  When they discovered
+        that the application server we chose required Remote Procedure Calls (the
+        subject of many CERT advisories in the Unix world), we hit a brick wall.  Our
+        application was no longer trusted, and was not to be installed.  Luckily
+        the next version of the application server fixed that problem.
+      </p>
+      <p>
+        In the midst of this, I decided to learn as much as I could about operating
+        in a hardened environment.  Hardening involves turning off access to anything
+        that is not needed, and only allowing what is needed.  All mail servers, ftp
+        servers, rpc services, telnet, and any other clear text communications ports need
+        to be removed.  All communication into and out of the box needs to be
+        encrypted, with the exception of HTTP (although we were using HTTPS).
+      </p>
+      <p>
+        All of this was necessary.  I understand the principles behind it.  However,
+        I decided to ask their security analyst how to learn more--so we don't run
+        into this problem again.  He gave me a link to
+        <link href="http://www.sans.org">SANS institute</link> and a word of
+        advice: "Be paranoid.  Don't trust anything."
+      </p>
+      <p>
+        There is a point where the aforementioned philosophy goes a bit too far.  The
+        case in point relates to a story I heard working with the DoD.  During the
+        height of the "Cold War" between the US and Russia, a US commanding
+        officer required that all the computers be placed on these huge power
+        conditioners to reduce the Electro-Magnetic Interference (EMI) coming from the
+        power line feedback of the computers.  His rationalization was that he was
+	  positive KGB agents had the technology that they could read the EMI interference
+	  on the power lines and read the bits on the computers.  In hindsight this is
+	  improbable; no one can identify the bits travelling on a computer from EMI in the
+	  power lines due to the level of noise (clocks, addressing lines,
+	  <em>encrypted data</em>, and other computers on the network).
+        </p>
+        <p>
+        The security industry has a general rule of thumb to ensure that you don't spend
+	  too much time in this area:  The cost of cracking the server should be more than
+	  the information that is protected is worth.  Basically it boils down to this:
+	  sites like Slashdot and SourceForge do not require as much security as a bank.
+	  Protecting free information is not as critical as protecting people's bank accounts.
+	  I am not minimizing the contributions of the aforementioned sites to the world
+	  as a whole, but people become much more agitated if their bank account is wiped
+	  clean than if their news article is defaced.  This is not to say that if you are
+	  protecting free information then you can safely ignore security.  While the information
+	  is monetarily free to customers, it has value that can be measured in pride, respect,
+	  and accountability.
+        </p>
+        <p>
+        The moral of the story is be paranoid to a point.  Avalon is designed to be
+        a trusted system, and will be improved to work in an untrusted network.
+      </p>
+    </section>
+  </body>
+</document>

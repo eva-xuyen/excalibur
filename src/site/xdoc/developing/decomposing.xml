@@ -1,0 +1,414 @@
+<?xml version="1.0"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+
+  <properties>
+    <author email="hammant@apache.org">Paul Hammant</author>
+    <author email="bloritsch@apache.org">Berin Loritsch</author>
+    <title>Decomposing A System</title>
+  </properties>
+
+<body>
+  <section name="Decomposing A System">
+  <p>
+    We will use a hypothetical business server to demonstrate
+    how to identify services and Components.  After we define some
+    services that are used in the system, we will take one of those
+    services and define the different components needed by the
+    service.  My goal is to pass on some concepts that will help
+    you define your system in manageable pieces.
+  </p>
+  </section>
+  <section name="System Analysis -- Identifying Components">
+    <p>
+      While it is beyond the scope of this presentation to provide
+      a full-blown methodology, I do want to provide some pointers.
+      We will start with the implementation oriented definition of
+      Components and Services, and then provide a practical definition.
+    </p>
+    <table>
+      <tr><th>Component</th></tr>
+      <tr><td>
+        A Component is the combination of a work interface, and the
+        implementation of that interface.  Its use provides a looser
+        coupling between objects, allowing the implementation to
+        change independently of its clients.
+      </td></tr>
+    </table>
+    <table>
+      <tr><th>Service</th></tr>
+      <tr><td>
+        A Service is a group of one or more Components that provide
+        a complete solution.  Examples of a Service are protocol
+        handlers, job schedulers, and authentication and authorization
+        services.
+      </td></tr>
+    </table>
+    <p>
+      While these definitions provide a starting place, they don't
+      give the whole picture.  In order to decompose a system (defined
+      as a group of facilities that comprise a project) into the
+      necessary parts, I advocate a top-down approach.  That way you
+      will avoid being bogged down in details before you know what the
+      different facilities are.
+    </p>
+    <subsection name="Determining the Scope of Your Project">
+      <p>
+        You always have to start out with a general idea of what your
+        project is supposed to accomplish.  In the commercial world, the
+        initial statement of work accomplishes this.  In the open source
+        world, this is usually accomplished by an idea or brainstorming
+        session.  I can't stress enough the importance of having a high
+        level view of the project.
+      </p>
+      <p>
+        Obviously, a large project will be comprised of many different
+        services, and a small project will only have one or two.  If you
+        start to feel a bit overwhelmed, just remind yourself that a large
+        project is really an umbrella for a bunch of smaller projects.
+        Eventually, you will get to the point where you will be able to
+        comprehend the big picture.
+      </p>
+    </subsection>
+  </section>
+  <section name="Statement of Work: Business Server">
+    <p>
+      The Business Server is a hypothetical project.  For the purpose
+      of our discussion, its function is to handle sales orders,
+      automatically bill customers, and manage the inventory control.
+      Sales orders have to be processed as they come in, using some
+      kind of transaction system.  The server automatically bills the
+      customers 30 days after the sales order is filled.  The inventory
+      is managed by both the server and by the current inventory counted
+      at the factory or warehouse.  The business server will be a
+      distributed system, and each server will communicate with others
+      via a messaging service.
+    </p>
+  </section>
+  <section name="Finding the Services">
+    <p>
+      We will use the Business Server Project to discover the services.
+      Considering the overly broad statement of work, we can immediately
+      begin to see some services defined in the description of the
+      project.  The list of services will be split into explicit ones
+      (services that can immediately be derived from the statement of
+      work) and implicit ones (services that are discovered due to similar
+      work or as supporting the explicit services).  Please note that the
+      implementing company will develop not all of the services-some will
+      be purchased as commercial solutions.  In those cases, we will
+      probably put a wrapper so that we still have a specific way of
+      interacting with the commercial product.  The implementing company
+      will build the majority of the services.
+    </p>
+    <subsection name="Explicit Services">
+      <p>
+        We can quickly derive a number of services from the statement
+        of work.  Our work is not done after this initial analysis,
+        because the definition of some services requires the existence
+        of other services.
+      </p>
+      <subsection name="Transaction Processing Service">
+        <p>
+          The statement of work specifies that "Sales orders have to be
+          processed as they come in".  This means we need to have a
+          mechanism of receiving sales requests and automatically process
+          them.  This is similar to the way web servers work.  They
+          receive a request for a resource, process it, and return a
+          result (e.g. the HTML page).  This is known as Transaction
+          Processing.
+        </p>
+        <p>
+          To be fair, there are different types of transactions.  The
+          generic transaction service will most likely have to be broken
+          down into something more specific like a "Sales Order Processor".
+          The approach has to do with how generic you make your service.
+          There is a balance between usability and reusability.  The more
+          generic a service is, the more reusable it is.  Usually it is
+          also more difficult to comprehend.
+        </p>
+      </subsection>
+      <subsection name="Scheduling Service">
+        <p>
+          There are a couple of instances where an event must be scheduled
+          for a specified amount of time after a transaction.  In addition,
+          the inventory control processes need to kick off supply orders on
+          a periodic basis.  Because the statement of work states "server
+          automatically bills the customers 30 days after the sales order
+          is filled" we need a scheduling service.  The good news is that
+          Avalon Cornerstone provides one for us so we don't have to create
+          our own.
+        </p>
+      </subsection>
+      <subsection name="Messaging Service">
+        <p>
+          The statement of work specifies that "each server will
+          communicate via a messaging service" in our distributed system.
+          Let's face it, sometimes customers want a specific product or
+          method they want to use.  The messaging service is a prime
+          example of using another company's product.  Most likely, we
+          would use Java Messaging Service (JMS) to interface with the
+          Messaging Service.  Since JMS is a standard, it is unlikely
+          that the interface will change any time soon.
+        </p>
+        <p>
+          In practical experience, a well-designed message oriented system
+          will scale better than object oriented systems (like EJB).  One
+          reason for better scalability is that messaging tends to have
+          lower concurrent overhead memory.  Another reason for this is that
+          it is easier to spread the load of message processing across all
+          servers instead of concentrating all the processing in a small
+          cluster of servers (or even just one server).
+        </p>
+      </subsection>
+      <subsection name="Inventory Control Service">
+        <p>
+          While this is not a classic server piece in textbooks, it is a
+          requirement of this system.  The inventory control service
+          routinely monitors the records for what the factory or warehouse
+          has in stock, and triggers events when stock starts running out.
+        </p>
+      </subsection>
+    </subsection>
+    <subsection name="Implied Services">
+      <p>
+        Using experience with past systems, and further breaking down
+        other services will yield a number of services that the system
+        needs that wasn't specified.  Due to space limitations, we will
+        avoid doing a full decomposition.
+      </p>
+      <subsection name="Authentication and Authorization Service">
+        <p>
+          The authentication and authorization service is not necessarily
+          specified in the statement of work -- but all business systems
+          must take security seriously.  That means all clients of the system
+          must be authenticated, and every action of the user must be
+          authorized.
+        </p>
+      </subsection>
+      <subsection name="Workflow Automation Service">
+        <p>
+          Workflow automation is a hot development area in enterprise
+          systems.  If you don't use a third party workflow management
+          server, you will have to invent your own.  Workflow automation
+          is generally the act of using a software system to route tasks
+          through a Company's business process.  For more information,
+          view the Workflow Management Council's web page at
+          <a href="http://www.wfmc.org">http://www.wfmc.org</a>.
+        </p>
+      </subsection>
+      <subsection name="Document Repository Service">
+        <p>
+          This definition of a "document repository" is very loosely
+          defined as the current state of information in a task.  In
+          other words, when the company receives a purchase order, our
+          system needs to store and recall the purchase order information.
+          The same goes for billing and any other process in the system
+          from inventory to new customer requests.
+        </p>
+      </subsection>
+    </subsection>
+    <subsection name="Summary">
+      <p>
+        I hope that the examples of services for the Business Server
+        project will help you discover more.  You will find that as you
+        go from higher levels of abstraction down to lower levels, you
+        will find more types of services required like Connection Management
+        to handle requests on open ports.  Some of the services we defined
+        will be implemented by third party systems such as the Messaging
+        Service and the Workflow Management Service.  It is in your best
+        interest to use a standard interface for these services so that
+        you can change vendors later.  Some services are actually multiple
+        services acting as one larger service.  Some are already available
+        within Avalon Excalibur or Avalon Cornerstone.
+      </p>
+      <p>
+        One thing to keep in mind while discovering the services in a
+        system is that a service should be a high level sub-system.  This
+        will help you define components using teams of analysts.  Because
+        we have already identified the main services, you can have more
+        than one person (or team) decompose each of the services in parallel.
+        The boundaries are well defined, so there is little chance for
+        overlap.  If you decide to do the parallel analysis, you should
+        come back together to identify common Components so that you can
+        reuse as much code as possible.
+      </p>
+      <img src="../images/deployment.gif"/>
+    </subsection>
+  </section>
+  <section name="Finding Components">
+    <p>
+      We will use the Document Repository Service mentioned already for the
+      process of identifying the proper Components.  For the sake of our
+      conversation, we will now state the requirements of the Document
+      Repository Service.  The repository will use a database for persistent
+      storage, identify and authorize clients, and cache documents in memory.
+    </p>
+    <subsection name="Practical Definition of Components">
+      <p>
+        When we talk about components, you have to think in terms of "What
+        facilities does my service need to operate?"  Avalon was conceived
+        with the concept of <em>casting</em> your system.  The
+        developer of the system        would come up with a list of responsibilities
+        for the Component known        as its <em>role</em>.
+      </p>
+      <subsection name="What is a Role?">
+        <p>
+          The concept of roles comes from the theater.  A play, musical, or
+          movie will have a certain number of roles that actors play.  Although
+          there never seems to be a shortage of actors, there are a finite
+          number of roles.  Its <em>script</em> defines the
+          function or action of a role.  Just like the theatrical version, the
+          script determines how you interact with the Component.  Think of the
+          different roles in your system, and you will have your
+          <em>cast</em> of Components so to speak.
+        </p>
+        <p>
+          A role is the contract for a type of component.  For example, our
+          Document Repository Service needs to interact with a database.
+          Avalon Excalibur defines a Component that satisfies the role "Data
+          Source".  Excalibur includes two different Components that satisfy
+          that role, depending on the setting our Service will be living in;
+          however, they both satisfy the same contracts.  The majority of
+          Avalon based systems will only use one active Component for each
+          role.  The script is the work interface: the interface with which
+          other components interact.
+        </p>
+        <p>
+          There are specific contracts that you must define and keep in mind
+          when you specify interfaces for your Components.  The contracts
+          specify what users of the Component must provide, and what the
+          Component produces.  Sometimes you must include usage semantics in
+          the contract.  An example is the difference between a temporary
+          storage Component and a permanent storage Component.  When the
+          interface and contract are defined, you can work on your
+          implementation.
+        </p>
+      </subsection>
+    </subsection>
+    <subsection name="What is a good candidate for a Component?">
+      <p>
+        We have already identified four possibilities for Components within
+        our Document Repository Service: DataSourceComponent (from Excalibur),
+        Cache, Repository, and Guardian.  You should look for roles with a high
+        likelihood of multiple implementations that need to inter-operate
+        seamlessly.
+      </p>
+      <p>
+        Using that example, you will discover several instances where you need
+        replaceable facilities.  Most of the time, you will only be using one
+        implementation of the facility, but you need the ability to upgrade it
+        independently of the rest of the system.  Other times, you will need
+        alternate implementations due to environmental issues.  For example,
+        the "Data Source" that Excalibur defined will usually handle all the
+        JDBC Connection pooling itself-but sometimes you want to take advantage
+        of that facility built into a Java 2 Enterprise Edition (J2EE) server.
+        Excalibur solves this by having a "Data Source" that directly pools and
+        manages the JDBC connections, and one that uses Java's Naming and
+        Directory Interface (JNDI) to get the specified connection.
+      </p>
+    </subsection>
+    <subsection name="What is not a good Component?">
+      <p>
+        People who are used to JavaBeans tend to implement everything as a
+        JavaBean.  This means everything from data modeling to transaction
+        processing.  If you used this approach with Components, you might end
+        up with an overly complex system.  Think of Components as modeling a
+        service or facility, and not data.  You could have a Component that
+        pulls data from another resource, but the data should remain distinct
+        as data.  An example of this philosophy in Avalon Excalibur is the
+        fact that the Connection is not a Component.
+      </p>
+      <p>
+        Another example could be the Guardian Component we specified earlier.
+        It could be argued that the logic involved in the Guardian is so
+        specific to the Document Repository Service that it could not be used
+        again for a completely different service.  While there are ways of
+        managing the complexity, and ways of making it flexible-sometimes the
+        extra work is not worth it.  You have to weigh your decisions in such
+        cases carefully.  If the logic performed in a potential Component is
+        going to be applied consistently then it might make sense to keep it a
+        Component.  There is room to have multiple instances of a Component in
+        a system, and they would be selected at run time.  If the logic for a
+        potential Component is specific to only one other Component, it might
+        be worth it to absorb the logic into the other Component.  Using the
+        example of the Guardian Component and the Repository Component, we
+        could argue that our Guardian is so specific to the Repository, that it
+        is not implemented as a Component.
+      </p>
+    </subsection>
+    <subsection name="Decomposing the Document Repository Service">
+      <p>
+        We will list the Components that we are going to implement with a
+        description of their roles, the rationale, and their origination (if
+        the component already exists).
+      </p>
+      <subsection name="DocumentRepository">
+        <p>
+          The DocumentRepository is the parent Component of the whole service.
+          In Avalon, services are implemented as Blocks, which are a specific
+          kind of Component.  The Block must have a work interface that extends
+          the Service marker interface.  The Block interface also extends
+          Avalon's Component interface.  Please note that Block and Service are
+          interfaces that are part of Avalon Phoenix.  In the end, a Service is
+          still technically just a specific type of Component.
+        </p>
+        <p>
+          The DocumentRepository is our method of getting Document objects from
+          persistent storage.  It interacts with the other Components in the
+          service to provide security, functionality, and speed.  This
+          particular DocumentRepository will connect to a database and employ
+          the logic to build the Document objects internally.
+        </p>
+      </subsection>
+      <subsection name="DataSourceComponent">
+        <p>
+          The DataSourceComponent is supplied by Avalon Excalibur.  It is our
+          method of retrieving valid JDBC Connection objects for our use.
+        </p>
+      </subsection>
+      <subsection name="Cache">
+        <p>
+          The Cache is a short-term memory-based storage facility.  The
+          DocumentRepository will use it to store Document objects referenced
+          by a hash algorithm.  In order to promote the reusability of the
+          Cache Component, the stored object must implement a Cacheable
+          interface.
+        </p>
+      </subsection>
+      <subsection name="Guardian">
+        <p>
+          The Guardian Component is used to manage permissions based on the
+          Principal.  The Guardian will load its permission sets from a
+          database.  The Guardian will use the standard Java security model to
+          enforce access to the specific Document objects.
+        </p>
+      </subsection>
+    </subsection>
+    <subsection name="Summary">
+      <p>
+        At this point, you should have an idea of what makes a good Component.
+        The examples describe all the Components that will be in the Document
+        Repository Service, with a brief summary of what they will do.  A quick
+        glance through the list supports the approach of only implementing
+        facilities as Components -- not data.  At this point, you should be able
+        to determine what components your services need to operate.
+      </p>
+    </subsection>
+  </section>
+ </body>
+</document>

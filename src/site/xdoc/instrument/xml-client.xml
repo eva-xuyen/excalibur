@@ -1,0 +1,170 @@
+<?xml version="1.0"?>
+
+<!--
+     Licensed to the Apache Software Foundation (ASF) under one or more
+     contributor license agreements.  See the NOTICE file distributed with
+     this work for additional information regarding copyright ownership.
+     The ASF licenses this file to You under the Apache License, Version 2.0
+     (the "License"); you may not use this file except in compliance with
+     the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed  under the  License is distributed on an "AS IS" BASIS,
+     WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+     implied.
+
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<document>
+    <properties>
+        <author email="leif.AT.tanukisoftware.DOT.com">Leif Mortenson</author>
+        <title>Excalibur Instrument - XML Client Interface</title>
+    </properties>
+    <body>
+        <section name="XML Client">
+            <p>
+                The HTTP Connector makes it possible for remote applications to connect
+                to an Instrument Manager.  The connector is capable of serving both
+                HTML and XML formatted content which makes it possible to monitor
+                and manipulate the Instruments registered with the Instrument Manager.
+            </p>
+            <p>
+                Used correctly, this interface provides a powerful and efficient way to
+                work with the Instrument Manager.
+                The Swing based <a href="java-client.html">Java client</a> makes use of
+                the XML interface to communicate with the Instrument Manager.
+            </p>
+            <p>
+                The XML interface is enabled by default, but it is possible to disable it
+                in the <a href="configuration.html">configuration</a> for the HTTP
+                Connector.  It is also possible to set the HTTP Connector into a read-only
+                mode, in which case several of the URLs listed below will be unavailable.
+            </p>
+            <subsection name="Interface URLs">
+                <p>
+                    Requests are made to the XML Client Interface using one or more of
+                    the following URLs.  Any client which is capable of making HTTP
+                    requests can be used.
+                </p>
+                <p>
+                    All requests must be made using the HTTP GET method.  Currently POST
+                    is not supported.  URL request parameters specific to each URL are
+                    described in detail on each URL page below.
+                </p>
+                <p>
+                    All requests and responsed are encoded using the UTF-8 encoding.
+                    When building the URLs, it is very important that any text parameter
+                    values be propperly URL Encoded.   English text will usually work but
+                    if a future user begins using your application with another languange,
+                    like Japanese, unencoded text will likely be corrupted when sending
+                    the requests to the server.
+                </p>
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <th>URL</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td><a href="xml-client-instrument-manager.html">Instrument Manager</a></td>
+                        <td>/instrument-manager.xml</td>
+                        <td>
+                            The Instrument Manager URL is used to obtain information about the
+                            Instrument Manager as a whole, including any root Instrumentables.
+                            By providing a recurse parameter, it is possible to request the
+                            entire instrument tree for the system in a single request.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="xml-client-instrumentable.html">Instrumentable</a></td>
+                        <td>/instrumentable.xml</td>
+                        <td>
+                            The Instrumentable URL is used to obtain information about a particular
+                            Instrumentable, including any child Instrumentables or Instruments.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="xml-client-instrument.html">Instrument</a></td>
+                        <td>/instrument.xml</td>
+                        <td>
+                            The Instrument URL is used to obtain information about a particular
+                            Instrument, including any permanent or leased Samples.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="xml-client-sample.html">Sample</a></td>
+                        <td>/sample.xml</td>
+                        <td>
+                            The Sample URL is used to obtain information about a particular
+                            Sample.  To obtain the actual data points of the sample, the
+                            <a href="xml-client-snapshot.html">Sample Snapshot</a> URL must
+                            be used.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="xml-client-snapshot.html">Sample Snapshot</a></td>
+                        <td>/snapshot.xml</td>
+                        <td>
+                            The Sample Snapshot URL is used to request a snapshot of the contents
+                            of a particular Sample.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="xml-client-snapshots.html">Sample Snapshots</a></td>
+                        <td>/snapshots.xml</td>
+                        <td>
+                            The Sample Snapshots URL work similar to the Sample Snapshot URL
+                            except that it makes it possible to request snapshots for several
+                            Samples in a single request.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="xml-client-create-sample.html">Create Sample</a></td>
+                        <td>/create-sample.xml</td>
+                        <td>
+                            The Create Sample URL is used to register a new Sample lease with the
+                            Instrument Manager.   It is also possible to renew leases using this
+                            URL.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="xml-client-create-samples.html">Create Samples</a></td>
+                        <td>/create-samples.xml</td>
+                        <td>
+                            The Create Samples URL is used to register multiple new Sample leases
+                            with the Instrument Manager.   It is also possible to renew leases
+                            using this URL.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="xml-client-sample-lease.html">Sample Lease</a></td>
+                        <td>/sample-lease.xml</td>
+                        <td>
+                            The Sample Lease URL is used to renew a lease on an existing
+                            Sample.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="xml-client-sample-leases.html">Sample Leases</a></td>
+                        <td>/sample-leases.xml</td>
+                        <td>
+                            The Sample Lease URL is used to renew the leases on multiple
+                            existing Samples.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="xml-client-gc.html">Invoke Garbage Collection</a></td>
+                        <td>/gc.xml</td>
+                        <td>
+                            The Invoke Garbage Collection URL is used to force the server
+                            to immediately perform a Garbage Collection sweep of its memory.
+                        </td>
+                    </tr>
+                </table>
+            </subsection>
+        </section>
+    </body>
+</document>

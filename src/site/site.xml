@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+     Licensed to the Apache Software Foundation (ASF) under one or more
+     contributor license agreements.  See the NOTICE file distributed with
+     this work for additional information regarding copyright ownership.
+     The ASF licenses this file to You under the Apache License, Version 2.0
+     (the "License"); you may not use this file except in compliance with
+     the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed  under the  License is distributed on an "AS IS" BASIS,
+     WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+     implied.
+
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<project>
+
+  <bannerLeft>
+    <name>Excalibur Project</name>
+    <src>images/logo.gif</src>
+    <href>http://excalibur.apache.org/</href>
+  </bannerLeft>
+  
+  <bannerRight>
+    <name>The Apache Software Foundation</name>
+    <src>images/asf-logo-reduced.gif</src>
+    <href>http://www.apache.org/</href>
+  </bannerRight>
+
+    <body>
+        <links>
+            <item name="Home" href="/index.html"/>
+            <item name="Fortress" href="/fortress/index.html"/>
+            <item name="Components" href="/component-list.html"/>
+            <item name="Containerkit" href="/containerkit.html"/>
+        </links>
+
+        <menu name="Essentials">
+            <item name="Overview" href="/index.html"/>
+            <item name="Mailing Lists" href="/mail-lists.html"/>
+            <item name="Subversion" href="/svn.html"/>
+            <item name="Wiki" href="http://wiki.apache.org/excalibur/"/>
+            <item name="FAQ" href="http://wiki.apache.org/excalibur/FrequentlyAskedQuestions"/>
+            <item name="Javadocs" href="http://excalibur.apache.org/apidocs/"/>
+            <item name="Download" href="http://excalibur.apache.org/download.cgi"/>
+            <item name="Issue Tracking" href="/issue-tracking.html"/>
+            <item name="Miscellaneous" href="misc.html" collapse="true">
+                <item name="Where's my documentation???" href="/no-docs-available.html"/>
+                <item name="No CVS" href="/cvs-usage.html"/>
+                <item name="Nightly builds" href="http://wiki.apache.org/excalibur/NightlyBuild"/>
+            </item>
+        </menu>
+
+        <menu name="Fortress">
+            <item name="Overview" href="/fortress/index.html"/>
+            <item name="Features Oriented" href="/fortress/features.html"/>
+            <item name="Getting Started" href="/fortress/getting-started.html"/>
+            <item name="Using Meta Info" href="/fortress/using-meta-info.html"/>
+            <item name="CLI" href="/fortress/cli.html"/>
+            <item name="Swing" href="/fortress/swing.html"/>
+            <item name="Servlet" href="/fortress/servlet.html"/>
+            <item name="Lifecycle Extensions" href="/lifecycle/index.html"/>
+            <item name="Design Notes" href="/fortress/design-notes.html"/>
+        </menu>
+
+        <menu name="Framework">
+            <item name="Documentation" href="/framework/index.html" collapse="true">
+              <item name="Lifecycle" href="/framework/lifecycle.html"/>
+              <item name="COP in Avalon" href="/framework/guide-cop-in-avalon.html"/>
+              <item name="Patterns in Avalon" href="/framework/guide-patterns-avalon.html"/>
+              <item name="IOC Patterns" href="/framework/guide-patterns-ioc.html"/>
+              <item name="IOC Security" href="/framework/guide-patterns-ioc-security.html"/>
+              <item name="Seperation of Concerns" href="/framework/guide-patterns-soc.html"/>
+              <item name="Interface and Implementation" href="/framework/guide-patterns-soii.html"/>
+              <item name="Designing Components" href="/framework/component-design.html"/>
+              <item name="Best Practices" href="/framework/best-practices.html"/>
+            </item>
+            <item name="Developing" href="/developing/index.html" collapse="true">
+              <item name="Authors" href="/developing/authors.html"/>
+              <item name="Introduction" href="/developing/introduction.html"/>
+              <item name="Decomposition" href="/developing/decomposing.html"/>
+              <item name="Avalon Framework" href="/developing/framework.html"/>
+              <item name="Using the framework" href="/developing/implementing.html"/>
+              <item name="Compatibility with Avalon" href="/developing/compatiblity.html"/>
+              <item name="Development Strategies" href="/developing/strategies.html"/>
+              <item name="Conclusion" href="/developing/conclusion.html"/>
+            </item>
+        </menu>
+
+        <menu name="Components">
+            <item name="Overview" href="/component-list.html"/>
+            <item name="Sourceresolver" href="/sourceresolve/index.html" collapse="true">
+                <item name="Overview" href="/sourceresolve/index.html"/>
+            </item>
+            <item name="Store" href="/store/index.html" collapse="true">
+                <item name="Overview" href="/store/index.html"/>
+            </item>
+            <item name="Thread" href="/thread.html"/>
+            <item name="XMLUtil" href="/xmlutil/index.html" collapse="true">
+                <item name="Overview" href="/xmlutil/index.html"/>
+            </item>
+        </menu>
+
+        <menu name="Containerkit">
+            <item name="Overview" href="/containerkit.html"/>
+            <item name="Instrument" href="/instrument/index.html" collapse="true">
+                <item name="Overview" href="/instrument/index.html"/>
+                <item name="HTML Based Client" href="/instrument/html-client.html"/>
+                <item name="XML Based Client" href="/instrument/xml-client.html" collapse="true">
+                    <item name="Instrument Manager" href="/instrument/xml-client-instrument-manager.html"/>
+                    <item name="Instrumentable" href="/instrument/xml-client-instrumentable.html"/>
+                    <item name="Instrument" href="/instrument/xml-client-instrument.html"/>
+                    <item name="Sample" href="/instrument/xml-client-sample.html"/>
+                    <item name="Snapshot" href="/instrument/xml-client-snapshot.html"/>
+                    <item name="Snapshots" href="/instrument/xml-client-snapshots.html"/>
+                    <item name="Create Sample" href="/instrument/xml-client-create-sample.html"/>
+                    <item name="Create Samples" href="/instrument/xml-client-create-samples.html"/>
+                    <item name="Sample Lease" href="/instrument/xml-client-sample-lease.html"/>
+                    <item name="Sample Leases" href="/instrument/xml-client-sample-leases.html"/>
+                    <item name="Invoke GC" href="/instrument/xml-client-gc.html"/>
+                </item>
+                <item name="Java Swing Client" href="/instrument/java-client.html"/>
+                <item name="Configuration" href="/instrument/configuration.html"/>
+                <item name="Component Integration" href="/instrument/component.html"/>
+                <item name="Container Integration" href="/instrument/container.html"/>
+                <item name="Advanced Features" href="/instrument/manager.html"/>
+            </item>
+            <item name="Lifecycle" href="/lifecycle/index.html" collapse="true">
+                <item name="Overview" href="/lifecycle/index.html"/>
+                <item name="Extensions" href="/lifecycle/extension.html"/>
+                <item name="Interfaces" href="/lifecycle/interfaces.html"/>
+                <item name="Tutorial" href="/lifecycle/fortress.html"/>
+            </item>
+            <item name="Logger" href="/logger.html"/>
+        </menu>
+
+        <menu name="Deprecated Materials">
+            <item name="Overview" href="/deprecation.html"/>
+            <item name="Old Documentation" href="/deprecation.html" collapse="false">
+                <item name="ECM" href="/component.html"/>
+                <item name="Event" href="/event/index.html" collapse="true">
+                    <item href="/event/event.html" name="Event"/>
+                    <item href="/event/command.html" name="Command"/>
+                    <item href="/event/mpool.html" name="MPool"/>
+                    <item href="/event/util.html" name="Util"/>
+                    <item href="/event/event-howto.html" name="Use Event Queues"/>
+                    <item href="/event/command-howto.html" name="Use the Command Manager"/>
+                    <item href="/event/mpool-howto.html" name="Use MPool"/>
+                    <item href="/event/util-howto.html" name="Use System Util"/>
+                    <item href="/event/cpuparser-howto.html" name="Extend System Util"/>
+                </item>
+                <item name="Configuration" href="/configuration.html"/>
+            </item>
+        </menu>
+
+        <menu name="Thanks">
+            <item name="to our sponsors!" href="http://www.apache.org/foundation/thanks.html"/>
+            <item name="Sponsor the ASF" href="http://www.apache.org/foundation/sponsorship.html"/>
+        </menu>
+    </body>
+
+</project>

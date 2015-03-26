@@ -1,0 +1,17 @@
+  <body bgcolor="white">
+    Component configuration interfaces and XML-based implementations.
+    <br><br>
+    <p>The <code>org.apache.avalon.framework.configuration</code> package contains primarily:</p>
+    <ul>
+      <li>The <a href="Configurable.html">Configurable</a> interface, which a Component implements
+      if it needs to be configured with externally-specified data before it is initialized.
+      </li>
+      <li>The <a href="Configuration.html">Configuration</a> interface, an implementation of which
+      will be passed to Components that implement <a href="Configurable.html">Configurable</a>.</li>
+      <li>The <a href="Reconfigurable.html">Reconfigurable</a> interface, which Components implement if
+      they need to be reconfigured at runtime.</li>
+      <li>Various classes providing the default XML-based implementation of <a
+        href="Configuration.html">Configuration</a>. The mapping from XML to Configuration tree is
+      described in <a href="DefaultConfigurationBuilder.html">DefaultConfigurationBuilder</a>.
+    </ul>
+  </body>

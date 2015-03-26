@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+
+  <properties>
+    <author email="hammant@apache.org">Paul Hammant</author>
+    <author email="bloritsch@apache.org">Berin Loritsch</author>
+    <title>Developing With Apache Avalon Authors</title>
+  </properties>
+
+<body>
+  <section name="Authors">
+    <subsection name="Berin Loritsch">
+    <p>
+      Berin has helped define and document the Avalon projects since 2000.
+      He has been involved in Apache Avalon and Apache Cocoon.  He is the
+      author of the current thread-safe pool implementations as well as
+      the DataSourceComponent.  Berin and Giacomo Pati were the architects
+      of Excalibur's Component Management infrastructure.
+    </p>
+    <p>
+      Outside of the public view of the Apache Software Foundation, Berin
+      has developed workflow based web applications as well as data
+      manipulation services.  He has nine years of experience developing
+      database backed applications, and eight years experience with
+      technical writing.  Berin has only been developing Java since 1999,
+      but his background in other Object Oriented Languages and architectures
+      like C++ and CORBA helped him get a jump start.
+    </p>
+   </subsection>
+   <subsection name="Paul Hammant">
+    <p>
+       Paul is most interested in applications that run on top of Phoenix.  As such he constantly
+       trawls the internet look for suitable server applications for Phoenix.  He tries to persuade
+       the authors to rebase to Phoenix or make their apps phoenix compatible.
+    </p>
+    <p>
+       Paul wrote some of blocks for Cornerstone and some of the apps in Avalon apps.
+       He also started <a href="http://avalon.apache.org/apps/apps/db/index.html">AvalonDB</a>,
+       <a href="http://www.jesktop.com">Jesktop</a>,
+       <a href="http://avalon.apache.org/excalibur/altrmi.html">Excalibur-AltRMI</a>,
+       <a href="http://www.enterpriseobjectbroker.org">Enterprise Object Broker</a>, and
+       <a href="http://www.picocontainer.org">Picocontainer</a>.
+    </p>
+   </subsection>
+  </section>
+ </body>
+</document>
+

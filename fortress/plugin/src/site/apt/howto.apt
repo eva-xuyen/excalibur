@@ -1,0 +1,54 @@
+ ------
+ Maven 2 Fortress Plugin: configuration examples
+ ------
+ The Excalibur Team
+ <dev@excalibur.apache.org>
+ ------
+ December 25, 2005
+
+ Introduction
+
+ The Fortress plugin allows extraction of Avalon/Fortress service meta-data from Java source files.
+
+   * collect-metadata (default): generates the war artifact
+
+   * The configuration in the pom.xml is as follows:
+-------------------
+     <build>
+     	...
+		<plugins>
+			...
+			<plugin>
+				<groupId>org.apache.excalibur.fortress.meta</groupId>
+				<artifactId>maven-fortress-plugin</artifactId>
+				<version>0.0.1</version>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>collect-metainfo</goal>
+						</goals>
+						<configuration>
+							<destdir>
+								${pom.build.outputDirectory}
+							</destdir>
+							<filesets>
+								<fileset>
+									<directory>
+										${pom.build.sourceDirectory}
+									</directory>
+									<includes>
+										<include>**/*.java</include>
+									</includes>
+								</fileset>
+							</filesets>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			...
+		</plugins>
+		...
+	</build>
+-------------------	
+   

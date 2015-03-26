@@ -1,0 +1,114 @@
+<?xml version="1.0"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+
+  <properties>
+    <author email="hammant@apache.org">Paul Hammant</author>
+    <author email="bloritsch@apache.org">Berin Loritsch</author>
+    <title>Compatibility with Avalon Project Containers</title>
+  </properties>
+
+<body>
+  <section name="Compatibility with Avalon Project Containers">
+  <p>
+    There are many applications, utility or tools written in Java that you
+    wish you could use in an Avalon container.  It may be that you are
+    writing such an app/utility/tool that you intend to additionally be
+    usable by Avalon components in Avalon containers.  This document
+    gives some advice on the subject.  We will refer to applications,
+    utilities and tools as just 'tools' from her on in.  We'll assume
+    the classes for which are in a single Jar.
+  </p>
+  <p>
+    This advise is applicable to all
+    <a href="../framework/principals/containment.html">reference containers</a>
+  </p>
+  </section>
+  <section name="Making a Jar for a tool">
+    <p>
+      The tool's Jar should only contain the classes in question and
+      directly associated resources. It should not contain the classes
+      or resources from other projects.  For example it is a bad habit
+      to include the org.apache.xerces.* jars in another jar.  It would
+      be correct for the notes accompanying the tools to list xerces.jar
+      as a dependency.
+    </p>
+    <p>
+      It is best that packages for the tool are well defined.  Sun
+      recommend a package structure that honors the internet domain of
+      the hosted proejct.  For example org.apache prefixes all the packages
+      of projects hosted at Apache.  Sometimes a project thinks it is
+      significant enough to avoid the domain name based naming, but still
+      have a package.  JUnit is an example of this, as it uses junit as its
+      top level package.  Tools that have no package or a package name
+      that a non unique word are not good design.
+    </p>
+  </section>
+  <section name="Wrapping third party tools">
+    <p>
+      There are many tools written in Java as beans that you wish you could
+      use in an Avalon container as a component.  If they are not
+      dependent on Avalon packages and classes already it is likely that
+      some wrapper concept is appropriate.  The normal form is to have
+      a separate package with a class that is dependent on Avalon Framework
+      methods.  That wrapper class would be Configurable, Initializable etc,
+      and would map its configuration to setZYZ() methods in the original bean.
+    </p>
+    <p>
+      It is also a good idea to understand the
+      <a href="../framework/cop/guide-patterns-soii.html">separation of interface
+      and implementation</a> when designing components.
+    </p>
+  </section>
+  <section name="Dynamic Classloading">
+    <p>
+      Many Java tools internally use
+      <em>Class.forName(String).newInstance()</em>
+      to instantiate some part of its internal functionality.  This
+      works if the class's Jar is mounted at the top-level system
+      classloader.  In the case of many Avalon containers, the Jar in
+      question will actually be mounted in a classloader at some other point
+      in a tree of classloaders.  Thus <em>Class.forName()</em>
+      will fail with ClassNotFoundException if running in a container.
+    </p>
+    <p>
+      A better thing to do would be to use
+      <em>this.getClass().getClassLoader().loadClass(String)</em>.
+      This means that the class will always be loaded from classloader
+      that hosts the rest of the classes for the tool.  It can run at any
+      point in a tree of classloaders without problem.
+    </p>
+  </section>
+  <section name="Use of Static">
+    <p>
+      It is common amongst novice developers to use much static
+      functionality.  This could be methods or class variables.  Given
+      that Avalon's containers may mount multiple instances of a component
+      potentially in multiple classloaders, the use of static may lead to
+      unpredicted behavior.  If the static var or method is mounted in a
+      classloader that is visible to multiple components, then it will
+      behave as expected.  For this reason, static should be used with care
+      - you cannot guarantee where someone might try to run your tool.
+    </p>
+    <p>
+      Static also makes Unit Testing quite difficult.  If you can at all
+      avoid it, please do so.
+    </p>
+  </section>
+ </body>
+</document>

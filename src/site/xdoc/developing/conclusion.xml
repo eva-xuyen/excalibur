@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+
+  <properties>
+    <author email="hammant@apache.org">Paul Hammant</author>
+    <author email="bloritsch@apache.org">Berin Loritsch</author>
+    <title>Conclusion</title>
+  </properties>
+
+<body>
+  <section name="Conclusion">
+  <p>
+    Maybe you are already convinced, but need some help convincing
+    your colleagues that Avalon is right for you.  Maybe you need
+    some convincing yourself.  Either way, this chapter will help
+    wrap everything up, and provide you with some convincing arguments.
+    We all need to fight Fear, Uncertainty, and Doubt (FUD) with the
+    Open Source model.  For arguments on the validity of Open Source,
+    I will direct you to Eric S. Raymond's excellent treatises on the
+    subject (
+      <a href="http://www.tuxedo.org/~esr/writings/cathedral-bazaar/">http://www.tuxedo.org/~esr/writings/cathedral-bazaar/</a> ).
+    Regardless of your opinions on his politics, the
+    papers he wrote and compiled into the book <em>The Cathedral
+    and the Bazaar</em> will give you the information you need to
+    be convinced about the open source model as a whole.
+  </p>
+  </section>
+  <section name="Avalon Works">
+    <p>
+      The bottom line is that Avalon accomplishes the goal it was
+      originally designed to fulfill.  Avalon does not introduce new
+      concepts and ideas, but rather uses and formalizes several concepts
+      that have stood the test of time.  The newest concept that influenced
+      the design of Avalon is the Separation of Concerns pattern introduced
+      sometime around 1995.  Even then, Separation of Concerns is a
+      formalization of System Analysis techniques.
+    </p>
+    <p>
+      Avalon's user base is measured in the hundreds.  Several projects
+      like Apache Cocoon, Apache JAMES, and Jesktop are all built on Avalon.
+      Developers for those projects are users of Avalon Framework.  Because of
+      the number of users Avalon has, it is very well tested.
+    </p>
+    <subsection name="Designed by the Best Minds">3
+      <p>
+        The authors of Avalon recognize that we are not the sole experts
+        on server side programming.  We use concepts and ideas from other
+        people's research.  We respond to feedback from our users.  Avalon
+        is not just designed by the five developers mentioned in the
+        introduction -- the people who came up with the concepts of Inversion
+        of Control, Separation of Concerns, and Component Oriented
+        Programming designed it.
+      </p>
+      <p>
+        The beauty of Open Source projects is that the result is an
+        amalgamation of the best ideas and the best code.  Avalon has gone
+        through periods of testing ideas and rejecting them because there
+        was a better solution.  You can take the knowledge gained by the
+        Avalon team and use it in your own systems.  You can take the
+        predefined components in Excalibur and use them in your own
+        projects -- they have been tested to work under heavy load without
+        errors.
+      </p>
+    </subsection>
+    <subsection name="Compatible License">
+      <p>
+        The <em>Apache Software License</em> (ASL) is compatible
+        with just about every other license known.  The biggest known
+        exceptions are the <em>GNU Public License</em> (GPL)
+        and the <em>Lesser GNU Public License</em> (LGPL).  The
+        important thing is that the ASL is friendly to corporate development,
+        and does not force you to release your source code if you don't want
+        to.  It is the same license used for the Apache Software Foundation's
+        venerable HTTP server.
+      </p>
+    </subsection>
+    <subsection name="Pooled Research">
+      <p>
+        Most of Avalon's users contribute back to the project in some way.
+        This spreads the cost of developing, debugging, and documenting the
+        framework across several users.  It also means that Avalon's code
+        has gone through a more extensive peer review than would ever be
+        possible in one company.  In addition, users of Avalon support
+        Avalon.  While it is true open source projects do not typically have
+        a help desk or telephone support line, we do have a mailing list.
+        Many times your questions can be answered in less time on the list
+        than it would take on some support lines.
+      </p>
+    </subsection>
+    <subsection name="Simplified Analysis and Design">
+      <p>
+        Developing on Avalon helps the developer to get into a mindset.
+        That mindset focuses the efforts on how to discover Components and
+        Services.  Since many of the details regarding the life of the
+        Components and Services in the system are already analyzed and
+        designed, the developer only has to choose which ones they need.
+      </p>
+      <p>
+        It is important to state that Avalon development does not replace
+        traditional Object Oriented Analysis and Design, but enhances it.
+        You are still using the same techniques you did before, only now
+        you have a tool set you can use to achieve your design faster.
+      </p>
+    </subsection>
+  </section>
+  <section name="Avalon is Ready">
+    <p>
+      Avalon Framework, Avalon Excalibur, Avalon Phoenix and Avalon LogKit
+      are ready for you to use now.  They are mature, powerful products and
+      they are only getting better!
+    </p>
+  </section>
+ </body>
+</document>

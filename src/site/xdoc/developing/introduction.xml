@@ -1,0 +1,358 @@
+<?xml version="1.0"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+
+  <properties>
+    <author email="hammant@apache.org">Paul Hammant</author>
+    <author email="bloritsch@apache.org">Berin Loritsch</author>
+    <title>Introduction and Overview</title>
+  </properties>
+
+<body>
+   <section name="Introduction and Overview">
+  <p>
+    In the beginning was Apache JServ.  Stefano Mazzocchi and others
+    helping develop Apache JServ realized that several patterns used
+    in that project were generic enough to create a Server Framework.
+    On Wednesday January 27, 1999 (roughly a month after release 1.0b
+    of JServ) Stefano put together a proposal to start a project
+    called the Java Apache Server Framework.  It was to be the basis
+    for all Java server code at Apache.  The idea was to provide a
+    framework to put together components and reuse code across a
+    number of projects.
+  </p>
+   </section>
+  <p>
+    Stefano Mazzocchi, Federico Barbieri, and Pierpaolo Fumagalli
+    created the initial version.  Later in 2000, Berin Loritsch and
+    Peter Donald joined the project.  By that time, Pierpaolo and
+    Stefano had moved on to other projects and Java Apache Server
+    Framework started to use the name Avalon.  Those five developers
+    are the main people responsible for the current design and
+    concepts used by the framework.  The current version is very
+    similar to the version that was released in June 2000.  In fact,
+    the major difference is the reorganization of the packages, and
+    splitting the project into subprojects.  The same design patterns
+    and interfaces exist today.
+  </p>
+  <section name="What is Avalon?">
+    <p>
+      Avalon is a parent project for five sub-projects: Framework,
+      Excalibur, LogKit, Phoenix, and Cornerstone.  Most
+      people think of the Framework when they hear the name Avalon,
+      but it is more than that.  Avalon began as the Java Apache
+      Server Framework that had the framework, utilities, components,
+      and a server's kernel implementation all in one project.
+    </p>
+    <p>
+      Since all the pieces of Avalon are of different maturity levels,
+      and have different release cycles, we have decided to break
+      Avalon into the smaller projects mentioned above.  That move also
+      enables new developers to understand and learn Avalon in distinct
+      chunks -- something that was almost impossible before.
+    </p>
+    <subsection name="Framework">
+      <p>
+        Avalon Framework is the basis for all the other projects under
+        the Avalon umbrella.  It defines the interfaces, contracts, and
+        default implementations for Avalon.  The Framework has the most
+        work put into it, and consequently is the most mature project.
+      </p>
+    </subsection>
+    <subsection name="Excalibur">
+      <p>
+        Avalon Excalibur is a collection of server side Components that
+        you can use in your own projects.  It includes pooling
+        implementations, database connection management, and Component
+        management implementations among others.
+      </p>
+    </subsection>
+    <subsection name="LogKit">
+      <p>
+        Avalon LogKit is a high speed logging toolkit that can be used by Framework,
+        Excalibur, Cornerstone, and Phoenix.  It is modeled on the same
+        principles as the JDK 1.4 Logging package but is compatible with
+        JDK 1.2+.
+      </p>
+    </subsection>
+    <subsection name="Phoenix">
+      <p>
+        Avalon Phoenix is a server kernel that manages the deployment
+        and execution of Services.
+      </p>
+    </subsection>
+    <subsection name="Cornerstone">
+      <p>
+        Avalon Cornerstone is a collection of services that you
+        can deploy in the Phoenix environment.  The Blocks include socket
+        management and job scheduling among others.
+      </p>
+    </subsection>
+    <subsection name="Scratchpad">
+      <p>
+        Scratchpad is not really an official project, but it is the
+        staging area for software package that are not ready for inclusion in
+        the other projects yet.  They are of varying quality, and their APIs are
+        not guaranteed to remain consistent until they are promoted.
+      </p>
+    </subsection>
+  </section>
+  <section name="Focus for this Overview">
+    <p>
+      We are focusing on Avalon Framework in this overview, but we will
+      cover enough of Avalon Excalibur and Avalon LogKit to get you
+      started.  We will use a hypothetical business server to demonstrate
+      how to practically use Avalon.  It is beyond the scope of this
+      overview to define a full-blown methodology, or to cover every
+      aspect of all the sub projects.
+    </p>
+    <p>
+      We decided to focus on Avalon Framework because it is the basis
+      for all of the other projects.  If you can comprehend the framework,
+      you can comprehend any Avalon based system.  You will also become
+      familiar with some of the programming idioms common in Avalon.
+      Another reason for focusing on the framework and touching on the
+      Avalon Excalibur and Avalon LogKit projects is that they are
+      officially released and supported.
+    </p>
+  </section>
+  <section name="What Can Avalon Be Used For?">
+    <p>
+      I have been asked on a couple of occasions to identify what Avalon
+      is good for, and what it is not good for.  Avalon's focus is server
+      side programming and easing the maintainability and design of server
+      focused projects.  Avalon can be described as a framework that
+      includes implementations of the framework.
+    </p>
+    <p>
+      While Avalon is focused on server side solutions, many people have
+      found it to be useful for regular applications.  The concepts used in
+      Framework, Excalibur, and LogKit are general enough to be used for
+      any project.  The two projects that are more squarely focused on
+      the server are Cornerstone and Phoenix.
+    </p>
+    <table>
+     <tr>
+      <th>Framework</th>
+     </tr>
+     <tr>
+      <td>
+       <ul>
+        <li>
+          <p>
+            A supporting or enclosing structure.
+          </p>
+        </li>
+        <li>
+          <p>
+            A basic system or arrangement as of ideas.
+          </p>
+        </li>
+      </ul>
+      </td>
+      </tr>
+     <tr>
+      <td>
+        <em>Webster's II New Riverside Dictionary</em>
+      </td>
+     </tr>
+    </table>
+    <p>
+      The word <em>framework</em> is broad in application.
+      Frameworks that focus on a single industry like medical systems
+      or communications are called vertical market frameworks.  The
+      reason being that the same framework will not work well in other
+      industries.  Frameworks that are generic enough to be used across
+      multiple industries are known as horizontal market frameworks.
+      Avalon is a horizontal market framework.  You would be able to
+      build vertical market frameworks using Avalon's Framework.
+    </p>
+    <p>
+      The most compelling example of a vertical market framework built
+      with Avalon is the publishing framework Apache Cocoon.  Apache
+      Cocoon version 2 is built using Avalon's Framework, Excalibur, and
+      LogKit projects.  It makes use of the interfaces and contracts in
+      the Framework to reduce the time it takes for a developer to learn
+      how Cocoon works.  It also leverages the data source management and
+      component management code in Excalibur so that it does not have to
+      reinvent the wheel.  Lastly, it uses the LogKit to handle all the
+      logging in the publishing framework.
+    </p>
+    <p>
+      Once you understand the principles behind Avalon Framework, you will
+      be able to comprehend any system built on Avalon.  Once you can
+      comprehend the system, you will be able to catch bugs more quickly
+      that are due to the misuse of the framework.
+    </p>
+    <subsection name="There is no Magic Formula">
+      <p>
+        It is important to state that trying to use any tool as a magic
+        formula for success is begging for trouble.  Avalon is no exception
+        to this rule.  Even though Avalon's Framework was designed to work for
+        server solutions, it is equally at home when using it to build
+        building a Graphical User Interface (GUI) applications.  Two examples
+        of this are
+        <a href="http://d-haven.org/guiapp">D-Haven.org's GUIApp</a>
+        and <a href="http://jesktop.sourceforge.net">Jesktop</a>
+      </p>
+      <p>
+        While you need to consider if Avalon is right for your project,
+        you can still learn from the principles and design that went into
+        it.  The question you need to ask yourself is, "Where is this
+        project going to be used?"  If the answer is that it will be run
+        in a server environment, then Avalon is a good choice whether you
+        are creating a Java Servlet, or creating a special purpose server.
+        If the answer is it will be run on a client's machine with no
+        interaction with a server, than chances are that Avalon might not
+        be a good fit.  Even then, the Component model is very flexible
+        and can help manage complexity in a large application.
+      </p>
+    </subsection>
+  </section>
+  <section name="Principles and Patterns">
+    <p>
+      All of Avalon is built with specific design principles.  The two
+      most important patterns are <em>Inversion of Control</em>
+      and <em>Separation of Concerns</em>.  Component Oriented
+      Programming, Aspect Oriented Programming, and Service Oriented
+      Programming also influence Avalon.  Volumes could be written about
+      each of the programming principles, however they are design mindsets.
+    </p>
+    <subsection name="Inversion of Control">
+      <p>
+        Inversion of Control (IOC) is the concept that a Component is
+        always externally managed.  This phrase was originally coined
+        by Brian Foote in one of his papers ( <a
+        href="http://www.laputan.org/drc/drc.html">http://www.laputan.org/drc/drc.html</a>
+        ) Everything a Component needs in the way of Contexts,
+        Configurations, and Loggers is given to the Component.  In
+        fact, every stage in the life of a Component is controlled by
+        the code that created that Component.  When you use this
+        pattern, you implement a secure method of Component
+        interaction in your system.
+      </p>
+      <table>
+       <tr><th>Warning!</th></tr>
+       <tr><td>
+      IOC is not equivalent to security!  IOC provides a mechanism
+      whereby you can implement a scalable security model.  In order
+      for a system to be truly secured, each Component must be secure,
+      no Component can modify the contents of objects that are passed
+      to them, and every interaction has to be with known entities.
+      Security is a major topic, and IOC is a tool in the programmer's
+      arsenal to achieve that goal.
+      </td></tr>
+      </table>
+    </subsection>
+    <subsection name="Separation of Concerns">
+      <p>
+        The idea that you should view your problem space from different
+        concern areas resulted in the Separation of Concerns (SOC) pattern (
+            <a href="http://www.research.ibm.com/hyperspace/MDSOC.htm">
+              http://www.research.ibm.com/hyperspace/MDSOC.htm
+            </a>).
+        An example would be viewing a web server from different viewpoints
+        of the same problem space.  A web server must be secure, stable,
+        manageable, configurable, and comply with the HTTP specifications.
+        Each of those attributes is a separate concern area.  Some of these
+        concerns are related to other concerns such as security and
+        stability (if a server is not stable it can't be secure).
+      </p>
+      <p>
+        The Separation of Concerns pattern in turn led to Aspect Oriented
+        Programming (AOP) (
+            <a href="http://www.aspectj.org">http://www.aspectj.org</a>).
+        Researchers discovered that many concerns
+        couldn't be addressed at class or even method granularity.  Those
+        concerns are called aspects.  Examples of aspects include managing
+        the lifecycle of objects, logging, handling exceptions and cleaning
+        up resources.  With the absence of a stable AOP implementation, the
+        Avalon team chose to implement Aspects or concerns by providing
+        small interfaces that a Component implements.
+      </p>
+    </subsection>
+    <subsection name="Component Oriented Programming">
+      <p>
+        Component Oriented Programming (COP) is the idea of breaking a
+        system down into components, or facilities within a system.  Each
+        facility has a work interface and contracts surrounding that
+        interface.  This approach allows easy replacement of Component
+        instances without affecting code in other parts of the systems.
+        The major distinction between Object Oriented Programming (OOP)
+        and COP is the level of integration.  The complexity of a COP
+        system is more easily managed due to fewer interdependencies
+        among classes, promoting the level of code reuse.
+      </p>
+      <p>
+        One of the chief benefits of COP is the ability to modify portions
+        of your project's code without breaking the entire system.  Another
+        benefit is the ability to have multiple implementations of the
+        Component that you can select at runtime.
+      </p>
+    </subsection>
+    <subsection name="Service Oriented Programming">
+      <p>
+        Service Oriented Programming (SOP) is the idea of breaking a
+        system down into services provided by the system.
+      </p>
+      <table>
+       <tr><th>Service</th></tr>
+       <tr><td>
+    <ul>
+      <li>
+        <p>
+          Work or duties performed for others.
+        </p>
+      </li>
+      <li>
+        <p>
+          A facility offering repair or maintenance.
+        </p>
+      </li>
+      <li>
+        <p>
+          A facility providing the public with a utility.
+        </p>
+      </li>
+    </ul>
+       </td></tr>
+       <tr><td><em>Webster's II New Riverside Dictionary</em></td></tr>
+      </table>
+      <p>
+        Avalon's Phoenix identifies a service as the interface and
+        contracts for a facility that Phoenix will provide.  The
+        implementation of the service is called a Block.  It is
+        important to realize that a server is made up of multiple
+        services.  To take the example of a Mail server, there are
+        the protocol handling services, the authentication and
+        authorization services, the administration service, and the
+        core mail handling service.
+      </p>
+      <p>
+        Avalon's Cornerstone provides a number of low-level services
+        that you can leverage for your own systems.  The services
+        provided are connection management, socket management,
+        principal/role management, and scheduling.  We touch on
+        services here because it is relevant to the process of
+        decomposing our hypothetical system down into the different
+        facilities.
+      </p>
+    </subsection>
+  </section>
+ </body>
+</document>

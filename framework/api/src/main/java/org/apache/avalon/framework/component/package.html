@@ -1,0 +1,82 @@
+<body>
+  <p>
+    <b>Deprecated:</b> use the interfaces in the
+    <code>org.apache.avalon.framework.service</code> package instead.
+    Interfaces and implementation of the component management services
+    supporting container based management of componet lookup and
+    decommissioning.
+  </p>
+
+  <h1>Migration from This Package</h1>
+
+  <p>
+    The Avalon team has determined that the best way to remove the need
+    for this package in projects that existed before the team deprecated
+    the package is to use a dynamic proxy.  There are two ways of defining
+    a dynamic proxy: using JDK 1.3's dynamic proxy generation code, and
+    using BCEL to write a special purpose proxy.
+  </p>
+
+  <p>
+    All the Avalon containers now employ this technique so that you can
+    confidently remove all deprecation warnings from your code by removing
+    the <code>Component</code> interface.
+  </p>
+
+  <p>
+    The code snippet below describes how to use JDK 1.3 to create a dynamic
+    proxy at runtime.  The method <code>getProxy</code> is where the proxy
+    is actually created.  The class <code>ComponentInvocationHandler</code>
+    takes care of handling the method calls.
+  </p>
+
+  <pre>
+    /**
+     * Get the Component wrapped in the proxy.  The role must be the service
+     * interface's fully qualified classname to work.
+     */
+    public Component getProxy( String role, Object service ) throws Exception
+    {
+        Class serviceInterface = m_classLoader.loadClass( role );
+
+        return (Component)Proxy.newProxyInstance( m_classLoader,
+                                                  new Class[]{Component.class, serviceInterface},
+                                                  new ComponentInvocationHandler( service ) );
+    }
+
+    /**
+     * Internal class to handle the wrapping with Component
+     */
+    private final static class ComponentInvocationHandler
+        implements InvocationHandler
+    {
+        private final Object m_delagate;
+
+        public ComponentInvocationHandler( final Object delegate )
+        {
+            if( null == delegate )
+            {
+                throw new NullPointerException( "delegate" );
+            }
+
+            m_delagate = delegate;
+        }
+
+        public Object invoke( final Object proxy,
+                              final Method meth,
+                              final Object[] args )
+            throws Throwable
+        {
+            try
+            {
+                return meth.invoke( m_delagate, args );
+            }
+            catch( final InvocationTargetException ite )
+            {
+                throw ite.getTargetException();
+            }
+        }
+    }
+  </pre>
+
+</body>
